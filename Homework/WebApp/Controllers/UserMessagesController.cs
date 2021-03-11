@@ -1,29 +1,33 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
+using DAL.App.EF;
+using DAL.App.EF.Repositories;
+using Domain.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain;
 
 namespace WebApp.Controllers
 {
     public class UserMessagesController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public UserMessagesController(AppDbContext context)
+        public UserMessagesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: UserMessages
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.UserMessages.Include(u => u.MessageForm).Include(u => u.User);
-            return View(await appDbContext.ToListAsync());
+
+            var res = await _uow.UserMessage.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: UserMessages/Details/5
@@ -34,10 +38,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userMessage = await _context.UserMessages
-                .Include(u => u.MessageForm)
-                .Include(u => u.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var userMessage = await _uow.UserMessage.FirstOrDefaultAsync(id.Value);
             if (userMessage == null)
             {
                 return NotFound();
@@ -47,10 +48,10 @@ namespace WebApp.Controllers
         }
 
         // GET: UserMessages/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["MessageFormId"] = new SelectList(_context.MessageForms, "Id", "Email");
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "FirstName");
+            ViewData["MessageFormId"] = new SelectList(await _uow.MessageForm.GetAllAsync(false), "Id", "Email");
+            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(false), "Id", "FirstName");
             return View();
         }
 
@@ -59,17 +60,16 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DateSent,UserId,MessageFormId")] UserMessage userMessage)
+        public async Task<IActionResult> Create(UserMessage userMessage)
         {
             if (ModelState.IsValid)
             {
-                userMessage.Id = Guid.NewGuid();
-                _context.Add(userMessage);
-                await _context.SaveChangesAsync();
+                _uow.UserMessage.Add(userMessage);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MessageFormId"] = new SelectList(_context.MessageForms, "Id", "Email", userMessage.MessageFormId);
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "FirstName", userMessage.UserId);
+            ViewData["MessageFormId"] = new SelectList(await _uow.MessageForm.GetAllAsync(), "Id", "Email", userMessage.MessageFormId);
+            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(), "Id", "FirstName", userMessage.UserId);
             return View(userMessage);
         }
 
@@ -81,13 +81,13 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userMessage = await _context.UserMessages.FindAsync(id);
+            var userMessage = await _uow.UserMessage.FirstOrDefaultAsync(id.Value);
             if (userMessage == null)
             {
                 return NotFound();
             }
-            ViewData["MessageFormId"] = new SelectList(_context.MessageForms, "Id", "Email", userMessage.MessageFormId);
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "FirstName", userMessage.UserId);
+            ViewData["MessageFormId"] = new SelectList(await _uow.MessageForm.GetAllAsync(), "Id", "Email", userMessage.MessageFormId);
+            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(), "Id", "FirstName", userMessage.UserId);
             return View(userMessage);
         }
 
@@ -96,7 +96,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,DateSent,UserId,MessageFormId")] UserMessage userMessage)
+        public async Task<IActionResult> Edit(Guid id, UserMessage userMessage)
         {
             if (id != userMessage.Id)
             {
@@ -107,12 +107,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(userMessage);
-                    await _context.SaveChangesAsync();
+                    _uow.UserMessage.Update(userMessage);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserMessageExists(userMessage.Id))
+                    if (!await UserMessageExists(userMessage.Id))
                     {
                         return NotFound();
                     }
@@ -123,8 +123,8 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MessageFormId"] = new SelectList(_context.MessageForms, "Id", "Email", userMessage.MessageFormId);
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "FirstName", userMessage.UserId);
+            ViewData["MessageFormId"] = new SelectList(await _uow.MessageForm.GetAllAsync(), "Id", "Email", userMessage.MessageFormId);
+            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(), "Id", "FirstName", userMessage.UserId);
             return View(userMessage);
         }
 
@@ -136,10 +136,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userMessage = await _context.UserMessages
-                .Include(u => u.MessageForm)
-                .Include(u => u.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var userMessage = await _uow.UserMessage.FirstOrDefaultAsync(id.Value);
+
             if (userMessage == null)
             {
                 return NotFound();
@@ -153,15 +151,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var userMessage = await _context.UserMessages.FindAsync(id);
-            _context.UserMessages.Remove(userMessage);
-            await _context.SaveChangesAsync();
+            await _uow.UserMessage.RemoveAsync(id);
+
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserMessageExists(Guid id)
+        private async Task<bool> UserMessageExists(Guid id)
         {
-            return _context.UserMessages.Any(e => e.Id == id);
+            return await _uow.UserMessage.ExistsAsync(id);
         }
     }
 }

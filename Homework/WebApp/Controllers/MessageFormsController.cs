@@ -1,28 +1,31 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
-using Domain;
+using DAL.App.EF.Repositories;
+using Domain.App;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.Controllers
 {
     public class MessageFormsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public MessageFormsController(AppDbContext context)
+        public MessageFormsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: MessageForms
         public async Task<IActionResult> Index()
         {
-            return View(await _context.MessageForms.ToListAsync());
+            var res = await _uow.MessageForm.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: MessageForms/Details/5
@@ -33,8 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var messageForm = await _context.MessageForms
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var messageForm = await _uow.MessageForm.FirstOrDefaultAsync(id.Value);
             if (messageForm == null)
             {
                 return NotFound();
@@ -54,13 +56,12 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Email,Subject,Message")] MessageForm messageForm)
+        public async Task<IActionResult> Create(MessageForm messageForm)
         {
             if (ModelState.IsValid)
             {
-                messageForm.Id = Guid.NewGuid();
-                _context.Add(messageForm);
-                await _context.SaveChangesAsync();
+                _uow.MessageForm.Add(messageForm);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(messageForm);
@@ -74,7 +75,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var messageForm = await _context.MessageForms.FindAsync(id);
+            var messageForm = await _uow.MessageForm.FirstOrDefaultAsync(id.Value);
             if (messageForm == null)
             {
                 return NotFound();
@@ -87,7 +88,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Email,Subject,Message")] MessageForm messageForm)
+        public async Task<IActionResult> Edit(Guid id, MessageForm messageForm)
         {
             if (id != messageForm.Id)
             {
@@ -98,12 +99,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(messageForm);
-                    await _context.SaveChangesAsync();
+                    _uow.MessageForm.Update(messageForm);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MessageFormExists(messageForm.Id))
+                    if (!await MessageFormExists(messageForm.Id))
                     {
                         return NotFound();
                     }
@@ -125,8 +126,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var messageForm = await _context.MessageForms
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var messageForm = await _uow.MessageForm.FirstOrDefaultAsync(id.Value);
             if (messageForm == null)
             {
                 return NotFound();
@@ -140,15 +140,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var messageForm = await _context.MessageForms.FindAsync(id);
-            _context.MessageForms.Remove(messageForm);
-            await _context.SaveChangesAsync();
+            await _uow.MessageForm.RemoveAsync(id);
+
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MessageFormExists(Guid id)
+        private async Task<bool> MessageFormExists(Guid id)
         {
-            return _context.MessageForms.Any(e => e.Id == id);
+            return await _uow.MessageForm.ExistsAsync(id);
         }
     }
 }

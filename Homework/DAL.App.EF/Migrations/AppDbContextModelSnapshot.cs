@@ -19,7 +19,7 @@ namespace DAL.App.EF.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.3");
 
-            modelBuilder.Entity("Domain.Booking", b =>
+            modelBuilder.Entity("Domain.App.Booking", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -42,7 +42,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("Domain.BookingStatus", b =>
+            modelBuilder.Entity("Domain.App.BookingStatus", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -67,7 +67,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("BookingStatus");
                 });
 
-            modelBuilder.Entity("Domain.Category", b =>
+            modelBuilder.Entity("Domain.App.Category", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -83,7 +83,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("Domain.City", b =>
+            modelBuilder.Entity("Domain.App.City", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -98,7 +98,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Cities");
                 });
 
-            modelBuilder.Entity("Domain.Condition", b =>
+            modelBuilder.Entity("Domain.App.Condition", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -114,7 +114,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Conditions");
                 });
 
-            modelBuilder.Entity("Domain.County", b =>
+            modelBuilder.Entity("Domain.App.County", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -130,7 +130,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Counties");
                 });
 
-            modelBuilder.Entity("Domain.Material", b =>
+            modelBuilder.Entity("Domain.App.Material", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -150,7 +150,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Materials");
                 });
 
-            modelBuilder.Entity("Domain.MessageForm", b =>
+            modelBuilder.Entity("Domain.App.MessageForm", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -176,10 +176,13 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("MessageForms");
                 });
 
-            modelBuilder.Entity("Domain.Picture", b =>
+            modelBuilder.Entity("Domain.App.Picture", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Url")
@@ -189,10 +192,12 @@ namespace DAL.App.EF.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProductId");
+
                     b.ToTable("Pictures");
                 });
 
-            modelBuilder.Entity("Domain.Product", b =>
+            modelBuilder.Entity("Domain.App.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -255,7 +260,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("Domain.ProductMaterial", b =>
+            modelBuilder.Entity("Domain.App.ProductMaterial", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -276,28 +281,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("ProductMaterials");
                 });
 
-            modelBuilder.Entity("Domain.ProductPictures", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("PictureId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PictureId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductPictures");
-                });
-
-            modelBuilder.Entity("Domain.Unit", b =>
+            modelBuilder.Entity("Domain.App.Unit", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -313,7 +297,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("Units");
                 });
 
-            modelBuilder.Entity("Domain.User", b =>
+            modelBuilder.Entity("Domain.App.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -344,7 +328,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("Domain.UserBooking", b =>
+            modelBuilder.Entity("Domain.App.UserBooking", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -371,7 +355,7 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("UserBookings");
                 });
 
-            modelBuilder.Entity("Domain.UserMessage", b =>
+            modelBuilder.Entity("Domain.App.UserMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -395,13 +379,13 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("UserMessages");
                 });
 
-            modelBuilder.Entity("Domain.UserProducts", b =>
+            modelBuilder.Entity("Domain.App.UserProducts", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BookingId")
+                    b.Property<Guid?>("BookingId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DateAdded")
@@ -630,20 +614,20 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Domain.Booking", b =>
+            modelBuilder.Entity("Domain.App.Booking", b =>
                 {
-                    b.HasOne("Domain.Product", "Product")
+                    b.HasOne("Domain.App.Product", "Product")
                         .WithOne("Booking")
-                        .HasForeignKey("Domain.Booking", "ProductId")
+                        .HasForeignKey("Domain.App.Booking", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Domain.BookingStatus", b =>
+            modelBuilder.Entity("Domain.App.BookingStatus", b =>
                 {
-                    b.HasOne("Domain.Booking", "Booking")
+                    b.HasOne("Domain.App.Booking", "Booking")
                         .WithMany("BookingStatus")
                         .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -652,31 +636,42 @@ namespace DAL.App.EF.Migrations
                     b.Navigation("Booking");
                 });
 
-            modelBuilder.Entity("Domain.Product", b =>
+            modelBuilder.Entity("Domain.App.Picture", b =>
                 {
-                    b.HasOne("Domain.Category", "Category")
+                    b.HasOne("Domain.App.Product", "Product")
+                        .WithMany("Pictures")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Domain.App.Product", b =>
+                {
+                    b.HasOne("Domain.App.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.City", "City")
+                    b.HasOne("Domain.App.City", "City")
                         .WithMany("Products")
                         .HasForeignKey("CityId");
 
-                    b.HasOne("Domain.Condition", "Condition")
+                    b.HasOne("Domain.App.Condition", "Condition")
                         .WithMany("Products")
                         .HasForeignKey("ConditionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.County", "County")
+                    b.HasOne("Domain.App.County", "County")
                         .WithMany("Products")
                         .HasForeignKey("CountyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Unit", "Unit")
+                    b.HasOne("Domain.App.Unit", "Unit")
                         .WithMany("Products")
                         .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -693,15 +688,15 @@ namespace DAL.App.EF.Migrations
                     b.Navigation("Unit");
                 });
 
-            modelBuilder.Entity("Domain.ProductMaterial", b =>
+            modelBuilder.Entity("Domain.App.ProductMaterial", b =>
                 {
-                    b.HasOne("Domain.Material", "Material")
+                    b.HasOne("Domain.App.Material", "Material")
                         .WithMany("ProductMaterials")
                         .HasForeignKey("MaterialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Product", "Products")
+                    b.HasOne("Domain.App.Product", "Products")
                         .WithMany("ProductMaterials")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -712,34 +707,15 @@ namespace DAL.App.EF.Migrations
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("Domain.ProductPictures", b =>
+            modelBuilder.Entity("Domain.App.UserBooking", b =>
                 {
-                    b.HasOne("Domain.Picture", "Picture")
-                        .WithMany("ProductPicturesCollection")
-                        .HasForeignKey("PictureId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Product", "Product")
-                        .WithMany("ProductPictures")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Picture");
-
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Domain.UserBooking", b =>
-                {
-                    b.HasOne("Domain.Booking", "Booking")
-                        .WithMany("UserBookings")
+                    b.HasOne("Domain.App.Booking", "Booking")
+                        .WithMany()
                         .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.User", "User")
+                    b.HasOne("Domain.App.User", "User")
                         .WithMany("UserBookings")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -750,15 +726,15 @@ namespace DAL.App.EF.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.UserMessage", b =>
+            modelBuilder.Entity("Domain.App.UserMessage", b =>
                 {
-                    b.HasOne("Domain.MessageForm", "MessageForm")
+                    b.HasOne("Domain.App.MessageForm", "MessageForm")
                         .WithMany("UserMessages")
                         .HasForeignKey("MessageFormId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.User", "User")
+                    b.HasOne("Domain.App.User", "User")
                         .WithMany("UserMessages")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -769,25 +745,21 @@ namespace DAL.App.EF.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.UserProducts", b =>
+            modelBuilder.Entity("Domain.App.UserProducts", b =>
                 {
-                    b.HasOne("Domain.Booking", "Booking")
+                    b.HasOne("Domain.App.Booking", null)
                         .WithMany("UserProductsCollection")
-                        .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BookingId");
 
-                    b.HasOne("Domain.Product", "Products")
+                    b.HasOne("Domain.App.Product", "Products")
                         .WithMany()
                         .HasForeignKey("ProductsId");
 
-                    b.HasOne("Domain.User", "User")
+                    b.HasOne("Domain.App.User", "User")
                         .WithMany("UserProductsCollection")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Booking");
 
                     b.Navigation("Products");
 
@@ -845,65 +817,58 @@ namespace DAL.App.EF.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Booking", b =>
+            modelBuilder.Entity("Domain.App.Booking", b =>
                 {
                     b.Navigation("BookingStatus");
-
-                    b.Navigation("UserBookings");
 
                     b.Navigation("UserProductsCollection");
                 });
 
-            modelBuilder.Entity("Domain.Category", b =>
+            modelBuilder.Entity("Domain.App.Category", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("Domain.City", b =>
+            modelBuilder.Entity("Domain.App.City", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("Domain.Condition", b =>
+            modelBuilder.Entity("Domain.App.Condition", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("Domain.County", b =>
+            modelBuilder.Entity("Domain.App.County", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("Domain.Material", b =>
+            modelBuilder.Entity("Domain.App.Material", b =>
                 {
                     b.Navigation("ProductMaterials");
                 });
 
-            modelBuilder.Entity("Domain.MessageForm", b =>
+            modelBuilder.Entity("Domain.App.MessageForm", b =>
                 {
                     b.Navigation("UserMessages");
                 });
 
-            modelBuilder.Entity("Domain.Picture", b =>
-                {
-                    b.Navigation("ProductPicturesCollection");
-                });
-
-            modelBuilder.Entity("Domain.Product", b =>
+            modelBuilder.Entity("Domain.App.Product", b =>
                 {
                     b.Navigation("Booking");
 
-                    b.Navigation("ProductMaterials");
+                    b.Navigation("Pictures");
 
-                    b.Navigation("ProductPictures");
+                    b.Navigation("ProductMaterials");
                 });
 
-            modelBuilder.Entity("Domain.Unit", b =>
+            modelBuilder.Entity("Domain.App.Unit", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("Domain.User", b =>
+            modelBuilder.Entity("Domain.App.User", b =>
                 {
                     b.Navigation("UserBookings");
 

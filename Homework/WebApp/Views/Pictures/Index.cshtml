@@ -1,4 +1,4 @@
-@model IEnumerable<Domain.Picture>
+@model IEnumerable<Domain.App.Picture>
 
 @{
     ViewData["Title"] = "Index";
@@ -15,6 +15,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Url)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product!.Description)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -23,6 +26,9 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Url)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Product!.Description)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

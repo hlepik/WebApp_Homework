@@ -1,28 +1,32 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
-using Domain;
+using DAL.App.EF.Repositories;
+using Domain.App;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.Controllers
 {
     public class CitiesController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public CitiesController(AppDbContext context)
+        public CitiesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Cities
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Cities.ToListAsync());
+            var res = await _uow.City.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
+
         }
 
         // GET: Cities/Details/5
@@ -33,8 +37,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var city = await _context.Cities
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var city = await _uow.City.FirstOrDefaultAsync(id.Value);
+
             if (city == null)
             {
                 return NotFound();
@@ -54,13 +58,12 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] City city)
+        public async Task<IActionResult> Create(City city)
         {
             if (ModelState.IsValid)
             {
-                city.Id = Guid.NewGuid();
-                _context.Add(city);
-                await _context.SaveChangesAsync();
+                _uow.City.Add(city);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(city);
@@ -74,7 +77,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var city = await _context.Cities.FindAsync(id);
+            var city = await _uow.City.FirstOrDefaultAsync(id.Value);
             if (city == null)
             {
                 return NotFound();
@@ -87,7 +90,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name")] City city)
+        public async Task<IActionResult> Edit(Guid id, City city)
         {
             if (id != city.Id)
             {
@@ -98,12 +101,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(city);
-                    await _context.SaveChangesAsync();
+                    _uow.City.Update(city);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CityExists(city.Id))
+                    if (!await CityExists(city.Id))
                     {
                         return NotFound();
                     }
@@ -125,8 +128,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var city = await _context.Cities
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var city = await _uow.City.FirstOrDefaultAsync(id.Value);
             if (city == null)
             {
                 return NotFound();
@@ -140,15 +142,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var city = await _context.Cities.FindAsync(id);
-            _context.Cities.Remove(city);
-            await _context.SaveChangesAsync();
+            await _uow.City.RemoveAsync(id);
+
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CityExists(Guid id)
+        private async Task<bool> CityExists(Guid id)
         {
-            return _context.Cities.Any(e => e.Id == id);
+            return await _uow.City.ExistsAsync(id);
         }
     }
 }

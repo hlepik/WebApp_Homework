@@ -2,27 +2,31 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using Domain;
+using Domain.App;
 
 namespace WebApp.Controllers
 {
     public class PicturesController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public PicturesController(AppDbContext context)
+        public PicturesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Pictures
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Pictures.ToListAsync());
+
+            var res = await _uow.Picture.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: Pictures/Details/5
@@ -33,8 +37,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var picture = await _context.Pictures
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var picture = await _uow.Picture.FirstOrDefaultAsync(id.Value);
             if (picture == null)
             {
                 return NotFound();
@@ -44,8 +47,9 @@ namespace WebApp.Controllers
         }
 
         // GET: Pictures/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewData["ProductId"] = new SelectList(await _uow.Product.GetAllAsync(false), "Id", "Description");
             return View();
         }
 
@@ -54,15 +58,15 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Url")] Picture picture)
+        public async Task<IActionResult> Create( Picture picture)
         {
             if (ModelState.IsValid)
             {
-                picture.Id = Guid.NewGuid();
-                _context.Add(picture);
-                await _context.SaveChangesAsync();
+                _uow.Picture.Add(picture);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ProductId"] = new SelectList(await _uow.Product.GetAllAsync(), "Id", "Description", picture.ProductId);
             return View(picture);
         }
 
@@ -74,11 +78,12 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var picture = await _context.Pictures.FindAsync(id);
+            var picture = await _uow.Picture.FirstOrDefaultAsync(id.Value);
             if (picture == null)
             {
                 return NotFound();
             }
+            ViewData["ProductId"] = new SelectList(await _uow.Product.GetAllAsync(), "Id", "Description", picture.ProductId);
             return View(picture);
         }
 
@@ -87,7 +92,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Url")] Picture picture)
+        public async Task<IActionResult> Edit(Guid id,  Picture picture)
         {
             if (id != picture.Id)
             {
@@ -98,12 +103,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(picture);
-                    await _context.SaveChangesAsync();
+                    _uow.Picture.Update(picture);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PictureExists(picture.Id))
+                    if (!await PictureExists(picture.Id))
                     {
                         return NotFound();
                     }
@@ -114,6 +119,7 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ProductId"] = new SelectList(await _uow.Product.GetAllAsync(), "Id", "Description", picture.ProductId);
             return View(picture);
         }
 
@@ -125,8 +131,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var picture = await _context.Pictures
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var picture = await _uow.Picture.FirstOrDefaultAsync(id.Value);
             if (picture == null)
             {
                 return NotFound();
@@ -140,15 +145,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var picture = await _context.Pictures.FindAsync(id);
-            _context.Pictures.Remove(picture);
-            await _context.SaveChangesAsync();
+            await _uow.Picture.RemoveAsync(id);
+
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PictureExists(Guid id)
+        private async Task<bool> PictureExists(Guid id)
         {
-            return _context.Pictures.Any(e => e.Id == id);
+            return await _uow.Picture.ExistsAsync(id);
         }
     }
 }

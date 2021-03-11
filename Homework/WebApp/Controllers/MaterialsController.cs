@@ -1,28 +1,31 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
-using Domain;
+using DAL.App.EF.Repositories;
+using Domain.App;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.Controllers
 {
     public class MaterialsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public MaterialsController(AppDbContext context)
+        public MaterialsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Materials
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Materials.ToListAsync());
+            var res = await _uow.Material.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: Materials/Details/5
@@ -33,8 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var material = await _context.Materials
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var material = await _uow.Material.FirstOrDefaultAsync(id.Value);
             if (material == null)
             {
                 return NotFound();
@@ -54,13 +56,12 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Comment")] Material material)
+        public async Task<IActionResult> Create( Material material)
         {
             if (ModelState.IsValid)
             {
-                material.Id = Guid.NewGuid();
-                _context.Add(material);
-                await _context.SaveChangesAsync();
+                _uow.Material.Add(material);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(material);
@@ -74,7 +75,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var material = await _context.Materials.FindAsync(id);
+            var material = await _uow.Material.FirstOrDefaultAsync(id.Value);
             if (material == null)
             {
                 return NotFound();
@@ -87,7 +88,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Comment")] Material material)
+        public async Task<IActionResult> Edit(Guid id, Material material)
         {
             if (id != material.Id)
             {
@@ -98,12 +99,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(material);
-                    await _context.SaveChangesAsync();
+                    _uow.Material.Update(material);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MaterialExists(material.Id))
+                    if (!await MaterialExists(material.Id))
                     {
                         return NotFound();
                     }
@@ -125,8 +126,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var material = await _context.Materials
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var material = await _uow.Material.FirstOrDefaultAsync(id.Value);
             if (material == null)
             {
                 return NotFound();
@@ -140,15 +140,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var material = await _context.Materials.FindAsync(id);
-            _context.Materials.Remove(material);
-            await _context.SaveChangesAsync();
+            await _uow.Material.RemoveAsync(id);
+
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool MaterialExists(Guid id)
+        private async Task<bool> MaterialExists(Guid id)
         {
-            return _context.Materials.Any(e => e.Id == id);
+            return await _uow.Material.ExistsAsync(id);
         }
     }
 }

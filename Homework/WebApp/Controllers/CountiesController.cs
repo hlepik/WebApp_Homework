@@ -1,28 +1,31 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
-using Domain;
+using DAL.App.EF.Repositories;
+using Domain.App;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.Controllers
 {
     public class CountiesController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public CountiesController(AppDbContext context)
+        public CountiesController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Counties
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Counties.ToListAsync());
+            var res = await _uow.County.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: Counties/Details/5
@@ -33,8 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var county = await _context.Counties
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var county = await _uow.County.FirstOrDefaultAsync(id.Value);
             if (county == null)
             {
                 return NotFound();
@@ -54,13 +56,12 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] County county)
+        public async Task<IActionResult> Create(County county)
         {
             if (ModelState.IsValid)
             {
-                county.Id = Guid.NewGuid();
-                _context.Add(county);
-                await _context.SaveChangesAsync();
+                _uow.County.Add(county);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(county);
@@ -74,7 +75,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var county = await _context.Counties.FindAsync(id);
+            var county = await _uow.County.FirstOrDefaultAsync(id.Value);
             if (county == null)
             {
                 return NotFound();
@@ -87,7 +88,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name")] County county)
+        public async Task<IActionResult> Edit(Guid id, County county)
         {
             if (id != county.Id)
             {
@@ -98,12 +99,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(county);
-                    await _context.SaveChangesAsync();
+                    _uow.County.Update(county);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CountyExists(county.Id))
+                    if (!await CountyExists(county.Id))
                     {
                         return NotFound();
                     }
@@ -125,8 +126,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var county = await _context.Counties
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var county = await _uow.County.FirstOrDefaultAsync(id.Value);
             if (county == null)
             {
                 return NotFound();
@@ -140,15 +140,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var county = await _context.Counties.FindAsync(id);
-            _context.Counties.Remove(county);
-            await _context.SaveChangesAsync();
+            await _uow.County.RemoveAsync(id);
+
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CountyExists(Guid id)
+        private async Task<bool> CountyExists(Guid id)
         {
-            return _context.Counties.Any(e => e.Id == id);
+            return await _uow.County.ExistsAsync(id);
         }
     }
 }

@@ -1,29 +1,32 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
+using DAL.App.EF;
+using DAL.App.EF.Repositories;
+using Domain.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain;
 
 namespace WebApp.Controllers
 {
     public class UserBookingsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public UserBookingsController(AppDbContext context)
+        public UserBookingsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: UserBookings
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.UserBookings.Include(u => u.Booking).Include(u => u.User);
-            return View(await appDbContext.ToListAsync());
+            var res = await _uow.UserBooking.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: UserBookings/Details/5
@@ -34,10 +37,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userBooking = await _context.UserBookings
-                .Include(u => u.Booking)
-                .Include(u => u.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var userBooking = await _uow.UserBooking.FirstOrDefaultAsync(id.Value);
             if (userBooking == null)
             {
                 return NotFound();
@@ -47,10 +47,10 @@ namespace WebApp.Controllers
         }
 
         // GET: UserBookings/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["BookingId"] = new SelectList(_context.Bookings, "Id", "Id");
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "FirstName");
+            ViewData["BookingId"] = new SelectList(await _uow.Booking.GetAllAsync(false), "Id", "Id");
+            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(false), "Id", "FirstName");
             return View();
         }
 
@@ -59,17 +59,16 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DateBooked,DateRemoved,BookingId,UserId")] UserBooking userBooking)
+        public async Task<IActionResult> Create(UserBooking userBooking)
         {
             if (ModelState.IsValid)
             {
-                userBooking.Id = Guid.NewGuid();
-                _context.Add(userBooking);
-                await _context.SaveChangesAsync();
+                _uow.UserBooking.Add(userBooking);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookingId"] = new SelectList(_context.Bookings, "Id", "Id", userBooking.BookingId);
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "FirstName", userBooking.UserId);
+            ViewData["BookingId"] = new SelectList(await _uow.Booking.GetAllAsync(), "Id", "Id", userBooking.BookingId);
+            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(), "Id", "FirstName", userBooking.UserId);
             return View(userBooking);
         }
 
@@ -81,13 +80,13 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userBooking = await _context.UserBookings.FindAsync(id);
+            var userBooking = await _uow.UserBooking.FirstOrDefaultAsync(id.Value);
             if (userBooking == null)
             {
                 return NotFound();
             }
-            ViewData["BookingId"] = new SelectList(_context.Bookings, "Id", "Id", userBooking.BookingId);
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "FirstName", userBooking.UserId);
+            ViewData["BookingId"] = new SelectList(await _uow.Booking.GetAllAsync(), "Id", "Id", userBooking.BookingId);
+            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(), "Id", "FirstName", userBooking.UserId);
             return View(userBooking);
         }
 
@@ -96,7 +95,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,DateBooked,DateRemoved,BookingId,UserId")] UserBooking userBooking)
+        public async Task<IActionResult> Edit(Guid id, UserBooking userBooking)
         {
             if (id != userBooking.Id)
             {
@@ -107,12 +106,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(userBooking);
-                    await _context.SaveChangesAsync();
+                    _uow.UserBooking.Update(userBooking);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserBookingExists(userBooking.Id))
+                    if (!await UserBookingExists(userBooking.Id))
                     {
                         return NotFound();
                     }
@@ -123,8 +122,8 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookingId"] = new SelectList(_context.Bookings, "Id", "Id", userBooking.BookingId);
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "FirstName", userBooking.UserId);
+            ViewData["BookingId"] = new SelectList(await _uow.Booking.GetAllAsync(), "Id", "Id", userBooking.BookingId);
+            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(), "Id", "FirstName", userBooking.UserId);
             return View(userBooking);
         }
 
@@ -136,10 +135,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userBooking = await _context.UserBookings
-                .Include(u => u.Booking)
-                .Include(u => u.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var userBooking = await _uow.UserBooking.FirstOrDefaultAsync(id.Value);
             if (userBooking == null)
             {
                 return NotFound();
@@ -153,15 +149,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var userBooking = await _context.UserBookings.FindAsync(id);
-            _context.UserBookings.Remove(userBooking);
-            await _context.SaveChangesAsync();
+            await _uow.UserBooking.RemoveAsync(id);
+
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserBookingExists(Guid id)
+        private async Task<bool> UserBookingExists(Guid id)
         {
-            return _context.UserBookings.Any(e => e.Id == id);
+            return await _uow.UserBooking.ExistsAsync(id);
         }
     }
 }

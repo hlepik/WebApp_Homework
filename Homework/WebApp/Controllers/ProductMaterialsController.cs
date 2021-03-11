@@ -1,29 +1,33 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
+using DAL.App.EF;
+using DAL.App.EF.Repositories;
+using Domain.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain;
 
 namespace WebApp.Controllers
 {
     public class ProductMaterialsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public ProductMaterialsController(AppDbContext context)
+        public ProductMaterialsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: ProductMaterials
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.ProductMaterials.Include(p => p.Material).Include(p => p.Products);
-            return View(await appDbContext.ToListAsync());
+
+            var res = await _uow.ProductMaterial.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: ProductMaterials/Details/5
@@ -34,10 +38,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var productMaterial = await _context.ProductMaterials
-                .Include(p => p.Material)
-                .Include(p => p.Products)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var productMaterial = await _uow.ProductMaterial.FirstOrDefaultAsync(id.Value);
             if (productMaterial == null)
             {
                 return NotFound();
@@ -47,10 +48,10 @@ namespace WebApp.Controllers
         }
 
         // GET: ProductMaterials/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["MaterialId"] = new SelectList(_context.Materials, "Id", "Name");
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Description");
+            ViewData["MaterialId"] = new SelectList(await _uow.Material.GetAllAsync(false), "Id", "Name");
+            ViewData["ProductId"] = new SelectList(await _uow.Product.GetAllAsync(false), "Id", "Description");
             return View();
         }
 
@@ -59,17 +60,16 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,MaterialId,ProductId")] ProductMaterial productMaterial)
+        public async Task<IActionResult> Create(ProductMaterial productMaterial)
         {
             if (ModelState.IsValid)
             {
-                productMaterial.Id = Guid.NewGuid();
-                _context.Add(productMaterial);
-                await _context.SaveChangesAsync();
+                _uow.ProductMaterial.Add(productMaterial);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MaterialId"] = new SelectList(_context.Materials, "Id", "Name", productMaterial.MaterialId);
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Description", productMaterial.ProductId);
+            ViewData["MaterialId"] = new SelectList(await _uow.Material.GetAllAsync(), "Id", "Name", productMaterial.MaterialId);
+            ViewData["ProductId"] = new SelectList(await _uow.Product.GetAllAsync(), "Id", "Description", productMaterial.ProductId);
             return View(productMaterial);
         }
 
@@ -81,13 +81,13 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var productMaterial = await _context.ProductMaterials.FindAsync(id);
+            var productMaterial = await _uow.ProductMaterial.FirstOrDefaultAsync(id.Value);
             if (productMaterial == null)
             {
                 return NotFound();
             }
-            ViewData["MaterialId"] = new SelectList(_context.Materials, "Id", "Name", productMaterial.MaterialId);
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Description", productMaterial.ProductId);
+            ViewData["MaterialId"] = new SelectList(await _uow.Material.GetAllAsync(), "Id", "Name", productMaterial.MaterialId);
+            ViewData["ProductId"] = new SelectList(await _uow.Product.GetAllAsync(), "Id", "Description", productMaterial.ProductId);
             return View(productMaterial);
         }
 
@@ -96,7 +96,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,MaterialId,ProductId")] ProductMaterial productMaterial)
+        public async Task<IActionResult> Edit(Guid id, ProductMaterial productMaterial)
         {
             if (id != productMaterial.Id)
             {
@@ -107,12 +107,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(productMaterial);
-                    await _context.SaveChangesAsync();
+                    _uow.ProductMaterial.Update(productMaterial);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductMaterialExists(productMaterial.Id))
+                    if (!await ProductMaterialExists(productMaterial.Id))
                     {
                         return NotFound();
                     }
@@ -123,8 +123,8 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MaterialId"] = new SelectList(_context.Materials, "Id", "Name", productMaterial.MaterialId);
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Description", productMaterial.ProductId);
+            ViewData["MaterialId"] = new SelectList(await _uow.Material.GetAllAsync(), "Id", "Name", productMaterial.MaterialId);
+            ViewData["ProductId"] = new SelectList(await _uow.Product.GetAllAsync(), "Id", "Description", productMaterial.ProductId);
             return View(productMaterial);
         }
 
@@ -136,10 +136,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var productMaterial = await _context.ProductMaterials
-                .Include(p => p.Material)
-                .Include(p => p.Products)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var productMaterial = await _uow.ProductMaterial.FirstOrDefaultAsync(id.Value);
             if (productMaterial == null)
             {
                 return NotFound();
@@ -153,15 +150,16 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var productMaterial = await _context.ProductMaterials.FindAsync(id);
-            _context.ProductMaterials.Remove(productMaterial);
-            await _context.SaveChangesAsync();
+            await _uow.ProductMaterial.RemoveAsync(id);
+
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductMaterialExists(Guid id)
+        private async Task<bool> ProductMaterialExists(Guid id)
         {
-            return _context.ProductMaterials.Any(e => e.Id == id);
+            return await _uow.ProductMaterial.ExistsAsync(id);
         }
     }
+
 }

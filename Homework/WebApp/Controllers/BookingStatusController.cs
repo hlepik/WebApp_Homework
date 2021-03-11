@@ -1,29 +1,33 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
+using DAL.App.EF;
+using DAL.App.EF.Repositories;
+using Domain.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain;
 
 namespace WebApp.Controllers
 {
     public class BookingStatusController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public BookingStatusController(AppDbContext context)
+        public BookingStatusController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: BookingStatus
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.BookingStatus.Include(b => b.Booking);
-            return View(await appDbContext.ToListAsync());
+            var res = await _uow.BookingStatus.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
+
         }
 
         // GET: BookingStatus/Details/5
@@ -34,9 +38,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var bookingStatus = await _context.BookingStatus
-                .Include(b => b.Booking)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var bookingStatus = await _uow.BookingStatus
+                .FirstOrDefaultAsync(id.Value);
             if (bookingStatus == null)
             {
                 return NotFound();
@@ -46,9 +49,9 @@ namespace WebApp.Controllers
         }
 
         // GET: BookingStatus/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["BookingId"] = new SelectList(_context.Bookings, "Id", "Id");
+            ViewData["BookingId"] = new SelectList(await _uow.BookingStatus.GetAllAsync(), "Id", "Id");
             return View();
         }
 
@@ -57,16 +60,16 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,Comment,BookingId")] BookingStatus bookingStatus)
+        public async Task<IActionResult> Create(BookingStatus bookingStatus)
         {
             if (ModelState.IsValid)
             {
-                bookingStatus.Id = Guid.NewGuid();
-                _context.Add(bookingStatus);
-                await _context.SaveChangesAsync();
+                _uow.BookingStatus.Add(bookingStatus);
+                await _uow.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookingId"] = new SelectList(_context.Bookings, "Id", "Id", bookingStatus.BookingId);
+            ViewData["BookingId"] = new SelectList(await _uow.Booking.GetAllAsync(false), "Id", "Id", bookingStatus.BookingId);
             return View(bookingStatus);
         }
 
@@ -78,12 +81,12 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var bookingStatus = await _context.BookingStatus.FindAsync(id);
+            var bookingStatus = await _uow.BookingStatus.FirstOrDefaultAsync(id.Value);
             if (bookingStatus == null)
             {
                 return NotFound();
             }
-            ViewData["BookingId"] = new SelectList(_context.Bookings, "Id", "Id", bookingStatus.BookingId);
+            ViewData["BookingId"] = new SelectList(await _uow.Booking.GetAllAsync(), "Id", "Id", bookingStatus.BookingId);
             return View(bookingStatus);
         }
 
@@ -92,7 +95,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Description,Comment,BookingId")] BookingStatus bookingStatus)
+        public async Task<IActionResult> Edit(Guid id, BookingStatus bookingStatus)
         {
             if (id != bookingStatus.Id)
             {
@@ -103,12 +106,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(bookingStatus);
-                    await _context.SaveChangesAsync();
+                    _uow.BookingStatus.Update(bookingStatus);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookingStatusExists(bookingStatus.Id))
+                    if (!await BookingStatusExists(bookingStatus.Id))
                     {
                         return NotFound();
                     }
@@ -119,7 +122,7 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BookingId"] = new SelectList(_context.Bookings, "Id", "Id", bookingStatus.BookingId);
+            ViewData["BookingId"] = new SelectList(await _uow.Booking.GetAllAsync(), "Id", "Id", bookingStatus.BookingId);
             return View(bookingStatus);
         }
 
@@ -131,9 +134,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var bookingStatus = await _context.BookingStatus
-                .Include(b => b.Booking)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var bookingStatus = await _uow.BookingStatus.FirstOrDefaultAsync(id.Value);
             if (bookingStatus == null)
             {
                 return NotFound();
@@ -147,15 +148,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var bookingStatus = await _context.BookingStatus.FindAsync(id);
-            _context.BookingStatus.Remove(bookingStatus);
-            await _context.SaveChangesAsync();
+            await _uow.BookingStatus.RemoveAsync(id);
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BookingStatusExists(Guid id)
+        private async Task<bool> BookingStatusExists(Guid id)
         {
-            return _context.BookingStatus.Any(e => e.Id == id);
+            return await _uow.BookingStatus.ExistsAsync(id);
         }
+
     }
 }

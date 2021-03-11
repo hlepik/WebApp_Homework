@@ -1,28 +1,31 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
-using Domain;
+using DAL.App.EF.Repositories;
+using Domain.App;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.Controllers
 {
     public class UnitsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public UnitsController(AppDbContext context)
+        public UnitsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Units
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Units.ToListAsync());
+            var res = await _uow.Unit.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: Units/Details/5
@@ -33,8 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var units = await _context.Units
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var units = await _uow.Unit.FirstOrDefaultAsync(id.Value);
             if (units == null)
             {
                 return NotFound();
@@ -58,9 +60,8 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                units.Id = Guid.NewGuid();
-                _context.Add(units);
-                await _context.SaveChangesAsync();
+                _uow.Unit.Add(units);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(units);
@@ -74,7 +75,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var units = await _context.Units.FindAsync(id);
+            var units = await _uow.Unit.FirstOrDefaultAsync(id.Value);
             if (units == null)
             {
                 return NotFound();
@@ -87,7 +88,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name")] Unit units)
+        public async Task<IActionResult> Edit(Guid id, Unit units)
         {
             if (id != units.Id)
             {
@@ -98,12 +99,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(units);
-                    await _context.SaveChangesAsync();
+                    _uow.Unit.Update(units);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UnitsExists(units.Id))
+                    if (!await UnitsExists(units.Id))
                     {
                         return NotFound();
                     }
@@ -125,8 +126,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var units = await _context.Units
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var units = await _uow.Unit.FirstOrDefaultAsync(id.Value);
             if (units == null)
             {
                 return NotFound();
@@ -140,15 +140,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var units = await _context.Units.FindAsync(id);
-            _context.Units.Remove(units);
-            await _context.SaveChangesAsync();
+            await _uow.Unit.RemoveAsync(id);
+
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UnitsExists(Guid id)
+        private async Task<bool> UnitsExists(Guid id)
         {
-            return _context.Units.Any(e => e.Id == id);
+            return await _uow.Unit.ExistsAsync(id);
         }
     }
 }

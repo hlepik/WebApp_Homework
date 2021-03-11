@@ -1,28 +1,31 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
-using Domain;
+using DAL.App.EF.Repositories;
+using Domain.App;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.Controllers
 {
     public class ConditionsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public ConditionsController(AppDbContext context)
+        public ConditionsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Conditions
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Conditions.ToListAsync());
+            var res = await _uow.Condition.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: Conditions/Details/5
@@ -33,8 +36,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var condition = await _context.Conditions
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var condition = await _uow.Condition.FirstOrDefaultAsync(id.Value);
             if (condition == null)
             {
                 return NotFound();
@@ -54,13 +56,12 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description")] Condition condition)
+        public async Task<IActionResult> Create( Condition condition)
         {
             if (ModelState.IsValid)
             {
-                condition.Id = Guid.NewGuid();
-                _context.Add(condition);
-                await _context.SaveChangesAsync();
+                _uow.Condition.Add(condition);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(condition);
@@ -74,7 +75,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var condition = await _context.Conditions.FindAsync(id);
+            var condition = await _uow.Condition.FirstOrDefaultAsync(id.Value);
             if (condition == null)
             {
                 return NotFound();
@@ -87,7 +88,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Description")] Condition condition)
+        public async Task<IActionResult> Edit(Guid id, Condition condition)
         {
             if (id != condition.Id)
             {
@@ -98,12 +99,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(condition);
-                    await _context.SaveChangesAsync();
+                    _uow.Condition.Update(condition);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ConditionExists(condition.Id))
+                    if (!await ConditionExists(condition.Id))
                     {
                         return NotFound();
                     }
@@ -125,8 +126,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var condition = await _context.Conditions
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var condition = await _uow.Condition.FirstOrDefaultAsync(id.Value);
             if (condition == null)
             {
                 return NotFound();
@@ -140,15 +140,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var condition = await _context.Conditions.FindAsync(id);
-            _context.Conditions.Remove(condition);
-            await _context.SaveChangesAsync();
+            await _uow.Condition.RemoveAsync(id);
+
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ConditionExists(Guid id)
+        private async Task<bool> ConditionExists(Guid id)
         {
-            return _context.Conditions.Any(e => e.Id == id);
+            return await _uow.Condition.ExistsAsync(id);
         }
     }
 }

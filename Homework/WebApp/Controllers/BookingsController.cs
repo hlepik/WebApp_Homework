@@ -2,27 +2,34 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using Domain;
+using DAL.App.EF.Repositories;
+using Domain.App;
+
 
 namespace WebApp.Controllers
 {
     public class BookingsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public BookingsController(AppDbContext context)
+        public BookingsController(IAppUnitOfWork uow)
         {
-            _context = context;
+
+            _uow = uow;
         }
 
         // GET: Bookings
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Bookings.ToListAsync());
+            var res = await _uow.Booking.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: Bookings/Details/5
@@ -33,8 +40,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var booking = await _context.Bookings
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var booking = await _uow.Booking.FirstOrDefaultAsync(id.Value);
+
             if (booking == null)
             {
                 return NotFound();
@@ -54,13 +61,13 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,TimeBooked,Until")] Booking booking)
+        public async Task<IActionResult> Create( Booking booking)
         {
             if (ModelState.IsValid)
             {
-                booking.Id = Guid.NewGuid();
-                _context.Add(booking);
-                await _context.SaveChangesAsync();
+                _uow.Booking.Add(booking);
+                await _uow.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             return View(booking);
@@ -74,7 +81,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var booking = await _context.Bookings.FindAsync(id);
+            var booking = await _uow.Booking.FirstOrDefaultAsync(id.Value);
             if (booking == null)
             {
                 return NotFound();
@@ -87,7 +94,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,TimeBooked,Until")] Booking booking)
+        public async Task<IActionResult> Edit(Guid id,  Booking booking)
         {
             if (id != booking.Id)
             {
@@ -98,12 +105,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(booking);
-                    await _context.SaveChangesAsync();
+                    _uow.Booking.Update(booking);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookingExists(booking.Id))
+                    if (!await BookingExists(booking.Id))
                     {
                         return NotFound();
                     }
@@ -125,8 +132,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var booking = await _context.Bookings
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var booking = await _uow.Booking.FirstOrDefaultAsync(id.Value);
+
             if (booking == null)
             {
                 return NotFound();
@@ -140,15 +147,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var booking = await _context.Bookings.FindAsync(id);
-            _context.Bookings.Remove(booking);
-            await _context.SaveChangesAsync();
+            await _uow.Booking.RemoveAsync(id);
+
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BookingExists(Guid id)
+        private async Task<bool> BookingExists(Guid id)
         {
-            return _context.Bookings.Any(e => e.Id == id);
+            return await _uow.Booking.ExistsAsync(id);
         }
     }
 }

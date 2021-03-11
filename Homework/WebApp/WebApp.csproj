@@ -80,6 +80,11 @@
       <_ContentIncludedByDefault Remove="Views\Cities\Details.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Cities\Edit.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Cities\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Pictures\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Pictures\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Pictures\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Pictures\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Pictures\Index.cshtml" />
     </ItemGroup>
 
     <ItemGroup>

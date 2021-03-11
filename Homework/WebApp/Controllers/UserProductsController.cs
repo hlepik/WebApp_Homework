@@ -1,29 +1,32 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
+using DAL.App.EF;
+using DAL.App.EF.Repositories;
+using Domain.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain;
 
 namespace WebApp.Controllers
 {
     public class UserProductsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public UserProductsController(AppDbContext context)
+        public UserProductsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: UserProducts
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.UserProducts.Include(u => u.User);
-            return View(await appDbContext.ToListAsync());
+            var res = await _uow.UserProducts.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: UserProducts/Details/5
@@ -34,9 +37,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userProducts = await _context.UserProducts
-                .Include(u => u.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var userProducts = await _uow.UserProducts.FirstOrDefaultAsync(id.Value);
             if (userProducts == null)
             {
                 return NotFound();
@@ -46,10 +47,10 @@ namespace WebApp.Controllers
         }
 
         // GET: UserProducts/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["BookingId"] = new SelectList(_context.Bookings, "Id", "Id");
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "FirstName");
+            ViewData["BookingId"] = new SelectList(await _uow.Booking.GetAllAsync(false), "Id", "Id");
+            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(false), "Id", "FirstName");
             return View();
         }
 
@@ -58,16 +59,15 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DateAdded,DateRemoved,UserId,BookingId,ProductTypeId")] UserProducts userProducts)
+        public async Task<IActionResult> Create(UserProducts userProducts)
         {
             if (ModelState.IsValid)
             {
-                userProducts.Id = Guid.NewGuid();
-                _context.Add(userProducts);
-                await _context.SaveChangesAsync();
+                _uow.UserProducts.Add(userProducts);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "FirstName", userProducts.UserId);
+            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(), "Id", "FirstName", userProducts.UserId);
             return View(userProducts);
         }
 
@@ -79,12 +79,12 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userProducts = await _context.UserProducts.FindAsync(id);
+            var userProducts = await _uow.UserProducts.FirstOrDefaultAsync(id.Value);
             if (userProducts == null)
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "FirstName", userProducts.UserId);
+            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(), "Id", "FirstName", userProducts.UserId);
             return View(userProducts);
         }
 
@@ -93,7 +93,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,DateAdded,DateRemoved,UserId,BookingId,ProductTypeId")] UserProducts userProducts)
+        public async Task<IActionResult> Edit(Guid id, UserProducts userProducts)
         {
             if (id != userProducts.Id)
             {
@@ -104,12 +104,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(userProducts);
-                    await _context.SaveChangesAsync();
+                    _uow.UserProducts.Update(userProducts);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserProductsExists(userProducts.Id))
+                    if (!await UserProductsExists(userProducts.Id))
                     {
                         return NotFound();
                     }
@@ -120,7 +120,7 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "FirstName", userProducts.UserId);
+            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(), "Id", "FirstName", userProducts.UserId);
             return View(userProducts);
         }
 
@@ -132,9 +132,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userProducts = await _context.UserProducts
-                .Include(u => u.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var userProducts = await _uow.UserProducts.FirstOrDefaultAsync(id.Value);
             if (userProducts == null)
             {
                 return NotFound();
@@ -148,15 +146,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var userProducts = await _context.UserProducts.FindAsync(id);
-            _context.UserProducts.Remove(userProducts);
-            await _context.SaveChangesAsync();
+            await _uow.UserProducts.RemoveAsync(id);
+
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserProductsExists(Guid id)
+        private async Task<bool> UserProductsExists(Guid id)
         {
-            return _context.UserProducts.Any(e => e.Id == id);
+            return await _uow.UserProducts.ExistsAsync(id);
         }
     }
 }

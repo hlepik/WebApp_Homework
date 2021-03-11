@@ -1,29 +1,32 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
+using Contracts.DAL.App.Repositories;
+using DAL.App.EF;
+using DAL.App.EF.Repositories;
+using Domain.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain;
 
 namespace WebApp.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public ProductsController(AppDbContext context)
+        public ProductsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
         }
 
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Products.Include(p => p.Category).Include(p => p.Condition).Include(p => p.County).Include(p => p.Unit);
-            return View(await appDbContext.ToListAsync());
+            var res = await _uow.Product.GetAllAsync();
+            await _uow.SaveChangesAsync();
+            return View(res);
         }
 
         // GET: Products/Details/5
@@ -34,12 +37,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.Condition)
-                .Include(p => p.County)
-                .Include(p => p.Unit)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _uow.Product.FirstOrDefaultAsync(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -49,13 +47,13 @@ namespace WebApp.Controllers
         }
 
         // GET: Products/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
-            ViewData["ConditionId"] = new SelectList(_context.Conditions, "Id", "Description");
-            ViewData["CountyId"] = new SelectList(_context.Counties, "Id", "Name");
-            ViewData["UnitId"] = new SelectList(_context.Units, "Id", "Name");
-            ViewData["City"] = new SelectList(_context.Cities, "Id", "Name");
+            ViewData["CategoryId"] = new SelectList(await _uow.Category.GetAllAsync(false), "Id", "Name");
+            ViewData["ConditionId"] = new SelectList(await _uow.Condition.GetAllAsync(false), "Id", "Description");
+            ViewData["CountyId"] = new SelectList(await _uow.County.GetAllAsync(false), "Id", "Name");
+            ViewData["UnitId"] = new SelectList(await _uow.Unit.GetAllAsync(false), "Id", "Name");
+            ViewData["City"] = new SelectList(await _uow.City.GetAllAsync(false), "Id", "Name");
             return View();
         }
 
@@ -64,20 +62,19 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Description,Color,ProductAge,IsBooked,HasTransport,Height,Width,Depth,ConditionId,CountyId,UnitId,CategoryId")] Product product)
+        public async Task<IActionResult> Create(Product product)
         {
             if (ModelState.IsValid)
             {
-                product.Id = Guid.NewGuid();
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                _uow.Product.Add(product);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
-            ViewData["ConditionId"] = new SelectList(_context.Conditions, "Id", "Description", product.ConditionId);
-            ViewData["CountyId"] = new SelectList(_context.Counties, "Id", "Name", product.CountyId);
-            ViewData["UnitId"] = new SelectList(_context.Units, "Id", "Name", product.UnitId);
-            ViewData["City"] = new SelectList(_context.Cities, "Id", "Name", product.City);
+            ViewData["CategoryId"] = new SelectList(await _uow.Category.GetAllAsync(), "Id", "Name", product.CategoryId);
+            ViewData["ConditionId"] = new SelectList(await _uow.Condition.GetAllAsync(), "Id", "Description", product.ConditionId);
+            ViewData["CountyId"] = new SelectList(await _uow.County.GetAllAsync(), "Id", "Name", product.CountyId);
+            ViewData["UnitId"] = new SelectList(await _uow.Unit.GetAllAsync(), "Id", "Name", product.UnitId);
+            ViewData["City"] = new SelectList(await _uow.City.GetAllAsync(), "Id", "Name", product.City);
 
             return View(product);
         }
@@ -90,16 +87,16 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
+            var product = await _uow.Product.FirstOrDefaultAsync(id.Value);
             if (product == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
-            ViewData["ConditionId"] = new SelectList(_context.Conditions, "Id", "Description", product.ConditionId);
-            ViewData["CountyId"] = new SelectList(_context.Counties, "Id", "Name", product.CountyId);
-            ViewData["UnitId"] = new SelectList(_context.Units, "Id", "Name", product.UnitId);
-            ViewData["City"] = new SelectList(_context.Cities, "Id", "Name", product.City);
+            ViewData["CategoryId"] = new SelectList(await _uow.Category.GetAllAsync(), "Id", "Name", product.CategoryId);
+            ViewData["ConditionId"] = new SelectList(await _uow.Condition.GetAllAsync(), "Id", "Description", product.ConditionId);
+            ViewData["CountyId"] = new SelectList(await _uow.County.GetAllAsync(), "Id", "Name", product.CountyId);
+            ViewData["UnitId"] = new SelectList(await _uow.Unit.GetAllAsync(), "Id", "Name", product.UnitId);
+            ViewData["City"] = new SelectList(await _uow.City.GetAllAsync(), "Id", "Name", product.City);
 
             return View(product);
         }
@@ -109,7 +106,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Description,Color,ProductAge,IsBooked,HasTransport,Height,Width,Depth,ConditionId,CountyId,UnitId,CategoryId")] Product product)
+        public async Task<IActionResult> Edit(Guid id, Product product)
         {
             if (id != product.Id)
             {
@@ -120,12 +117,12 @@ namespace WebApp.Controllers
             {
                 try
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
+                    _uow.Product.Update(product);
+                    await _uow.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductExists(product.Id))
+                    if (!await ProductExists(product.Id))
                     {
                         return NotFound();
                     }
@@ -136,11 +133,11 @@ namespace WebApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
-            ViewData["ConditionId"] = new SelectList(_context.Conditions, "Id", "Description", product.ConditionId);
-            ViewData["CountyId"] = new SelectList(_context.Counties, "Id", "Name", product.CountyId);
-            ViewData["UnitId"] = new SelectList(_context.Units, "Id", "Name", product.UnitId);
-            ViewData["City"] = new SelectList(_context.Cities, "Id", "Name", product.City);
+            ViewData["CategoryId"] = new SelectList(await _uow.Category.GetAllAsync(), "Id", "Name", product.CategoryId);
+            ViewData["ConditionId"] = new SelectList(await _uow.Condition.GetAllAsync(), "Id", "Description", product.ConditionId);
+            ViewData["CountyId"] = new SelectList(await _uow.County.GetAllAsync(), "Id", "Name", product.CountyId);
+            ViewData["UnitId"] = new SelectList(await _uow.Unit.GetAllAsync(), "Id", "Name", product.UnitId);
+            ViewData["City"] = new SelectList(await _uow.City.GetAllAsync(), "Id", "Name", product.City);
 
             return View(product);
         }
@@ -153,12 +150,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.Condition)
-                .Include(p => p.County)
-                .Include(p => p.Unit)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _uow.Product.FirstOrDefaultAsync(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -172,15 +164,15 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var product = await _context.Products.FindAsync(id);
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
+            await _uow.Product.RemoveAsync(id);
+
+            await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductExists(Guid id)
+        private async Task<bool> ProductExists(Guid id)
         {
-            return _context.Products.Any(e => e.Id == id);
+            return await _uow.Product.ExistsAsync(id);
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain;
+using Domain.App;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,9 +16,9 @@ namespace DAL.App.EF
         public DbSet<Material> Materials { get; set; } = default!;
         public DbSet<MessageForm> MessageForms { get; set; } = default!;
         public DbSet<Picture> Pictures { get; set; } = default!;
-        public DbSet<ProductPictures> ProductPictures { get; set; } = default!;
         public DbSet<ProductMaterial> ProductMaterials { get; set; } = default!;
         public DbSet<Product> Products { get; set; } = default!;
+        public DbSet<User> User { get; set; } = default!;
 
         public DbSet<Unit> Units { get; set; } = default!;
         public DbSet<UserBooking> UserBookings { get; set; } = default!;
