@@ -1,4 +1,4 @@
-@model Domain.App.Booking
+@model WebApp.ViewModels.Booking.BookingCreateEditViewModels
 
 @{
     ViewData["Title"] = "Edit";
@@ -12,17 +12,9 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="TimeBooked" class="control-label"></label>
-                <input asp-for="TimeBooked" class="form-control" />
-                <span asp-validation-for="TimeBooked" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Until" class="control-label"></label>
-                <input asp-for="Until" class="form-control" />
-                <span asp-validation-for="Until" class="text-danger"></span>
-            </div>
+            <partial name="_CreateEdit" model="Model"/>
+
+            <input type="hidden" asp-for="Booking.Id" />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

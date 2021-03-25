@@ -6,28 +6,35 @@ using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
 using DAL.App.EF.Repositories;
 using Domain.App;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace WebApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ConditionsController : Controller
     {
+
         private readonly IAppUnitOfWork _uow;
 
         public ConditionsController(IAppUnitOfWork uow)
         {
+
             _uow = uow;
         }
 
         // GET: Conditions
+
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var res = await _uow.Condition.GetAllAsync();
-            await _uow.SaveChangesAsync();
             return View(res);
         }
 
+        [AllowAnonymous]
         // GET: Conditions/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -36,7 +43,9 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var condition = await _uow.Condition.FirstOrDefaultAsync(id.Value);
+            var condition = await _uow.Condition
+                .FirstOrDefaultAsync(id.Value);
+
             if (condition == null)
             {
                 return NotFound();
@@ -58,13 +67,12 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create( Condition condition)
         {
-            if (ModelState.IsValid)
-            {
-                _uow.Condition.Add(condition);
-                await _uow.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(condition);
+            if (!ModelState.IsValid) return View(condition);
+
+            _uow.Condition.Add(condition);
+            await _uow.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Conditions/Edit/5
@@ -95,27 +103,13 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _uow.Condition.Update(condition);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await ConditionExists(condition.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(condition);
+            if (!ModelState.IsValid) return View(condition);
+
+            _uow.Condition.Update(condition);
+            await _uow.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Conditions/Delete/5
@@ -141,14 +135,10 @@ namespace WebApp.Controllers
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             await _uow.Condition.RemoveAsync(id);
-
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+
         }
 
-        private async Task<bool> ConditionExists(Guid id)
-        {
-            return await _uow.Condition.ExistsAsync(id);
-        }
     }
 }

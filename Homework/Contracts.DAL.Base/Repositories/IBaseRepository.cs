@@ -17,4 +17,5 @@ namespace Contracts.DAL.Base.Repositories
         where TKey : IEquatable<TKey>
     {
     }
+
 }

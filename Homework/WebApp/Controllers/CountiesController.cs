@@ -6,13 +6,17 @@ using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
 using DAL.App.EF.Repositories;
 using Domain.App;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace WebApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CountiesController : Controller
     {
+
         private readonly IAppUnitOfWork _uow;
 
         public CountiesController(IAppUnitOfWork uow)
@@ -21,13 +25,14 @@ namespace WebApp.Controllers
         }
 
         // GET: Counties
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var res = await _uow.County.GetAllAsync();
-            await _uow.SaveChangesAsync();
             return View(res);
         }
 
+        [AllowAnonymous]
         // GET: Counties/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -36,7 +41,9 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var county = await _uow.County.FirstOrDefaultAsync(id.Value);
+            var county = await _uow.County
+                .FirstOrDefaultAsync(id.Value);
+
             if (county == null)
             {
                 return NotFound();
@@ -58,13 +65,12 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(County county)
         {
-            if (ModelState.IsValid)
-            {
-                _uow.County.Add(county);
-                await _uow.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(county);
+            if (!ModelState.IsValid) return View(county);
+
+            _uow.County.Add(county);
+            await _uow.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Counties/Edit/5
@@ -95,27 +101,13 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _uow.County.Update(county);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await CountyExists(county.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(county);
+            if (!ModelState.IsValid) return View(county);
+
+            _uow.County.Update(county);
+            await _uow.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Counties/Delete/5
@@ -141,14 +133,10 @@ namespace WebApp.Controllers
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             await _uow.County.RemoveAsync(id);
-
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+
         }
 
-        private async Task<bool> CountyExists(Guid id)
-        {
-            return await _uow.County.ExistsAsync(id);
-        }
     }
 }

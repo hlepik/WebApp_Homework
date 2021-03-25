@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Domain.App.Identity;
 using Domain.Base;
 
 namespace Domain.App
@@ -10,14 +11,12 @@ namespace Domain.App
         public DateTime TimeBooked { get; set; } = DateTime.Now;
         public DateTime? Until { get; set; }
 
-        public ICollection<UserProducts>? UserProductsCollection { get; set; }
-
-
-        public ICollection<BookingStatus>? BookingStatus { get; set; }
 
         public Guid ProductId { get; set; }
         public Product? Product { get; set; }
 
+        public Guid UserBookingId { get; set; }
+        public UserBookings? UserBookings { get; set; }
 
     }
 }

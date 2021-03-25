@@ -1,0 +1,18 @@
+@model Domain.App.Product
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>UserBookedProducts</h4>
+    <hr />
+    <partial name="_Details" model="Model"/>
+
+</div>
+<div>
+    <a asp-action="Delete" asp-route-id="@Model.Id">Remove</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

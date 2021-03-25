@@ -1,4 +1,5 @@
 using System;
+using Microsoft.AspNetCore.Identity;
 
 namespace Contracts.Domain.Base
 {
@@ -13,6 +14,7 @@ namespace Contracts.Domain.Base
     {
 
     }
+
 
 
 }

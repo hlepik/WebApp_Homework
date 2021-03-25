@@ -11,10 +11,11 @@ namespace Contracts.DAL.Base.Repositories
         where TKey : IEquatable<TKey>
     {
         // async
-        Task<IEnumerable<TEntity>> GetAllAsync(bool noTracking = true);
-        Task<TEntity?> FirstOrDefaultAsync(TKey id, bool noTracking = true);
-        Task<bool> ExistsAsync(TKey id);
-        Task<TEntity> RemoveAsync(TKey id);
+        Task<IEnumerable<TEntity>> GetAllAsync(TKey? userId = default, bool noTracking = true);
+        Task<TEntity?> FirstOrDefaultAsync(TKey id, TKey? userId = default,  bool noTracking = true);
+        Task<bool> ExistsAsync(TKey id, TKey? userId = default);
+        Task<TEntity> RemoveAsync(TKey id, TKey? userId = default);
+
 
     }
 

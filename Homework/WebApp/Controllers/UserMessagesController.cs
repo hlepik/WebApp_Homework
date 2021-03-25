@@ -1,23 +1,26 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
-using DAL.App.EF;
-using DAL.App.EF.Repositories;
-using Domain.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using DAL.App.EF;
+using Domain.App.Identity;
+using Extensions.Base;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
 {
+    [Authorize]
     public class UserMessagesController : Controller
     {
         private readonly IAppUnitOfWork _uow;
 
         public UserMessagesController(IAppUnitOfWork uow)
         {
+
             _uow = uow;
         }
 
@@ -25,8 +28,7 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var res = await _uow.UserMessage.GetAllAsync();
-            await _uow.SaveChangesAsync();
+            var res = await _uow.MessageForm.GetAllMessagesAsync(User.GetUserEmail());
             return View(res);
         }
 
@@ -38,8 +40,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userMessage = await _uow.UserMessage.FirstOrDefaultAsync(id.Value);
-            if (userMessage == null)
+            var userMessage = await _uow.UserMessages.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            if (userMessage== null)
             {
                 return NotFound();
             }
@@ -48,10 +50,8 @@ namespace WebApp.Controllers
         }
 
         // GET: UserMessages/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
-            ViewData["MessageFormId"] = new SelectList(await _uow.MessageForm.GetAllAsync(false), "Id", "Email");
-            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(false), "Id", "FirstName");
             return View();
         }
 
@@ -60,17 +60,13 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(UserMessage userMessage)
+        public async Task<IActionResult> Create( UserMessages userMessages)
         {
-            if (ModelState.IsValid)
-            {
-                _uow.UserMessage.Add(userMessage);
-                await _uow.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["MessageFormId"] = new SelectList(await _uow.MessageForm.GetAllAsync(), "Id", "Email", userMessage.MessageFormId);
-            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(), "Id", "FirstName", userMessage.UserId);
-            return View(userMessage);
+            if (!ModelState.IsValid) return View(userMessages);
+
+            _uow.UserMessages.Add(userMessages);
+            await _uow.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: UserMessages/Edit/5
@@ -81,14 +77,12 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userMessage = await _uow.UserMessage.FirstOrDefaultAsync(id.Value);
-            if (userMessage == null)
+            var userMessages= await _uow.UserMessages.FirstOrDefaultAsync(id.Value);
+            if (userMessages == null)
             {
                 return NotFound();
             }
-            ViewData["MessageFormId"] = new SelectList(await _uow.MessageForm.GetAllAsync(), "Id", "Email", userMessage.MessageFormId);
-            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(), "Id", "FirstName", userMessage.UserId);
-            return View(userMessage);
+            return View(userMessages);
         }
 
         // POST: UserMessages/Edit/5
@@ -96,36 +90,16 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, UserMessage userMessage)
+        public async Task<IActionResult> Edit(Guid id, UserMessages userMessages)
         {
-            if (id != userMessage.Id)
+            if (id != userMessages.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _uow.UserMessage.Update(userMessage);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await UserMessageExists(userMessage.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["MessageFormId"] = new SelectList(await _uow.MessageForm.GetAllAsync(), "Id", "Email", userMessage.MessageFormId);
-            ViewData["UserId"] = new SelectList(await _uow.User.GetAllAsync(), "Id", "FirstName", userMessage.UserId);
-            return View(userMessage);
+            _uow.UserMessages.Update(userMessages);
+            await _uow.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: UserMessages/Delete/5
@@ -136,14 +110,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userMessage = await _uow.UserMessage.FirstOrDefaultAsync(id.Value);
+            var userMessages = await _uow.UserMessages.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
 
-            if (userMessage == null)
+            if (userMessages == null)
             {
                 return NotFound();
             }
 
-            return View(userMessage);
+            return View(userMessages);
         }
 
         // POST: UserMessages/Delete/5
@@ -151,15 +125,11 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.UserMessage.RemoveAsync(id);
-
+            await _uow.UserMessages.RemoveAsync(id);
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<bool> UserMessageExists(Guid id)
-        {
-            return await _uow.UserMessage.ExistsAsync(id);
-        }
+
     }
 }

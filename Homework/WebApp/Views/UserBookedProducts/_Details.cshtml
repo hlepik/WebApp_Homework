@@ -1,0 +1,39 @@
+@model Domain.App.Product
+ <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.County)
+        </dt>
+
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.County!.Name)
+        </dd>
+
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.City)
+        </dt>
+
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.City!.Name)
+        </dd>
+        <dt class = "col-sm-2">
+           Location description
+        </dt>
+
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.LocationDescription)
+        </dd>
+        <dt class = "col-sm-2">
+            Does product has transport?
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.HasTransport)
+        </dd>
+
+    </dl>
+

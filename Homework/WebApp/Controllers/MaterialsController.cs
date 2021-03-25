@@ -6,13 +6,16 @@ using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
 using DAL.App.EF.Repositories;
 using Domain.App;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class MaterialsController : Controller
     {
+
         private readonly IAppUnitOfWork _uow;
 
         public MaterialsController(IAppUnitOfWork uow)
@@ -21,13 +24,15 @@ namespace WebApp.Controllers
         }
 
         // GET: Materials
+
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var res = await _uow.Material.GetAllAsync();
-            await _uow.SaveChangesAsync();
             return View(res);
         }
 
+        [AllowAnonymous]
         // GET: Materials/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -36,14 +41,19 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var material = await _uow.Material.FirstOrDefaultAsync(id.Value);
-            if (material == null)
+
+            var contactType = await _uow.Material
+                .FirstOrDefaultAsync(id.Value);
+
+            if (contactType == null)
             {
                 return NotFound();
             }
 
-            return View(material);
+            return View(contactType);
         }
+
+
 
         // GET: Materials/Create
         public IActionResult Create()
@@ -56,15 +66,15 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( Material material)
+        public async Task<IActionResult> Create(Material material)
         {
-            if (ModelState.IsValid)
-            {
-                _uow.Material.Add(material);
-                await _uow.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(material);
+            if (!ModelState.IsValid) return View(material);
+
+            _uow.Material.Add(material);
+            await _uow.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
+
         }
 
         // GET: Materials/Edit/5
@@ -94,28 +104,13 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
+            if (!ModelState.IsValid) return View(material);
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _uow.Material.Update(material);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await MaterialExists(material.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(material);
+            _uow.Material.Update(material);
+            await _uow.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Materials/Delete/5
@@ -141,14 +136,11 @@ namespace WebApp.Controllers
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             await _uow.Material.RemoveAsync(id);
-
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+
+
         }
 
-        private async Task<bool> MaterialExists(Guid id)
-        {
-            return await _uow.Material.ExistsAsync(id);
-        }
     }
 }

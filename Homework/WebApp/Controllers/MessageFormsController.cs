@@ -1,30 +1,34 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
-using DAL.App.EF;
-using DAL.App.EF.Repositories;
-using Domain.App;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using DAL.App.EF;
+using Domain.App;
+using Domain.App.Identity;
+using Extensions.Base;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers
 {
+    [Authorize]
     public class MessageFormsController : Controller
     {
         private readonly IAppUnitOfWork _uow;
 
         public MessageFormsController(IAppUnitOfWork uow)
         {
+
             _uow = uow;
         }
 
         // GET: MessageForms
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.MessageForm.GetAllAsync();
-            await _uow.SaveChangesAsync();
+            var res = await _uow.MessageForm.GetAllAsync(User.GetUserId()!.Value);
             return View(res);
         }
 
@@ -36,7 +40,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var messageForm = await _uow.MessageForm.FirstOrDefaultAsync(id.Value);
+            var messageForm = await _uow.MessageForm.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (messageForm == null)
             {
                 return NotFound();
@@ -46,7 +50,7 @@ namespace WebApp.Controllers
         }
 
         // GET: MessageForms/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             return View();
         }
@@ -56,11 +60,24 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(MessageForm messageForm)
+        public async Task<IActionResult> Create( MessageForm messageForm)
         {
             if (ModelState.IsValid)
             {
+
+
                 _uow.MessageForm.Add(messageForm);
+                messageForm.SenderId = User.GetUserId()!.Value;
+
+                await _uow.SaveChangesAsync();
+                    var userMessage = new UserMessages
+                {
+                    MessageFormId = messageForm.Id,
+                    UserId = User.GetUserId()!.Value,
+
+                };
+
+                _uow.UserMessages.Add(userMessage);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -75,7 +92,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var messageForm = await _uow.MessageForm.FirstOrDefaultAsync(id.Value);
+            var messageForm = await _uow.MessageForm.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (messageForm == null)
             {
                 return NotFound();
@@ -97,23 +114,10 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _uow.MessageForm.Update(messageForm);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await MessageFormExists(messageForm.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _uow.MessageForm.Update(messageForm);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
+
             }
             return View(messageForm);
         }
@@ -126,7 +130,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var messageForm = await _uow.MessageForm.FirstOrDefaultAsync(id.Value);
+            var messageForm = await _uow.MessageForm.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+
             if (messageForm == null)
             {
                 return NotFound();
@@ -141,14 +146,10 @@ namespace WebApp.Controllers
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             await _uow.MessageForm.RemoveAsync(id);
-
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<bool> MessageFormExists(Guid id)
-        {
-            return await _uow.MessageForm.ExistsAsync(id);
-        }
+
     }
 }

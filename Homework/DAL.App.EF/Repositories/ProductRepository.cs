@@ -9,52 +9,116 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class ProductRepository : BaseRepository<Product, AppDbContext>,IProductRepository
+    public class ProductRepository: BaseRepository<Product, AppDbContext>,IProductRepository
     {
         public ProductRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
 
-        public async Task DeleteAllProductsByDateAsync(Guid id)
+        public async Task<IEnumerable<Product>> GetAllProductsIsNotBookedAsync()
         {
+            var query = CreateQuery();
 
-            foreach (var product in await RepoDbSet.Where(x => x.Id == id).ToListAsync())
-            {
-                Remove(product);
-            }
-        }
-
-        public override async Task<IEnumerable<Product>> GetAllAsync(bool noTracking = true)
-        {
-            var query = RepoDbSet.AsQueryable();
-            if (noTracking)
-            {
-                query = query.AsNoTracking();
-            }
 
             query = query
-                .Include(p => p.Category)
-                .Include(p => p.Condition)
-                .Include(p => p.Unit)
-                .Include(p => p.County);
+                .Where(x => x.IsBooked == false);
+
+
             var res = await query.ToListAsync();
 
 
             return res;
+
         }
 
-        public override async Task<Product?> FirstOrDefaultAsync(Guid id, bool noTracking = true)
+        public async Task<IEnumerable<Product>> GetAllProductsAsync()
         {
-            var query = RepoDbSet.AsQueryable();
+            var query = CreateQuery();
 
-            if (noTracking)
+
+                query = query
+                    .Include(c => c.City)
+                    .Include(c => c.County)
+                    .Include(c => c.Condition)
+                    .Include(c => c.Category)
+                    .Include(c => c.Unit);
+
+
+            var res = await query.ToListAsync();
+
+
+            return res;
+
+        }
+
+
+        public override async Task<IEnumerable<Product>> GetAllAsync(Guid userId = default, bool noTracking = true)
+        {
+            var query = CreateQuery(userId, noTracking);
+
+            if (userId != default)
             {
-                query = query.AsNoTracking();
+                query = query
+                    .Where(c => c.AppUserId == userId)
+                    .Include(c => c.City)
+                    .Include(c => c.County)
+                    .Include(c => c.Condition)
+                    .Include(c => c.Category)
+                    .Include(c => c.Unit);
             }
+
+            var res = await query.ToListAsync();
+
+
+            return res;
+
+        }
+
+        public override async Task<Product?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
+        {
+            var query = CreateQuery(userId, noTracking);
+
+            query = query
+                .Include(c => c.City)
+                .Include(c => c.County)
+                .Include(c => c.Condition)
+                .Include(c => c.Category)
+                .Include(c => c.Unit);
+
+            var res = await query.FirstOrDefaultAsync(m => m.Id == id && m.AppUserId == userId);
+
+            return res;
+        }
+        public async Task<Product> FirstOrDefaultWithoutOutIdAsync(Guid id)
+        {
+            var query = CreateQuery();
+
+            query = query
+                .Include(p => p.City)
+                .Include(c => c.County)
+                .Include(c => c.Condition)
+                .Include(c => c.Category)
+                .Include(c => c.Unit);
 
             var res = await query.FirstOrDefaultAsync(m => m.Id == id);
 
             return res;
         }
+
+
+
+
+
+        public async Task<Product> ChangeBookingStatus(Guid id)
+        {
+
+            var query = CreateQuery();
+            var product = await query.FirstOrDefaultAsync(m => m.Id == id);
+
+            return product;
+        }
+
+
     }
+
 }

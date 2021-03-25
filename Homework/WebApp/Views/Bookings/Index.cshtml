@@ -1,22 +1,25 @@
-@model IEnumerable<Domain.App.Booking>
+@model IEnumerable<Domain.App.Product>
+
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+@if (User.Identity!.IsAuthenticated)
+{
+    <p>
+        <a asp-action="Create">Reserve</a>
+    </p>
+}
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.TimeBooked)
+                @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Until)
+                @Html.DisplayNameFor(model => model.City)
             </th>
             <th></th>
         </tr>
@@ -24,16 +27,15 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+
             <td>
-                @Html.DisplayFor(modelItem => item.TimeBooked)
+                @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Until)
+                @Html.DisplayFor(modelItem => item.City!.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
             </td>
         </tr>
 }

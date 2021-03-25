@@ -1,31 +1,37 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
-using DAL.App.EF;
-using DAL.App.EF.Repositories;
-using Domain.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using DAL.App.EF;
+using Domain.App;
+using Extensions.Base;
+using Microsoft.AspNetCore.Authorization;
+using WebApp.ViewModels.Products;
 
 namespace WebApp.Controllers
 {
+   [Authorize]
+
     public class ProductsController : Controller
     {
         private readonly IAppUnitOfWork _uow;
 
         public ProductsController(IAppUnitOfWork uow)
         {
+
             _uow = uow;
         }
+
 
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.Product.GetAllAsync();
-            await _uow.SaveChangesAsync();
+
+            var res = await _uow.Product.GetAllAsync(User.GetUserId()!.Value);
             return View(res);
         }
 
@@ -37,7 +43,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var product = await _uow.Product.FirstOrDefaultAsync(id.Value);
+            var product = await _uow.Product.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (product == null)
             {
                 return NotFound();
@@ -49,12 +55,19 @@ namespace WebApp.Controllers
         // GET: Products/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["CategoryId"] = new SelectList(await _uow.Category.GetAllAsync(false), "Id", "Name");
-            ViewData["ConditionId"] = new SelectList(await _uow.Condition.GetAllAsync(false), "Id", "Description");
-            ViewData["CountyId"] = new SelectList(await _uow.County.GetAllAsync(false), "Id", "Name");
-            ViewData["UnitId"] = new SelectList(await _uow.Unit.GetAllAsync(false), "Id", "Name");
-            ViewData["City"] = new SelectList(await _uow.City.GetAllAsync(false), "Id", "Name");
-            return View();
+            var vm = new ProductCreateEditViewModels();
+            vm.CitySelectList = new SelectList(await _uow.City.GetAllAsync(), nameof(City.Id),
+                nameof(City.Name));
+            vm.ConditionSelectList = new SelectList(await _uow.Condition.GetAllAsync(), nameof(Condition.Id),
+                nameof(Condition.Description));
+            vm.CountySelectList = new SelectList(await _uow.County.GetAllAsync(), nameof(County.Id),
+                nameof(County.Name));
+            vm.CategorySelectList = new SelectList(await _uow.Category.GetAllAsync(), nameof(Category.Id),
+                nameof(Category.Name));
+            vm.UnitSelectList= new SelectList(await _uow.Unit.GetAllAsync(), nameof(Unit.Id),
+                nameof(Unit.Name));
+            return View(vm);
+
         }
 
         // POST: Products/Create
@@ -62,21 +75,27 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Product product)
+        public async Task<IActionResult> Create(ProductCreateEditViewModels vm)
         {
             if (ModelState.IsValid)
             {
-                _uow.Product.Add(product);
+                vm.Product.AppUserId = User.GetUserId()!.Value;
+                _uow.Product.Add(vm.Product);
                 await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(await _uow.Category.GetAllAsync(), "Id", "Name", product.CategoryId);
-            ViewData["ConditionId"] = new SelectList(await _uow.Condition.GetAllAsync(), "Id", "Description", product.ConditionId);
-            ViewData["CountyId"] = new SelectList(await _uow.County.GetAllAsync(), "Id", "Name", product.CountyId);
-            ViewData["UnitId"] = new SelectList(await _uow.Unit.GetAllAsync(), "Id", "Name", product.UnitId);
-            ViewData["City"] = new SelectList(await _uow.City.GetAllAsync(), "Id", "Name", product.City);
-
-            return View(product);
+            // ViewData["AppUserId"] = new SelectList(await _uow.User.GetAllAsync(), "Id", "Firstname", product.AppUserId);
+            vm.CitySelectList = new SelectList(await _uow.City.GetAllAsync(), nameof(City.Id),
+                nameof(City.Name), vm.Product.CityId);
+            vm.CountySelectList = new SelectList(await _uow.County.GetAllAsync(), nameof(County.Id),
+                nameof(County.Name), vm.Product.CountyId);
+            vm.ConditionSelectList = new SelectList(await _uow.Condition.GetAllAsync(), nameof(Condition.Id),
+                nameof(Condition.Description), vm.Product.ConditionId);
+            vm.CategorySelectList = new SelectList(await _uow.Category.GetAllAsync(), nameof(Category.Id),
+                nameof(Category.Name), vm.Product.CategoryId);
+            vm.UnitSelectList= new SelectList(await _uow.Unit.GetAllAsync(), nameof(Unit.Id),
+                nameof(Unit.Name), vm.Product.UnitId);
+            return View(vm);
         }
 
         // GET: Products/Edit/5
@@ -87,18 +106,24 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var product = await _uow.Product.FirstOrDefaultAsync(id.Value);
+            var product = await _uow.Product.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (product == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(await _uow.Category.GetAllAsync(), "Id", "Name", product.CategoryId);
-            ViewData["ConditionId"] = new SelectList(await _uow.Condition.GetAllAsync(), "Id", "Description", product.ConditionId);
-            ViewData["CountyId"] = new SelectList(await _uow.County.GetAllAsync(), "Id", "Name", product.CountyId);
-            ViewData["UnitId"] = new SelectList(await _uow.Unit.GetAllAsync(), "Id", "Name", product.UnitId);
-            ViewData["City"] = new SelectList(await _uow.City.GetAllAsync(), "Id", "Name", product.City);
-
-            return View(product);
+            var vm = new ProductCreateEditViewModels();
+            vm.Product = product;
+            vm.CitySelectList = new SelectList(await _uow.City.GetAllAsync(), nameof(City.Id),
+                nameof(City.Name), vm.Product.CityId);
+            vm.CountySelectList = new SelectList(await _uow.County.GetAllAsync(), nameof(County.Id),
+                nameof(County.Name), vm.Product.CountyId);
+            vm.ConditionSelectList = new SelectList(await _uow.Condition.GetAllAsync(), nameof(Condition.Id),
+                nameof(Condition.Description), vm.Product.ConditionId);
+            vm.CategorySelectList = new SelectList(await _uow.Category.GetAllAsync(), nameof(Category.Id),
+                nameof(Category.Name), vm.Product.CategoryId);
+            vm.UnitSelectList= new SelectList(await _uow.Unit.GetAllAsync(), nameof(Unit.Id),
+                nameof(Unit.Name), vm.Product.UnitId);
+            return View(vm);
         }
 
         // POST: Products/Edit/5
@@ -106,40 +131,31 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Product product)
+        public async Task<IActionResult> Edit(Guid id, ProductCreateEditViewModels vm)
         {
-            if (id != product.Id)
+            if (id != vm.Product.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _uow.Product.Update(product);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await ProductExists(product.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _uow.Product.Update(vm.Product);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(await _uow.Category.GetAllAsync(), "Id", "Name", product.CategoryId);
-            ViewData["ConditionId"] = new SelectList(await _uow.Condition.GetAllAsync(), "Id", "Description", product.ConditionId);
-            ViewData["CountyId"] = new SelectList(await _uow.County.GetAllAsync(), "Id", "Name", product.CountyId);
-            ViewData["UnitId"] = new SelectList(await _uow.Unit.GetAllAsync(), "Id", "Name", product.UnitId);
-            ViewData["City"] = new SelectList(await _uow.City.GetAllAsync(), "Id", "Name", product.City);
 
-            return View(product);
+            vm.CitySelectList = new SelectList(await _uow.City.GetAllAsync(), nameof(City.Id),
+                nameof(City.Name), vm.Product.CityId);
+            vm.CountySelectList = new SelectList(await _uow.County.GetAllAsync(), nameof(County.Id),
+                nameof(County.Name), vm.Product.CountyId);
+            vm.ConditionSelectList = new SelectList(await _uow.Condition.GetAllAsync(), nameof(Condition.Id),
+                nameof(Condition.Description), vm.Product.ConditionId);
+            vm.CategorySelectList = new SelectList(await _uow.Category.GetAllAsync(), nameof(Category.Id),
+                nameof(Category.Name), vm.Product.CategoryId);
+            vm.UnitSelectList= new SelectList(await _uow.Unit.GetAllAsync(), nameof(Unit.Id),
+                nameof(Unit.Name), vm.Product.UnitId);
+            return View(vm);
         }
 
         // GET: Products/Delete/5
@@ -150,7 +166,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var product = await _uow.Product.FirstOrDefaultAsync(id.Value);
+            var product = await _uow.Product.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (product == null)
             {
                 return NotFound();
@@ -164,15 +180,12 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Product.RemoveAsync(id);
-
+            await _uow.Product.RemoveAsync(id, User.GetUserId()!.Value);
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<bool> ProductExists(Guid id)
-        {
-            return await _uow.Product.ExistsAsync(id);
-        }
     }
 }
+
+

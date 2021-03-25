@@ -1,0 +1,14 @@
+@model WebApp.ViewModels.Picture.PictureCreateEditViewModels
+
+<div class="form-group">
+    <label asp-for="Picture.Url" class="control-label"></label>
+    <input asp-for="Picture.Url" class="form-control" />
+    <span asp-validation-for="Picture.Url" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Picture.ProductId" class="control-label"></label>
+    <select asp-for="Picture.ProductId" class="form-control" asp-items="Model.ProductSelectList">
+        <option>--- Please select ---</option>
+    </select>
+    <span asp-validation-for="Picture.ProductId" class="text-danger"></span>
+</div>

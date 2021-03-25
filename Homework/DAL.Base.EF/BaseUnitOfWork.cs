@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +19,8 @@ namespace DAL.Base.EF
         {
             return UowDbContext.SaveChangesAsync();
         }
+
+
     }
 
 }

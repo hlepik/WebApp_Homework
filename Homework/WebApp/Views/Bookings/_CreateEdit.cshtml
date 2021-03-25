@@ -1,0 +1,20 @@
+@model WebApp.ViewModels.Booking.BookingCreateEditViewModels
+
+<div class="form-group">
+    <label asp-for="Booking.TimeBooked" class="control-label"></label>
+    <input asp-for="Booking.TimeBooked" class="form-control" />
+    <span asp-validation-for="Booking.TimeBooked" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Booking.Until" class="control-label"></label>
+    <input asp-for="Booking.Until" class="form-control" />
+    <span asp-validation-for="Booking.Until" class="text-danger"></span>
+</div>
+
+<div class="form-group">
+    <label asp-for="Booking.ProductId" class="control-label"></label>
+    <select asp-for="Booking.ProductId" class="form-control" asp-items="Model.ProductSelectList">
+        <option>--- Please select ---</option>
+    </select>
+    <span asp-validation-for="Booking.ProductId" class="text-danger"></span>
+</div>

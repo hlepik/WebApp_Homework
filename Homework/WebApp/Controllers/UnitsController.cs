@@ -6,13 +6,16 @@ using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
 using DAL.App.EF.Repositories;
 using Domain.App;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UnitsController : Controller
     {
+
         private readonly IAppUnitOfWork _uow;
 
         public UnitsController(IAppUnitOfWork uow)
@@ -21,13 +24,14 @@ namespace WebApp.Controllers
         }
 
         // GET: Units
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var res = await _uow.Unit.GetAllAsync();
-            await _uow.SaveChangesAsync();
             return View(res);
         }
 
+        [AllowAnonymous]
         // GET: Units/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -56,15 +60,14 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Unit units)
+        public async Task<IActionResult> Create(Unit units)
         {
-            if (ModelState.IsValid)
-            {
-                _uow.Unit.Add(units);
-                await _uow.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(units);
+            if (!ModelState.IsValid) return View(units);
+
+            _uow.Unit.Add(units);
+            await _uow.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Units/Edit/5
@@ -94,28 +97,12 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
+            if (!ModelState.IsValid) return View(units);
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _uow.Unit.Update(units);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await UnitsExists(units.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(units);
+            _uow.Unit.Update(units);
+            await _uow.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Units/Delete/5
@@ -141,14 +128,10 @@ namespace WebApp.Controllers
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             await _uow.Unit.RemoveAsync(id);
-
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+
         }
 
-        private async Task<bool> UnitsExists(Guid id)
-        {
-            return await _uow.Unit.ExistsAsync(id);
-        }
     }
 }

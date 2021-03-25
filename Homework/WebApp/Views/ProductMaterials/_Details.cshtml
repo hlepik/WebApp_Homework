@@ -1,0 +1,16 @@
+@model Domain.App.ProductMaterial
+
+<dl class="row">
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.Material)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.Material!.Name)
+    </dd >
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.Products)
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.Products!.Description)
+    </dd >
+</dl>

@@ -9,50 +9,40 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class BookingRepository : BaseRepository<Booking, AppDbContext>,IBookingRepository
-
+    public class BookingRepository  : BaseRepository<Booking, AppDbContext>,IBookingRepository
     {
+
         public BookingRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
-
-
-        public async Task DeleteAllBookingsByDateAsync(DateTime time)
+        public override async Task<IEnumerable<Booking>> GetAllAsync(Guid userId = default, bool noTracking = true)
         {
+            var query = CreateQuery(userId, noTracking);
 
-            foreach (var booking in await RepoDbSet.Where(x => x.Until == time).ToListAsync())
-            {
-                Remove(booking);
-            }
-        }
-        public override async Task<IEnumerable<Booking>> GetAllAsync(bool noTracking = true)
-        {
-            var query = RepoDbSet.AsQueryable();
-            if (noTracking)
-            {
-                query = query.AsNoTracking();
-            }
+            query = query
+                .Include(p => p.Product)
+                .Where(c => c.Product!.IsBooked == false);
+
+
 
             var res = await query.ToListAsync();
 
-
             return res;
         }
 
-        public override async Task<Booking?> FirstOrDefaultAsync(Guid id, bool noTracking = true)
+        public override async Task<Booking?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
-            var query = RepoDbSet.AsQueryable();
-
-            if (noTracking)
-            {
-                query = query.AsNoTracking();
-            }
+            var query = CreateQuery();
 
 
-            var res = await query.FirstOrDefaultAsync(m => m.Id == id);
+            query = query
+                .Include(p => p.Product);
 
+            var res = await query.FirstOrDefaultAsync(m => m.Id == id && m.Product!.AppUserId == userId);
 
             return res;
         }
+
+
     }
 }

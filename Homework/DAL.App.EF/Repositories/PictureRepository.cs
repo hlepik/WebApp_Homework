@@ -9,51 +9,41 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
 {
-    public class PictureRepository :  BaseRepository<Picture, AppDbContext>,IPictureRepository
+    public class PictureRepository : BaseRepository<Picture, AppDbContext>,IPictureRepository
     {
+
         public PictureRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
-
-        public async Task DeleteAllPicturesByDateAsync(Guid id)
+        public override async Task<IEnumerable<Picture>> GetAllAsync(Guid userId = default, bool noTracking = true)
         {
-
-            foreach (var picture in await RepoDbSet.Where(x => x.Id == id).ToListAsync())
-            {
-                Remove(picture);
-            }
-        }
-
-        public override async Task<IEnumerable<Picture>> GetAllAsync(bool noTracking = true)
-        {
-            var query = RepoDbSet.AsQueryable();
-            if (noTracking)
-            {
-                query = query.AsNoTracking();
-            }
+            var query = CreateQuery(userId, noTracking);
 
             query = query
-                .Include(p => p.Product);
+                .Include(p => p.Product)
+                .Where(c => c.Product!.AppUserId == userId);;
+
 
 
             var res = await query.ToListAsync();
 
 
             return res;
+
         }
 
-        public override async Task<Picture?> FirstOrDefaultAsync(Guid id, bool noTracking = true)
+        public override async Task<Picture?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
-            var query = RepoDbSet.AsQueryable();
+            var query = CreateQuery(userId, noTracking);
 
-            if (noTracking)
-            {
-                query = query.AsNoTracking();
-            }
 
-            var res = await query.FirstOrDefaultAsync(m => m.Id == id);
+            query = query
+                .Include(p => p.Product);
+
+            var res = await query.FirstOrDefaultAsync(m => m.Id == id && m.Product!.AppUserId == userId);
 
             return res;
         }
     }
+
 }

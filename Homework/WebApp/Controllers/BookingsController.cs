@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain.App;
-
+using Extensions.Base;
+using Microsoft.AspNetCore.Authorization;
+using WebApp.ViewModels.Booking;
 
 namespace WebApp.Controllers
 {
+    [Authorize]
     public class BookingsController : Controller
     {
         private readonly IAppUnitOfWork _uow;
+
 
         public BookingsController(IAppUnitOfWork uow)
         {
@@ -25,13 +27,14 @@ namespace WebApp.Controllers
         }
 
         // GET: Bookings
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.Booking.GetAllAsync();
-            await _uow.SaveChangesAsync();
+            var res = await _uow.Product.GetAllProductsAsync();
             return View(res);
         }
 
+        [AllowAnonymous]
         // GET: Bookings/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -40,20 +43,25 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var booking = await _uow.Booking.FirstOrDefaultAsync(id.Value);
+            var product = await _uow.Product.FirstOrDefaultWithoutOutIdAsync(id.Value);
 
-            if (booking == null)
+            if (product == null)
             {
                 return NotFound();
             }
 
-            return View(booking);
+            return View(product);
         }
 
         // GET: Bookings/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+
+            var vm = new BookingCreateEditViewModels();
+            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(User.GetUserId()!.Value), nameof(Product.Id),
+                nameof(Product.Description));
+            return View(vm);
+
         }
 
         // POST: Bookings/Create
@@ -61,17 +69,37 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( Booking booking)
+        public async Task<IActionResult> Create(BookingCreateEditViewModels vm)
         {
             if (ModelState.IsValid)
             {
-                _uow.Booking.Add(booking);
+                vm.Booking.UserBookingId = User.GetUserId()!.Value;
+
+
+
+                var product = await _uow.Product.ChangeBookingStatus(vm.Booking.ProductId);
+                product.IsBooked = true;
+
+                var userBookings = new UserBookedProducts
+                {
+                    ProductId = vm.Booking.ProductId,
+                    AppUserId = vm.Booking.UserBookingId
+                };
+
+                _uow.UserBookedProducts.Add(userBookings);
+
+                _uow.Booking.Add(vm.Booking);
+                _uow.Product.Update(product);
                 await _uow.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }
-            return View(booking);
+            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(), nameof(Product.Id),
+                nameof(Product.Description), vm.Booking.ProductId);
+
+            return View(vm);
         }
+
 
         // GET: Bookings/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
@@ -81,12 +109,16 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var booking = await _uow.Booking.FirstOrDefaultAsync(id.Value);
+            var booking = await _uow.Booking.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (booking == null)
             {
                 return NotFound();
             }
-            return View(booking);
+            var vm = new BookingCreateEditViewModels();
+            vm.Booking = booking;
+            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(), nameof(Product.Id),
+                nameof(Product.Description), vm.Booking.ProductId);
+            return View(vm);
         }
 
         // POST: Bookings/Edit/5
@@ -94,34 +126,23 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id,  Booking booking)
+        public async Task<IActionResult> Edit(Guid id, BookingCreateEditViewModels vm )
         {
-            if (id != booking.Id)
+            if (id != vm.Booking.Id)
             {
                 return NotFound();
             }
 
+
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _uow.Booking.Update(booking);
-                    await _uow.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!await BookingExists(booking.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _uow.Booking.Update(vm.Booking);
+                await _uow.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(booking);
+            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(), nameof(Product.Id),
+                nameof(Product.Description), vm.Booking.ProductId);
+            return View(vm);
         }
 
         // GET: Bookings/Delete/5
@@ -132,7 +153,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var booking = await _uow.Booking.FirstOrDefaultAsync(id.Value);
+            var booking = await _uow.Booking.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
 
             if (booking == null)
             {
@@ -147,15 +168,11 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Booking.RemoveAsync(id);
-
+            await _uow.Booking.RemoveAsync(id, User.GetUserId()!.Value);
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<bool> BookingExists(Guid id)
-        {
-            return await _uow.Booking.ExistsAsync(id);
-        }
+
     }
 }
