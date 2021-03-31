@@ -4,6 +4,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BLL.App;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
@@ -46,6 +48,8 @@ namespace WebApp
 
 
             services.AddScoped<IAppUnitOfWork, AppUnitOfWork>();
+            services.AddScoped<IAppBLL, AppBLL>();
+
 
 
             services.AddDatabaseDeveloperPageExceptionFilter();

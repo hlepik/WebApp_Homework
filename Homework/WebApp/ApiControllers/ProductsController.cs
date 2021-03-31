@@ -2,33 +2,41 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using DTO.App;
+using Extensions.Base;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
+
     public class ProductsController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public ProductsController(AppDbContext context, IAppUnitOfWork uow)
+
+        public ProductsController(AppDbContext context, IAppBLL bll)
         {
             _context = context;
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts()
         {
-            return Ok(await _uow.Product.GetAllAsync());
+            return Ok(await _bll.Product.GetAllProductsAsync());
         }
 
         // GET: api/Products/5
@@ -44,6 +52,7 @@ namespace WebApp.ApiControllers
 
             return product;
         }
+
 
         // PUT: api/Products/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

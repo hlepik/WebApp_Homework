@@ -2,33 +2,42 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
+using DAL.App.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using Domain.App;
+using DTO.App;
+using Extensions.Base;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Booking = Domain.App.Booking;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class BookingsController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly IAppUnitOfWork _uow;
 
-        public BookingsController(AppDbContext context, IAppUnitOfWork uow)
+        private readonly IAppBLL _bll;
+
+
+        public BookingsController(AppDbContext context, IAppBLL bll)
         {
             _context = context;
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: api/Bookings
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
+        public async Task<ActionResult<IEnumerable<BookingDTO>>> GetBookings()
         {
-            return Ok(await _uow.Booking.GetAllAsync());
+            return Ok(await _bll.Booking.GetAllDTOAsync(User.GetUserId()!.Value));
         }
 
         // GET: api/Bookings/5
@@ -37,7 +46,7 @@ namespace WebApp.ApiControllers
         {
 
 
-            var booking = await _uow.Booking.FirstOrDefaultAsync(id);
+            var booking = await _bll.Booking.FirstOrDefaultAsync(id);
 
             if (booking == null)
             {
@@ -61,7 +70,7 @@ namespace WebApp.ApiControllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -101,7 +110,7 @@ namespace WebApp.ApiControllers
 
             _context.Bookings.Remove(booking);
             await _context.SaveChangesAsync();
-            
+
             return NoContent();
         }
 

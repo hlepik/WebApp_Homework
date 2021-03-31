@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Contracts.Domain.Base
 {
-
     public interface IDomainEntity : IDomainEntity<Guid>
     {
 
@@ -14,7 +13,4 @@ namespace Contracts.Domain.Base
     {
 
     }
-
-
-
 }

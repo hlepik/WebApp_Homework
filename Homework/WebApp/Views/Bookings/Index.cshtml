@@ -1,4 +1,4 @@
-@model IEnumerable<Domain.App.Product>
+@model IEnumerable<DTO.App.BookingDTO>
 
 
 @{
@@ -16,11 +16,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                @Html.DisplayNameFor(model => model.Product!.Description)
             </th>
+
+            @* <th> *@
+            @*     @Html.DisplayNameFor(model => model.Product!.County) *@
+            @* </th> *@
             <th>
-                @Html.DisplayNameFor(model => model.City)
+                @Html.DisplayNameFor(model => model.Product!.City)
             </th>
+            @* <th> *@
+            @*     @Html.DisplayNameFor(model => model.Product!.Color) *@
+            @* </th> *@
+            @* <th> *@
+            @*     @Html.DisplayNameFor(model => model.Product!.Condition) *@
+            @* </th> *@
+
             <th></th>
         </tr>
     </thead>
@@ -29,13 +40,24 @@
         <tr>
 
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
+                @Html.DisplayFor(modelItem => item.Product!.Description)
             </td>
+            @* <td> *@
+            @*     @Html.DisplayFor(modelItem => item.Product!.County!.Name) *@
+            @* </td> *@
+            @* *@
             <td>
-                @Html.DisplayFor(modelItem => item.City!.Name)
+                @Html.DisplayFor(modelItem => item.Product!.City)
             </td>
+            @* <td> *@
+            @*     @Html.DisplayFor(modelItem => item.Product!.Color) *@
+            @* </td> *@
+            @* <td> *@
+            @*     @Html.DisplayFor(modelItem => item.Product!.Condition!.Description) *@
+            @* </td> *@
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                <a asp-action="Details" asp-route-id="@item.ProductId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ProductId">Remove Product</a>
             </td>
         </tr>
 }

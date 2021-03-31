@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Contracts.DAL.App.Repositories;
 using DAL.Base.EF.Repositories;
 using Domain.App;
+using DTO.App;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.App.EF.Repositories
@@ -31,46 +32,25 @@ namespace DAL.App.EF.Repositories
 
         }
 
-        public async Task<IEnumerable<Product>> GetAllProductsAsync()
+
+        public async Task<IEnumerable<ProductDTO>> GetAllProductsAsync(Guid? userId = default, bool noTracking = true)
         {
             var query = CreateQuery();
 
+            var resQuery = query.Select(p => new ProductDTO()
+                {
+                    Id = p.Id,
+                    Description = p.Description,
+                    Color = p.Color,
+                    City = p.City!.Name,
+                    DateAdded = p.DateAdded.Date,
+                    LocationDescription = p.LocationDescription,
+                    County = p.County!.Name
+                })
+                .OrderByDescending(x => x.DateAdded);;
 
-                query = query
-                    .Include(c => c.City)
-                    .Include(c => c.County)
-                    .Include(c => c.Condition)
-                    .Include(c => c.Category)
-                    .Include(c => c.Unit);
+            return await resQuery.ToListAsync();
 
-
-            var res = await query.ToListAsync();
-
-
-            return res;
-
-        }
-
-
-        public override async Task<IEnumerable<Product>> GetAllAsync(Guid userId = default, bool noTracking = true)
-        {
-            var query = CreateQuery(userId, noTracking);
-
-            if (userId != default)
-            {
-                query = query
-                    .Where(c => c.AppUserId == userId)
-                    .Include(c => c.City)
-                    .Include(c => c.County)
-                    .Include(c => c.Condition)
-                    .Include(c => c.Category)
-                    .Include(c => c.Unit);
-            }
-
-            var res = await query.ToListAsync();
-
-
-            return res;
 
         }
 
@@ -85,7 +65,7 @@ namespace DAL.App.EF.Repositories
                 .Include(c => c.Category)
                 .Include(c => c.Unit);
 
-            var res = await query.FirstOrDefaultAsync(m => m.Id == id && m.AppUserId == userId);
+            var res = await query.FirstOrDefaultAsync(m => m.Id == id);
 
             return res;
         }
@@ -106,9 +86,6 @@ namespace DAL.App.EF.Repositories
         }
 
 
-
-
-
         public async Task<Product> ChangeBookingStatus(Guid id)
         {
 
@@ -116,6 +93,22 @@ namespace DAL.App.EF.Repositories
             var product = await query.FirstOrDefaultAsync(m => m.Id == id);
 
             return product;
+        }
+
+        public override async Task<IEnumerable<Product>> GetAllAsync(Guid userId, bool noTracking = true)
+        {
+            var query = CreateQuery(userId, noTracking);
+
+
+            query = query
+                .Where(c => c.AppUserId == userId)
+                .Include(c => c.City)
+                .Include(c => c.County);
+
+            var res = await query.ToListAsync();
+
+
+            return res;
         }
 
 

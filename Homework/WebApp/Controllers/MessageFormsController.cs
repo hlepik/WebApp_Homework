@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -17,19 +18,17 @@ namespace WebApp.Controllers
     [Authorize]
     public class MessageFormsController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public MessageFormsController(IAppUnitOfWork uow)
+        public MessageFormsController(IAppUnitOfWork uow, IAppBLL bll)
         {
-
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: MessageForms
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.MessageForm.GetAllAsync(User.GetUserId()!.Value);
-            return View(res);
+            return View(await _bll.MessageForm.GetAllAsync(User.GetUserId()!.Value));
         }
 
         // GET: MessageForms/Details/5
@@ -40,7 +39,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var messageForm = await _uow.MessageForm.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var messageForm = await _bll.MessageForm.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (messageForm == null)
             {
                 return NotFound();
@@ -64,12 +63,11 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-
-
-                _uow.MessageForm.Add(messageForm);
+                messageForm.DateSent = DateTime.Now;
+                _bll.MessageForm.Add(messageForm);
                 messageForm.SenderId = User.GetUserId()!.Value;
 
-                await _uow.SaveChangesAsync();
+                await _bll.SaveChangesAsync();
                     var userMessage = new UserMessages
                 {
                     MessageFormId = messageForm.Id,
@@ -77,8 +75,8 @@ namespace WebApp.Controllers
 
                 };
 
-                _uow.UserMessages.Add(userMessage);
-                await _uow.SaveChangesAsync();
+                _bll.UserMessages.Add(userMessage);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(messageForm);
@@ -92,7 +90,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var messageForm = await _uow.MessageForm.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var messageForm = await _bll.MessageForm.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (messageForm == null)
             {
                 return NotFound();
@@ -114,8 +112,8 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.MessageForm.Update(messageForm);
-                await _uow.SaveChangesAsync();
+                _bll.MessageForm.Update(messageForm);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
 
             }
@@ -130,7 +128,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var messageForm = await _uow.MessageForm.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var messageForm = await _bll.MessageForm.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
 
             if (messageForm == null)
             {
@@ -145,8 +143,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.MessageForm.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.MessageForm.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

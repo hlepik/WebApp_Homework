@@ -1,4 +1,4 @@
-@model IEnumerable<Domain.App.MessageForm>
+@model IEnumerable<DTO.App.UserMessagesDTO>
 
 @{
     ViewData["Title"] = "Index";
@@ -10,16 +10,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Email)
+                @Html.DisplayNameFor(model => model.MessageForm!.Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Subject)
+                @Html.DisplayNameFor(model => model.MessageForm!.Subject)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Message)
+                @Html.DisplayNameFor(model => model.MessageForm!.Message)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DateSent)
+                @Html.DisplayNameFor(model => model.MessageForm!.DateSent)
             </th>
 
             <th></th>
@@ -29,21 +29,21 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Email)
+                @Html.DisplayFor(modelItem => item.MessageForm!.Email)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Subject)
+                @Html.DisplayFor(modelItem => item.MessageForm!.Subject)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Message)
+                @Html.DisplayFor(modelItem => item.MessageForm!.Message)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DateSent)
+                @Html.DisplayFor(modelItem => item.MessageForm!.DateSent)
             </td>
 
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Edit"  asp-route-id="@item.Id">Reply</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">View</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>

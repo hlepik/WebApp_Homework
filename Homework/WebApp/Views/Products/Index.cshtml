@@ -1,13 +1,14 @@
-@model IEnumerable<Domain.App.Product>
+@model IEnumerable<DTO.App.ProductDTO>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>My Products</h1>
+<h1>Products</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
+    <a asp-action="MyProducts">My Products</a>
 </p>
 <table class="table">
     <thead>
@@ -19,35 +20,13 @@
                 @Html.DisplayNameFor(model => model.Color)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProductAge)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.IsBooked)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HasTransport)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Height)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Width)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Depth)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Condition)
-            </th>
+
             <th>
                 @Html.DisplayNameFor(model => model.County)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Unit)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
+
             <th>
                 @Html.DisplayNameFor(model => model.City)
             </th>
@@ -70,48 +49,25 @@
                 @Html.DisplayFor(modelItem => item.Color)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ProductAge)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.IsBooked)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.HasTransport)
+                @Html.DisplayFor(modelItem => item.County)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Height)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Width)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Depth)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Condition!.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.County!.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Unit!.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category!.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.City!.Name)
+                @Html.DisplayFor(modelItem => item.City!)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.LocationDescription)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DateAdded)
+                @Html.DisplayFor(modelItem => item.DateAdded.Date)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+
+
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+
             </td>
         </tr>
 }

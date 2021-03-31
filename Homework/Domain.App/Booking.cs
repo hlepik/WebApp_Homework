@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using Contracts.Domain.Base;
 using Domain.App.Identity;
 using Domain.Base;
 

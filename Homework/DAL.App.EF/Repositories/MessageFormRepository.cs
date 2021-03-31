@@ -27,19 +27,7 @@ namespace DAL.App.EF.Repositories
             return res;
 
         }
-        public async Task<IEnumerable<MessageForm>> GetAllMessagesAsync(string email)
-        {
-            var query = CreateQuery();
 
-
-            query = query
-
-                .Where(x => x.Email == email);
-
-            var res = await query.ToListAsync();
-            return res;
-
-        }
 
         public override async Task<MessageForm?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {

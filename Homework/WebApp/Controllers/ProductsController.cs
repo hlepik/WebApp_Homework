@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -18,12 +19,13 @@ namespace WebApp.Controllers
 
     public class ProductsController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public ProductsController(IAppUnitOfWork uow)
+        public ProductsController(IAppBLL bll)
         {
+            _bll = bll;
 
-            _uow = uow;
+
         }
 
 
@@ -31,8 +33,8 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var res = await _uow.Product.GetAllAsync(User.GetUserId()!.Value);
-            return View(res);
+            return View(await _bll.Product.GetAllProductsAsync());
+
         }
 
         // GET: Products/Details/5
@@ -43,7 +45,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var product = await _uow.Product.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var product = await _bll.Product.FirstOrDefaultAsync(id.Value);
             if (product == null)
             {
                 return NotFound();
@@ -52,19 +54,25 @@ namespace WebApp.Controllers
             return View(product);
         }
 
+        public async Task<IActionResult> MyProducts()
+        {
+            var res = await _bll.Product.GetAllAsync(User.GetUserId()!.Value);
+            return View(res);
+        }
+
         // GET: Products/Create
         public async Task<IActionResult> Create()
         {
             var vm = new ProductCreateEditViewModels();
-            vm.CitySelectList = new SelectList(await _uow.City.GetAllAsync(), nameof(City.Id),
+            vm.CitySelectList = new SelectList(await _bll.City.GetAllAsync(), nameof(City.Id),
                 nameof(City.Name));
-            vm.ConditionSelectList = new SelectList(await _uow.Condition.GetAllAsync(), nameof(Condition.Id),
+            vm.ConditionSelectList = new SelectList(await _bll.Condition.GetAllAsync(), nameof(Condition.Id),
                 nameof(Condition.Description));
-            vm.CountySelectList = new SelectList(await _uow.County.GetAllAsync(), nameof(County.Id),
+            vm.CountySelectList = new SelectList(await _bll.County.GetAllAsync(), nameof(County.Id),
                 nameof(County.Name));
-            vm.CategorySelectList = new SelectList(await _uow.Category.GetAllAsync(), nameof(Category.Id),
+            vm.CategorySelectList = new SelectList(await _bll.Category.GetAllAsync(), nameof(Category.Id),
                 nameof(Category.Name));
-            vm.UnitSelectList= new SelectList(await _uow.Unit.GetAllAsync(), nameof(Unit.Id),
+            vm.UnitSelectList= new SelectList(await _bll.Unit.GetAllAsync(), nameof(Unit.Id),
                 nameof(Unit.Name));
             return View(vm);
 
@@ -80,20 +88,20 @@ namespace WebApp.Controllers
             if (ModelState.IsValid)
             {
                 vm.Product.AppUserId = User.GetUserId()!.Value;
-                _uow.Product.Add(vm.Product);
-                await _uow.SaveChangesAsync();
+                vm.Product.DateAdded = DateTime.Now.Date;
+                _bll.Product.Add(vm.Product);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            // ViewData["AppUserId"] = new SelectList(await _uow.User.GetAllAsync(), "Id", "Firstname", product.AppUserId);
-            vm.CitySelectList = new SelectList(await _uow.City.GetAllAsync(), nameof(City.Id),
+            vm.CitySelectList = new SelectList(await _bll.City.GetAllAsync(), nameof(City.Id),
                 nameof(City.Name), vm.Product.CityId);
-            vm.CountySelectList = new SelectList(await _uow.County.GetAllAsync(), nameof(County.Id),
+            vm.CountySelectList = new SelectList(await _bll.County.GetAllAsync(), nameof(County.Id),
                 nameof(County.Name), vm.Product.CountyId);
-            vm.ConditionSelectList = new SelectList(await _uow.Condition.GetAllAsync(), nameof(Condition.Id),
+            vm.ConditionSelectList = new SelectList(await _bll.Condition.GetAllAsync(), nameof(Condition.Id),
                 nameof(Condition.Description), vm.Product.ConditionId);
-            vm.CategorySelectList = new SelectList(await _uow.Category.GetAllAsync(), nameof(Category.Id),
+            vm.CategorySelectList = new SelectList(await _bll.Category.GetAllAsync(), nameof(Category.Id),
                 nameof(Category.Name), vm.Product.CategoryId);
-            vm.UnitSelectList= new SelectList(await _uow.Unit.GetAllAsync(), nameof(Unit.Id),
+            vm.UnitSelectList= new SelectList(await _bll.Unit.GetAllAsync(), nameof(Unit.Id),
                 nameof(Unit.Name), vm.Product.UnitId);
             return View(vm);
         }
@@ -106,22 +114,22 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var product = await _uow.Product.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var product = await _bll.Product.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (product == null)
             {
                 return NotFound();
             }
             var vm = new ProductCreateEditViewModels();
             vm.Product = product;
-            vm.CitySelectList = new SelectList(await _uow.City.GetAllAsync(), nameof(City.Id),
+            vm.CitySelectList = new SelectList(await _bll.City.GetAllAsync(), nameof(City.Id),
                 nameof(City.Name), vm.Product.CityId);
-            vm.CountySelectList = new SelectList(await _uow.County.GetAllAsync(), nameof(County.Id),
+            vm.CountySelectList = new SelectList(await _bll.County.GetAllAsync(), nameof(County.Id),
                 nameof(County.Name), vm.Product.CountyId);
-            vm.ConditionSelectList = new SelectList(await _uow.Condition.GetAllAsync(), nameof(Condition.Id),
+            vm.ConditionSelectList = new SelectList(await _bll.Condition.GetAllAsync(), nameof(Condition.Id),
                 nameof(Condition.Description), vm.Product.ConditionId);
-            vm.CategorySelectList = new SelectList(await _uow.Category.GetAllAsync(), nameof(Category.Id),
+            vm.CategorySelectList = new SelectList(await _bll.Category.GetAllAsync(), nameof(Category.Id),
                 nameof(Category.Name), vm.Product.CategoryId);
-            vm.UnitSelectList= new SelectList(await _uow.Unit.GetAllAsync(), nameof(Unit.Id),
+            vm.UnitSelectList= new SelectList(await _bll.Unit.GetAllAsync(), nameof(Unit.Id),
                 nameof(Unit.Name), vm.Product.UnitId);
             return View(vm);
         }
@@ -140,20 +148,20 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Product.Update(vm.Product);
-                await _uow.SaveChangesAsync();
+                _bll.Product.Update(vm.Product);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            vm.CitySelectList = new SelectList(await _uow.City.GetAllAsync(), nameof(City.Id),
+            vm.CitySelectList = new SelectList(await _bll.City.GetAllAsync(), nameof(City.Id),
                 nameof(City.Name), vm.Product.CityId);
-            vm.CountySelectList = new SelectList(await _uow.County.GetAllAsync(), nameof(County.Id),
+            vm.CountySelectList = new SelectList(await _bll.County.GetAllAsync(), nameof(County.Id),
                 nameof(County.Name), vm.Product.CountyId);
-            vm.ConditionSelectList = new SelectList(await _uow.Condition.GetAllAsync(), nameof(Condition.Id),
+            vm.ConditionSelectList = new SelectList(await _bll.Condition.GetAllAsync(), nameof(Condition.Id),
                 nameof(Condition.Description), vm.Product.ConditionId);
-            vm.CategorySelectList = new SelectList(await _uow.Category.GetAllAsync(), nameof(Category.Id),
+            vm.CategorySelectList = new SelectList(await _bll.Category.GetAllAsync(), nameof(Category.Id),
                 nameof(Category.Name), vm.Product.CategoryId);
-            vm.UnitSelectList= new SelectList(await _uow.Unit.GetAllAsync(), nameof(Unit.Id),
+            vm.UnitSelectList= new SelectList(await _bll.Unit.GetAllAsync(), nameof(Unit.Id),
                 nameof(Unit.Name), vm.Product.UnitId);
             return View(vm);
         }
@@ -166,7 +174,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var product = await _uow.Product.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var product = await _bll.Product.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (product == null)
             {
                 return NotFound();
@@ -180,8 +188,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Product.RemoveAsync(id, User.GetUserId()!.Value);
-            await _uow.SaveChangesAsync();
+            await _bll.Product.RemoveAsync(id, User.GetUserId()!.Value);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

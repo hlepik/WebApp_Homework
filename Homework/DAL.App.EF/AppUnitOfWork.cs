@@ -17,26 +17,27 @@ namespace DAL.App.EF
         {
 
         }
-        public IBaseRepository<UserBookings> UserBookings => GetRepository(() => new BaseRepository<UserBookings, AppDbContext>(UowDbContext));
+        public IUserBookingsRepository UserBookings => GetRepository(() => new UserBookingsRepository(UowDbContext));
 
-        public IBaseRepository<UserMessages> UserMessages => GetRepository(() => new BaseRepository<UserMessages, AppDbContext>(UowDbContext));
+        public IUserMessagesRepository UserMessages => GetRepository(() => new UserMessagesRepository(UowDbContext));
 
         public IBookingRepository Booking => GetRepository(() => new BookingRepository(UowDbContext));
 
         public IUserBookedProductsRepository UserBookedProducts => GetRepository(() => new UserBookedProductsRepository(UowDbContext));
-        public IBaseRepository<Category> Category => GetRepository(() => new BaseRepository<Category, AppDbContext>(UowDbContext));
-        public IBaseRepository<City> City => GetRepository(() => new BaseRepository<City, AppDbContext>(UowDbContext));
-        public IBaseRepository<Condition> Condition => GetRepository(() => new BaseRepository<Condition, AppDbContext>(UowDbContext));
-        public IBaseRepository<County> County => GetRepository(() => new BaseRepository<County, AppDbContext>(UowDbContext));
-        public IBaseRepository<Material> Material => GetRepository(() => new BaseRepository<Material, AppDbContext>(UowDbContext));
+        public ICategoryRepository Category => GetRepository(() => new CategoryRepository(UowDbContext));
+        public ICityRepository City => GetRepository(() => new CityRepository(UowDbContext));
+        public IConditionRepository Condition => GetRepository(() => new ConditionRepository(UowDbContext));
+        public ICountyRepository County => GetRepository(() => new CountyRepository(UowDbContext));
+        public IMaterialRepository Material => GetRepository(() => new MaterialRepository(UowDbContext));
         public IMessageFormRepository MessageForm => GetRepository(() => new MessageFormRepository(UowDbContext));
         public IPictureRepository Picture => GetRepository(() => new PictureRepository(UowDbContext));
-        public IBaseRepository<Unit> Unit => GetRepository(() => new BaseRepository<Unit, AppDbContext>(UowDbContext));
+        public IUnitRepository Unit => GetRepository(() => new UnitRepository(UowDbContext));
 
         public IProductMaterialRepository ProductMaterial => GetRepository(() => new ProductMaterialRepository(UowDbContext));
 
         public IProductRepository Product => GetRepository(() => new ProductRepository(UowDbContext));
 
+        public IProductPicturesRepository ProductPictures => GetRepository(() => new ProductPicturesRepository(UowDbContext));
 
 
     }

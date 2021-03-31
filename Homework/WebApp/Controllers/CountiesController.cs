@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
@@ -17,19 +18,18 @@ namespace WebApp.Controllers
     public class CountiesController : Controller
     {
 
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public CountiesController(IAppUnitOfWork uow)
+        public CountiesController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: Counties
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.County.GetAllAsync();
-            return View(res);
+            return View(await _bll.County.GetAllAsync());
         }
 
         [AllowAnonymous]
@@ -41,7 +41,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var county = await _uow.County
+            var county = await _bll.County
                 .FirstOrDefaultAsync(id.Value);
 
             if (county == null)
@@ -67,8 +67,8 @@ namespace WebApp.Controllers
         {
             if (!ModelState.IsValid) return View(county);
 
-            _uow.County.Add(county);
-            await _uow.SaveChangesAsync();
+            _bll.County.Add(county);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
         }
@@ -81,7 +81,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var county = await _uow.County.FirstOrDefaultAsync(id.Value);
+            var county = await _bll.County.FirstOrDefaultAsync(id.Value);
             if (county == null)
             {
                 return NotFound();
@@ -103,8 +103,8 @@ namespace WebApp.Controllers
 
             if (!ModelState.IsValid) return View(county);
 
-            _uow.County.Update(county);
-            await _uow.SaveChangesAsync();
+            _bll.County.Update(county);
+            await _bll.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
 
@@ -118,7 +118,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var county = await _uow.County.FirstOrDefaultAsync(id.Value);
+            var county = await _bll.County.FirstOrDefaultAsync(id.Value);
             if (county == null)
             {
                 return NotFound();
@@ -132,8 +132,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.County.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.County.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
         }

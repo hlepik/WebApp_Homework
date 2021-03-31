@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
@@ -17,12 +18,11 @@ namespace WebApp.Controllers
     public class ConditionsController : Controller
     {
 
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public ConditionsController(IAppUnitOfWork uow)
+        public ConditionsController(IAppBLL bll)
         {
-
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: Conditions
@@ -30,7 +30,7 @@ namespace WebApp.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.Condition.GetAllAsync();
+            var res = await _bll.Condition.GetAllAsync();
             return View(res);
         }
 
@@ -43,7 +43,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var condition = await _uow.Condition
+            var condition = await _bll.Condition
                 .FirstOrDefaultAsync(id.Value);
 
             if (condition == null)
@@ -69,8 +69,8 @@ namespace WebApp.Controllers
         {
             if (!ModelState.IsValid) return View(condition);
 
-            _uow.Condition.Add(condition);
-            await _uow.SaveChangesAsync();
+            _bll.Condition.Add(condition);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
         }
@@ -83,7 +83,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var condition = await _uow.Condition.FirstOrDefaultAsync(id.Value);
+            var condition = await _bll.Condition.FirstOrDefaultAsync(id.Value);
             if (condition == null)
             {
                 return NotFound();
@@ -105,8 +105,8 @@ namespace WebApp.Controllers
 
             if (!ModelState.IsValid) return View(condition);
 
-            _uow.Condition.Update(condition);
-            await _uow.SaveChangesAsync();
+            _bll.Condition.Update(condition);
+            await _bll.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
 
@@ -120,7 +120,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var condition = await _uow.Condition.FirstOrDefaultAsync(id.Value);
+            var condition = await _bll.Condition.FirstOrDefaultAsync(id.Value);
             if (condition == null)
             {
                 return NotFound();
@@ -134,8 +134,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Condition.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.Condition.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
         }

@@ -1,11 +1,13 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
 using DAL.App.EF.Repositories;
 using Domain.App;
+using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,22 +19,19 @@ namespace WebApp.Controllers
     public class CitiesController : Controller
     {
 
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public CitiesController(IAppUnitOfWork uow)
+        public CitiesController(IAppBLL bll)
         {
-
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: Cities
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            // var res = await _uow.City.GetAllAsync(User.GetUserId()!.Value);
-            // return View(res);
-            var res = await _uow.City.GetAllAsync();
-            return View(res);
+
+            return View(await _bll.City.GetAllAsync());
 
 
         }
@@ -46,7 +45,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var city = await _uow.City
+            var city = await _bll.City
                 .FirstOrDefaultAsync(id.Value);
 
 
@@ -74,8 +73,8 @@ namespace WebApp.Controllers
         {
             if (!ModelState.IsValid) return View(city);
 
-            _uow.City.Add(city);
-            await _uow.SaveChangesAsync();
+            _bll.City.Add(city);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
         }
@@ -88,7 +87,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var city = await _uow.City.FirstOrDefaultAsync(id.Value);
+            var city = await _bll.City.FirstOrDefaultAsync(id.Value);
             if (city == null)
             {
                 return NotFound();
@@ -110,8 +109,8 @@ namespace WebApp.Controllers
 
             if (!ModelState.IsValid) return View(city);
 
-            _uow.City.Update(city);
-            await _uow.SaveChangesAsync();
+            _bll.City.Update(city);
+            await _bll.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
@@ -124,7 +123,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var city = await _uow.City.FirstOrDefaultAsync(id.Value);
+            var city = await _bll.City.FirstOrDefaultAsync(id.Value);
             if (city == null)
             {
                 return NotFound();
@@ -138,8 +137,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.City.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.City.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
         }

@@ -2,33 +2,38 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
+
     public class CountiesController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public CountiesController(AppDbContext context, IAppUnitOfWork uow)
+        public CountiesController(AppDbContext context,  IAppBLL bll)
         {
             _context = context;
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: api/Counties
         [HttpGet]
         public async Task<ActionResult<IEnumerable<County>>> GetCounties()
         {
-            return Ok(await _uow.County.GetAllAsync());
+            return Ok(await _bll.County.GetAllAsync());
         }
 
         // GET: api/Counties/5

@@ -1,11 +1,13 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
 using DAL.App.EF.Repositories;
 using Domain.App;
+using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,20 +18,18 @@ namespace WebApp.Controllers
     [Authorize(Roles = "Admin")]
     public class CategoriesController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public CategoriesController(IAppUnitOfWork uow)
+        public CategoriesController(IAppBLL bll)
         {
-
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: Categories
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.Category.GetAllAsync();
-            return View(res);
+            return View(await _bll.Category.GetAllCategoriesAsync());
 
         }
 
@@ -42,7 +42,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var category = await _uow.Category
+            var category = await _bll.Category
                 .FirstOrDefaultAsync(id.Value);
 
             if (category == null)
@@ -68,8 +68,8 @@ namespace WebApp.Controllers
         {
             if (!ModelState.IsValid) return View(category);
 
-            _uow.Category.Add(category);
-            await _uow.SaveChangesAsync();
+            _bll.Category.Add(category);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
         }
@@ -82,7 +82,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var category = await _uow.Category.FirstOrDefaultAsync(id.Value);
+            var category = await _bll.Category.FirstOrDefaultAsync(id.Value);
             if (category == null)
             {
                 return NotFound();
@@ -104,8 +104,8 @@ namespace WebApp.Controllers
 
             if (!ModelState.IsValid) return View(category);
 
-            _uow.Category.Update(category);
-            await _uow.SaveChangesAsync();
+            _bll.Category.Update(category);
+            await _bll.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
 
@@ -119,7 +119,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var category = await _uow.Category.FirstOrDefaultAsync(id.Value);
+            var category = await _bll.Category.FirstOrDefaultAsync(id.Value);
 
             if (category == null)
             {
@@ -134,8 +134,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Category.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.Category.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
         }

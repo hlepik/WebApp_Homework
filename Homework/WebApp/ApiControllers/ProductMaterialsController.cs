@@ -2,33 +2,40 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using DTO.App;
+using Extensions.Base;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
+
     public class ProductMaterialsController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public ProductMaterialsController(AppDbContext context, IAppUnitOfWork uow)
+        public ProductMaterialsController(AppDbContext context, IAppBLL bll)
         {
             _context = context;
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: api/ProductMaterials
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductMaterial>>> GetProductMaterials()
+        public async Task<ActionResult<IEnumerable<ProductMaterialDTO>>> GetProductMaterials()
         {
-            return Ok(await _uow.ProductMaterial.GetAllAsync());
+            return Ok(await _bll.ProductMaterial.GetAllProductMaterialsAsync(User.GetUserId()!.Value));
         }
 
         // GET: api/ProductMaterials/5

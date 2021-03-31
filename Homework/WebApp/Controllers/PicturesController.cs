@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -17,22 +18,22 @@ namespace WebApp.Controllers
     [Authorize]
     public class PicturesController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public PicturesController(IAppUnitOfWork uow)
+        public PicturesController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: Pictures
-        [AllowAnonymous]
+
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.Picture.GetAllAsync(User.GetUserId()!.Value);
-            return View(res);
+            return View(await _bll.Picture.GetAllAsync(User.GetUserId()!.Value));
+
         }
 
-        [AllowAnonymous]
+
         // GET: Pictures/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -41,7 +42,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var picture = await _uow.Picture
+            var picture = await _bll.Picture
                 .FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (picture == null)
             {
@@ -56,7 +57,7 @@ namespace WebApp.Controllers
         {
             // ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Description");
             var vm = new PictureCreateEditViewModels();
-            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(User.GetUserId()!.Value), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(User.GetUserId()!.Value), nameof(Product.Id),
                 nameof(Product.Description));
             return View(vm);
         }
@@ -70,12 +71,12 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _uow.Picture.Add(vm.Picture);
-                await _uow.SaveChangesAsync();
+                _bll.Picture.Add(vm.Picture);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             // ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Description", picture.ProductId);
-            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(), nameof(Product.Id),
                 nameof(Product.Description), vm.Picture.ProductId);
             return View(vm);
         }
@@ -88,14 +89,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var picture = await _uow.Picture.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var picture = await _bll.Picture.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (picture == null)
             {
                 return NotFound();
             }
             var vm = new PictureCreateEditViewModels();
             vm.Picture = picture;
-            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(), nameof(Product.Id),
                 nameof(Product.Description), vm.Picture.ProductId);
             return View(vm);
         }
@@ -114,11 +115,11 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Picture.Update(vm.Picture);
-                await _uow.SaveChangesAsync();
+                _bll.Picture.Update(vm.Picture);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(), nameof(Product.Id),
                 nameof(Product.Description), vm.Picture.ProductId);
             return View(vm);
         }
@@ -131,7 +132,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var picture = await _uow.Picture.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);;
+            var picture = await _bll.Picture.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);;
             if (picture == null)
             {
                 return NotFound();
@@ -145,8 +146,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Picture.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.Picture.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

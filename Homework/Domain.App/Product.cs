@@ -50,8 +50,7 @@ namespace Domain.App
         public ICollection<ProductMaterial>? ProductMaterials { get; set; }
         public ICollection<UserBookedProducts>? UserBookedProducts { get; set; }
 
-
-        public DateTime? DateAdded { get; set; }
+        public DateTime DateAdded { get; set; } = default!;
 
         public Guid AppUserId { get; set; }
         public AppUser? AppUser { get; set; }

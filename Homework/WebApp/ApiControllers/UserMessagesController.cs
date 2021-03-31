@@ -2,33 +2,40 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App.Identity;
+using DTO.App;
+using Extensions.Base;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
     public class UserMessagesController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public UserMessagesController(AppDbContext context, IAppUnitOfWork uow)
+        public UserMessagesController(AppDbContext context, IAppBLL bll)
         {
             _context = context;
-            _uow = uow;
+            _bll = bll;
+
         }
 
         // GET: api/UserMessages
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserMessages>>> GetUserMessages()
+        public async Task<ActionResult<IEnumerable<UserMessagesDTO>>> GetUserMessages()
         {
-            return Ok(await _uow.UserMessages.GetAllAsync());
+            return Ok(await _bll.UserMessages.GetAllMessagesAsync(User.GetUserEmail()));
         }
 
         // GET: api/UserMessages/5

@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using DTO.App;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels.Booking;
@@ -17,24 +19,23 @@ namespace WebApp.Controllers
     [Authorize]
     public class BookingsController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
 
-        public BookingsController(IAppUnitOfWork uow)
+        public BookingsController(IAppBLL bll)
         {
-
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: Bookings
-        [AllowAnonymous]
+
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.Product.GetAllProductsAsync();
-            return View(res);
+            return View(await _bll.Booking.GetAllDTOAsync(User.GetUserId()!.Value));
+
         }
 
-        [AllowAnonymous]
+
         // GET: Bookings/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -43,7 +44,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var product = await _uow.Product.FirstOrDefaultWithoutOutIdAsync(id.Value);
+            var product = await _bll.Booking.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
 
             if (product == null)
             {
@@ -58,7 +59,7 @@ namespace WebApp.Controllers
         {
 
             var vm = new BookingCreateEditViewModels();
-            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(User.GetUserId()!.Value), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(User.GetUserId()!.Value), nameof(Product.Id),
                 nameof(Product.Description));
             return View(vm);
 
@@ -77,7 +78,7 @@ namespace WebApp.Controllers
 
 
 
-                var product = await _uow.Product.ChangeBookingStatus(vm.Booking.ProductId);
+                var product = await _bll.Product.ChangeBookingStatus(vm.Booking.ProductId);
                 product.IsBooked = true;
 
                 var userBookings = new UserBookedProducts
@@ -86,15 +87,15 @@ namespace WebApp.Controllers
                     AppUserId = vm.Booking.UserBookingId
                 };
 
-                _uow.UserBookedProducts.Add(userBookings);
-
-                _uow.Booking.Add(vm.Booking);
-                _uow.Product.Update(product);
-                await _uow.SaveChangesAsync();
+                _bll.UserBookedProducts.Add(userBookings);
+                vm.Booking.TimeBooked = DateTime.Now;
+                _bll.Booking.Add(vm.Booking);
+                _bll.Product.Update(product);
+                await _bll.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }
-            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(), nameof(Product.Id),
                 nameof(Product.Description), vm.Booking.ProductId);
 
             return View(vm);
@@ -109,14 +110,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var booking = await _uow.Booking.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var booking = await _bll.Booking.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (booking == null)
             {
                 return NotFound();
             }
             var vm = new BookingCreateEditViewModels();
             vm.Booking = booking;
-            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(), nameof(Product.Id),
                 nameof(Product.Description), vm.Booking.ProductId);
             return View(vm);
         }
@@ -136,11 +137,11 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.Booking.Update(vm.Booking);
-                await _uow.SaveChangesAsync();
+                _bll.Booking.Update(vm.Booking);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(), nameof(Product.Id),
                 nameof(Product.Description), vm.Booking.ProductId);
             return View(vm);
         }
@@ -153,7 +154,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var booking = await _uow.Booking.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var booking = await _bll.Booking.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
 
             if (booking == null)
             {
@@ -168,8 +169,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Booking.RemoveAsync(id, User.GetUserId()!.Value);
-            await _uow.SaveChangesAsync();
+            await _bll.Booking.RemoveAsync(id, User.GetUserId()!.Value);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

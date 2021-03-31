@@ -9,6 +9,5 @@ namespace Contracts.DAL.App.Repositories
     public interface IMessageFormRepository: IBaseRepository<MessageForm>
     {
 
-        Task<IEnumerable<MessageForm>> GetAllMessagesAsync(string email);
     }
 }

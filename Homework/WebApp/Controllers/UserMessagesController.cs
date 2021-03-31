@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,20 +17,19 @@ namespace WebApp.Controllers
     [Authorize]
     public class UserMessagesController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public UserMessagesController(IAppUnitOfWork uow)
+        public UserMessagesController(IAppBLL bll)
         {
-
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: UserMessages
         public async Task<IActionResult> Index()
         {
 
-            var res = await _uow.MessageForm.GetAllMessagesAsync(User.GetUserEmail());
-            return View(res);
+            return View(await _bll.UserMessages.GetAllMessagesAsync(User.GetUserEmail()));
+
         }
 
         // GET: UserMessages/Details/5
@@ -40,7 +40,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userMessage = await _uow.UserMessages.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var userMessage = await _bll.UserMessages.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (userMessage== null)
             {
                 return NotFound();
@@ -64,8 +64,8 @@ namespace WebApp.Controllers
         {
             if (!ModelState.IsValid) return View(userMessages);
 
-            _uow.UserMessages.Add(userMessages);
-            await _uow.SaveChangesAsync();
+            _bll.UserMessages.Add(userMessages);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -77,7 +77,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userMessages= await _uow.UserMessages.FirstOrDefaultAsync(id.Value);
+            var userMessages= await _bll.UserMessages.FirstOrDefaultAsync(id.Value);
             if (userMessages == null)
             {
                 return NotFound();
@@ -97,8 +97,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            _uow.UserMessages.Update(userMessages);
-            await _uow.SaveChangesAsync();
+            _bll.UserMessages.Update(userMessages);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
@@ -110,7 +110,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userMessages = await _uow.UserMessages.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var userMessages = await _bll.UserMessages.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
 
             if (userMessages == null)
             {
@@ -125,8 +125,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.UserMessages.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.UserMessages.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

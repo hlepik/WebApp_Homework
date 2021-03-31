@@ -2,33 +2,38 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
+
     public class MessageFormsController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public MessageFormsController(AppDbContext context, IAppUnitOfWork uow)
+        public MessageFormsController(AppDbContext context,  IAppBLL bll)
         {
             _context = context;
-            _uow = uow;
+            _bll = bll;
         }
 
         // GET: api/MessageForms
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MessageForm>>> GetMessageForms()
         {
-            return Ok(await _uow.MessageForm.GetAllAsync());
+            return Ok(await _bll.MessageForm.GetAllAsync());
         }
 
         // GET: api/MessageForms/5

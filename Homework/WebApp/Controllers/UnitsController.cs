@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
@@ -16,19 +17,20 @@ namespace WebApp.Controllers
     public class UnitsController : Controller
     {
 
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public UnitsController(IAppUnitOfWork uow)
+        public UnitsController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
+
         }
 
         // GET: Units
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.Unit.GetAllAsync();
-            return View(res);
+            return View(await _bll.Unit.GetAllAsync());
+
         }
 
         [AllowAnonymous]
@@ -40,7 +42,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var units = await _uow.Unit.FirstOrDefaultAsync(id.Value);
+            var units = await _bll.Unit.FirstOrDefaultAsync(id.Value);
             if (units == null)
             {
                 return NotFound();
@@ -64,8 +66,8 @@ namespace WebApp.Controllers
         {
             if (!ModelState.IsValid) return View(units);
 
-            _uow.Unit.Add(units);
-            await _uow.SaveChangesAsync();
+            _bll.Unit.Add(units);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
         }
@@ -78,7 +80,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var units = await _uow.Unit.FirstOrDefaultAsync(id.Value);
+            var units = await _bll.Unit.FirstOrDefaultAsync(id.Value);
             if (units == null)
             {
                 return NotFound();
@@ -99,8 +101,8 @@ namespace WebApp.Controllers
             }
             if (!ModelState.IsValid) return View(units);
 
-            _uow.Unit.Update(units);
-            await _uow.SaveChangesAsync();
+            _bll.Unit.Update(units);
+            await _bll.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
@@ -113,7 +115,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var units = await _uow.Unit.FirstOrDefaultAsync(id.Value);
+            var units = await _bll.Unit.FirstOrDefaultAsync(id.Value);
             if (units == null)
             {
                 return NotFound();
@@ -127,8 +129,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.Unit.RemoveAsync(id);
-            await _uow.SaveChangesAsync();
+            await _bll.Unit.RemoveAsync(id);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
         }

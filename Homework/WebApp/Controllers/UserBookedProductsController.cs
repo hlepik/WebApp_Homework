@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Contracts.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -17,18 +18,19 @@ namespace WebApp.Controllers
     [Authorize]
     public class UserBookedProductsController : Controller
     {
-        private readonly IAppUnitOfWork _uow;
+        private readonly IAppBLL _bll;
 
-        public UserBookedProductsController(IAppUnitOfWork uow)
+        public UserBookedProductsController(IAppBLL bll)
         {
-            _uow = uow;
+            _bll = bll;
+
         }
 
         // GET: UserBookedProducts
         public async Task<IActionResult> Index()
         {
-            var res = await _uow.UserBookedProducts.GetAllAsync(User.GetUserId()!.Value);
-            return View(res);
+            return View(await _bll.UserBookedProducts.GetAllAsync(User.GetUserId()!.Value));
+
         }
 
         // GET: UserBookedProducts/Details/5
@@ -38,7 +40,7 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            var userBookedProducts = await _uow.Product.FirstOrDefaultWithoutOutIdAsync(id.Value);
+            var userBookedProducts = await _bll.Product.FirstOrDefaultWithoutOutIdAsync(id.Value);
 
 
             if (userBookedProducts == null)
@@ -53,7 +55,7 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Create()
         {
             var vm = new UserBookedProductsCreateEditViewModel();
-            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(User.GetUserId()!.Value), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(User.GetUserId()!.Value), nameof(Product.Id),
                 nameof(Product.Description));
             return View(vm);
         }
@@ -67,11 +69,11 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _uow.UserBookedProducts.Add(vm.UserBookedProducts);
-                await _uow.SaveChangesAsync();
+                _bll.UserBookedProducts.Add(vm.UserBookedProducts);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(), nameof(Product.Id),
                 nameof(Product.Description), vm.UserBookedProducts.ProductId);
             return View(vm);
         }
@@ -84,14 +86,14 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userBookedProducts = await _uow.UserBookedProducts.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var userBookedProducts = await _bll.UserBookedProducts.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
             if (userBookedProducts == null)
             {
                 return NotFound();
             }
             var vm = new UserBookedProductsCreateEditViewModel();
             vm.UserBookedProducts = userBookedProducts;
-            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(), nameof(Product.Id),
                 nameof(Product.Description), vm.UserBookedProducts.ProductId);
             return View(vm);
         }
@@ -111,12 +113,12 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
-                _uow.UserBookedProducts.Update(vm.UserBookedProducts);
-                await _uow.SaveChangesAsync();
+                _bll.UserBookedProducts.Update(vm.UserBookedProducts);
+                await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
 
             }
-            vm.ProductSelectList = new SelectList(await _uow.Product.GetAllAsync(), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(), nameof(Product.Id),
                 nameof(Product.Description), vm.UserBookedProducts.ProductId);
             return View(vm);
         }
@@ -129,7 +131,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userBookedProducts = await _uow.UserBookedProducts.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var userBookedProducts = await _bll.UserBookedProducts.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
 
             if (userBookedProducts == null)
             {
@@ -144,8 +146,8 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _uow.UserBookedProducts.RemoveAsync(id, User.GetUserId()!.Value);
-            await _uow.SaveChangesAsync();
+            await _bll.UserBookedProducts.RemoveAsync(id, User.GetUserId()!.Value);
+            await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

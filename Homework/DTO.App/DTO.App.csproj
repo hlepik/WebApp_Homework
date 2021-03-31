@@ -4,4 +4,8 @@
         <TargetFramework>net5.0</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\DAL.App.DTO\DAL.App.DTO.csproj" />
+    </ItemGroup>
+
 </Project>
