@@ -4,11 +4,14 @@ using System.Threading.Tasks;
 using Contracts.BLL.Base.Services;
 using Contracts.DAL.App.Repositories;
 using Domain.App;
-using DTO.App;
+using BLLAppDTO = BLL.App.DTO;
+using DALAppDTO = DAL.App.DTO;
+
 
 namespace Contracts.BLL.App.Services
 {
-    public interface IBookingService : IBaseEntityService<Booking>, IBookingRepository
+    public interface IBookingService : IBaseEntityService< BLLAppDTO.Booking,
+        DALAppDTO.Booking>, IBookingRepositoryCustom<BLLAppDTO.Booking>
     {
 
     }

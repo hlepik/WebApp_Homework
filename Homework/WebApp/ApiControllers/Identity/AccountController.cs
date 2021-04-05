@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using WebApp.Areas.Identity.Pages.Account;
 
 namespace WebApp.ApiControllers.Identity
 {

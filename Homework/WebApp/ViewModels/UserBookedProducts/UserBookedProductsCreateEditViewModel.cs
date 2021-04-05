@@ -4,7 +4,7 @@ namespace WebApp.ViewModels.UserBookedProducts
 {
     public class UserBookedProductsCreateEditViewModel
     {
-        public Domain.App.UserBookedProducts UserBookedProducts { get; set; } = default!;
+        public BLL.App.DTO.UserBookedProducts UserBookedProducts { get; set; } = default!;
 
         public SelectList? ProductSelectList { get; set; }
     }

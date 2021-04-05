@@ -15,8 +15,6 @@ namespace Contracts.DAL.Base.Repositories
         Task<TEntity?> FirstOrDefaultAsync(TKey id, TKey? userId = default,  bool noTracking = true);
         Task<bool> ExistsAsync(TKey id, TKey? userId = default);
         Task<TEntity> RemoveAsync(TKey id, TKey? userId = default);
-
-
     }
 
 

@@ -1,16 +1,9 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
-using DAL.App.EF;
-using DAL.App.EF.Repositories;
-using Domain.App;
-using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Category = BLL.App.DTO.Category;
 
 
 namespace WebApp.Controllers
@@ -64,7 +57,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( Category category)
+        public async Task<IActionResult> Create(Category category)
         {
             if (!ModelState.IsValid) return View(category);
 

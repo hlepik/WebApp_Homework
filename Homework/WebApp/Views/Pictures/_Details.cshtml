@@ -1,4 +1,4 @@
-@model Domain.App.Picture
+@model BLL.App.DTO.Picture
 
 <dl class="row">
     <dt class = "col-sm-2">
@@ -11,6 +11,6 @@
         @Html.DisplayNameFor(model => model.Product)
     </dt>
     <dd class = "col-sm-10">
-        @Html.DisplayFor(model => model.Product!.Description)
+        @Html.DisplayFor(model => model.ProductName)
     </dd >
 </dl>

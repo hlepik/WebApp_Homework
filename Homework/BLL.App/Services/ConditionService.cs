@@ -1,14 +1,17 @@
+using AutoMapper;
+using BLL.App.Mappers;
 using BLL.Base.Services;
 using Contracts.BLL.App.Services;
 using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
-using Domain.App;
+using BLLAppDTO = BLL.App.DTO;
+using DALAppDTO = DAL.App.DTO;
 
 namespace BLL.App.Services
 {
-    public class ConditionService: BaseEntityService<IAppUnitOfWork, IConditionRepository, Condition>, IConditionService
+    public class ConditionService: BaseEntityService<IAppUnitOfWork, IConditionRepository, BLLAppDTO.Condition, DALAppDTO.Condition>, IConditionService
     {
-        public ConditionService(IAppUnitOfWork serviceUow, IConditionRepository serviceRepository) : base(serviceUow, serviceRepository)
+        public ConditionService(IAppUnitOfWork serviceUow, IConditionRepository serviceRepository, IMapper mapper) : base(serviceUow, serviceRepository, new ConditionMapper(mapper))
         {
         }
 

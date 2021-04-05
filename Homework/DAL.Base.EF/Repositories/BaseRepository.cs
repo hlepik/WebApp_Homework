@@ -3,41 +3,51 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Authentication;
 using System.Threading.Tasks;
+using Contracts.DAL.Base.Mappers;
 using Contracts.DAL.Base.Repositories;
 using Contracts.Domain.Base;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Base.EF.Repositories
 {
-    public class BaseRepository<TEntity, TDbContext> : BaseRepository<TEntity, Guid, TDbContext>,
-        IBaseRepository<TEntity>
-        where TEntity : class, IDomainEntityId
+    public class BaseRepository<TDalEntity, TDomainEntity, TDbContext> :
+        BaseRepository<TDalEntity, TDomainEntity, Guid, TDbContext>,
+        IBaseRepository<TDalEntity>
+        where TDalEntity : class, IDomainEntityId
+        where TDomainEntity : class, IDomainEntityId
         where TDbContext : DbContext
     {
-        public BaseRepository(TDbContext dbContext) : base(dbContext)
+        public BaseRepository(TDbContext dbContext, IBaseMapper<TDalEntity, TDomainEntity> mapper) : base(dbContext,
+            mapper)
         {
         }
     }
 
-    public class BaseRepository<TEntity, TKey, TDbContext> : IBaseRepository<TEntity, TKey>
-        where TEntity : class, IDomainEntityId<TKey>
+    public class
+        BaseRepository<TDalEntity, TDomainEntity, TKey, TDbContext> : IBaseRepository<TDalEntity, TKey>
+        where TDalEntity : class, IDomainEntityId<TKey>
+        where TDomainEntity : class, IDomainEntityId<TKey>
         where TKey : IEquatable<TKey>
         where TDbContext : DbContext
     {
         protected readonly TDbContext RepoDbContext;
-        protected readonly DbSet<TEntity> RepoDbSet;
+        protected readonly DbSet<TDomainEntity> RepoDbSet;
+        protected readonly IBaseMapper<TDalEntity, TDomainEntity> Mapper;
 
-        public BaseRepository(TDbContext dbContext)
+        public BaseRepository(TDbContext dbContext, IBaseMapper<TDalEntity, TDomainEntity> mapper)
         {
             RepoDbContext = dbContext;
-            RepoDbSet = dbContext.Set<TEntity>();
+            RepoDbSet = dbContext.Set<TDomainEntity>();
+            Mapper = mapper;
         }
 
-        protected IQueryable<TEntity> CreateQuery(TKey? userId = default, bool noTracking = true)
+        protected IQueryable<TDomainEntity> CreateQuery(TKey? userId = default, bool noTracking = true)
         {
             var query = RepoDbSet.AsQueryable();
 
-            if (userId != null && !userId.Equals(default) && typeof(IDomainAppUserId<TKey>).IsAssignableFrom(typeof(TEntity)))
+            // TODO: validate the input entity also
+            if (userId != null && !userId.Equals(default) &&
+                typeof(IDomainAppUserId<TKey>).IsAssignableFrom(typeof(TDomainEntity)))
             {
                 // ReSharper disable once SuspiciousTypeConversion.Global
                 query = query.Where(e => ((IDomainAppUserId<TKey>) e).AppUserId.Equals(userId));
@@ -51,58 +61,68 @@ namespace DAL.Base.EF.Repositories
             return query;
         }
 
-        public virtual async Task<IEnumerable<TEntity>> GetAllAsync(TKey? userId = default, bool noTracking = true)
+        public virtual async Task<IEnumerable<TDalEntity>> GetAllAsync(TKey? userId = default, bool noTracking = true)
+        {
+            var query = CreateQuery(userId, noTracking);
+            var resQuery = query.Select(domainEntity => Mapper.Map(domainEntity));
+            var res = await resQuery.ToListAsync();
+
+            return res!;
+        }
+
+        public virtual async Task<TDalEntity?> FirstOrDefaultAsync(TKey id, TKey? userId = default,
+            bool noTracking = true)
         {
             var query = CreateQuery(userId, noTracking);
 
-            return await query.ToListAsync();
+            return await query.Select(d => Mapper.Map(d)).FirstOrDefaultAsync(e => e!.Id.Equals(id));
         }
 
-        public virtual async Task<TEntity?> FirstOrDefaultAsync(TKey id, TKey? userId = default, bool noTracking = true)
+        public virtual TDalEntity Add(TDalEntity entity)
         {
-            var query = CreateQuery(userId, noTracking);
-
-            return await query.FirstOrDefaultAsync(e => e.Id.Equals(id));
+            return Mapper.Map(RepoDbSet.Add(Mapper.Map(entity)!).Entity)!;
         }
 
-        public virtual TEntity Add(TEntity entity)
+        public virtual TDalEntity Update(TDalEntity entity)
         {
-            return RepoDbSet.Add(entity).Entity;
+            return Mapper.Map(RepoDbSet.Update(Mapper.Map(entity)!).Entity)!;
         }
 
-        public virtual TEntity Update(TEntity entity)
+        public virtual TDalEntity Remove(TDalEntity entity, TKey? userId = default)
         {
-            return RepoDbSet.Update(entity).Entity;
-        }
-
-        public virtual TEntity Remove(TEntity entity, TKey? userId = default)
-        {
-            if (userId != null && typeof(IDomainAppUserId<TKey>).IsAssignableFrom(typeof(TEntity)) && !((IDomainAppUserId<TKey>) entity).AppUserId.Equals(userId))
+            if (userId != null && !userId.Equals(default) &&
+                typeof(IDomainAppUserId<TKey>).IsAssignableFrom(typeof(TDomainEntity)) &&
+                !((IDomainAppUserId<TKey>) entity).AppUserId.Equals(userId))
             {
-                throw new AuthenticationException("Bad user id inside entity to be deleted.");
+                throw new AuthenticationException(
+                    $"Bad user id inside entity {typeof(TDalEntity).Name} to be deleted.");
                 // TODO: load entity from the db, check that userId inside entity is correct.
             }
 
-            return RepoDbSet.Remove(entity).Entity;
+            return Mapper.Map(RepoDbSet.Remove(Mapper.Map(entity)!).Entity)!;
         }
 
-        public virtual async Task<TEntity> RemoveAsync(TKey id, TKey? userId = default)
+        public virtual async Task<TDalEntity> RemoveAsync(TKey id, TKey? userId = default)
         {
             var entity = await FirstOrDefaultAsync(id, userId);
-            if (entity == null) throw new NullReferenceException($"Entity with id {id} not found.");
+            if (entity == null)
+                throw new NullReferenceException($"Entity {typeof(TDalEntity).Name} with id {id} not found.");
             return Remove(entity!, userId);
         }
 
         public virtual async Task<bool> ExistsAsync(TKey id, TKey? userId = default)
         {
-            if (userId != null && !typeof(IDomainAppUserId<TKey>).IsAssignableFrom(typeof(TEntity)))
-            {
-                throw new AuthenticationException("Bad user id inside entity.");
-            }
+            if (userId == null || userId.Equals(default))
+                // no ownership control, userId was null or default
+                return await RepoDbSet.AnyAsync(e => e.Id.Equals(id));
+
+            // we have userid and it is not null or default (null or 0) - so we should check for appuserid also
+            // does the entity actually implement the correct interface
+            if (!typeof(IDomainAppUserId<TKey>).IsAssignableFrom(typeof(TDomainEntity)))
+                throw new AuthenticationException(
+                    $"Entity {typeof(TDomainEntity).Name} does not implement required interface: {typeof(IDomainAppUserId<TKey>).Name} for AppUserId check");
             return await RepoDbSet.AnyAsync(e =>
                 e.Id.Equals(id) && ((IDomainAppUserId<TKey>) e).AppUserId.Equals(userId));
         }
-
     }
-
 }

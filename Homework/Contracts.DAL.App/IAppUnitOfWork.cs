@@ -20,7 +20,6 @@ namespace Contracts.DAL.App
         IPictureRepository Picture { get; }
         IProductMaterialRepository ProductMaterial{ get; }
         IUnitRepository Unit { get; }
-        IUserBookingsRepository UserBookings { get; }
         IUserMessagesRepository UserMessages { get; }
         IProductPicturesRepository ProductPictures { get; }
 

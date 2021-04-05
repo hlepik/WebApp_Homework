@@ -1,31 +1,27 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
 using Domain.App;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
 
     public class CitiesController : ControllerBase
     {
-        private readonly AppDbContext _context;
+
         private readonly IAppBLL _bll;
 
-        public CitiesController(AppDbContext context, IAppBLL bll)
+        public CitiesController(IAppBLL bll)
         {
-            _context = context;
             _bll = bll;
         }
 
@@ -38,9 +34,9 @@ namespace WebApp.ApiControllers
 
         // GET: api/Cities/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<City>> GetCity(Guid id)
+        public async Task<ActionResult<BLL.App.DTO.City>> GetCity(Guid id)
         {
-            var city = await _context.Cities.FindAsync(id);
+            var city = await _bll.City.FirstOrDefaultAsync(id);
 
             if (city == null)
             {
@@ -53,30 +49,15 @@ namespace WebApp.ApiControllers
         // PUT: api/Cities/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCity(Guid id, City city)
+        public async Task<IActionResult> PutCity(Guid id, BLL.App.DTO.City city)
         {
             if (id != city.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(city).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CityExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _bll.City.Update(city);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
@@ -84,10 +65,10 @@ namespace WebApp.ApiControllers
         // POST: api/Cities
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<City>> PostCity(City city)
+        public async Task<ActionResult<City>> PostCity(BLL.App.DTO.City city)
         {
-            _context.Cities.Add(city);
-            await _context.SaveChangesAsync();
+            _bll.City.Add(city);
+            await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetCity", new { id = city.Id }, city);
         }
@@ -96,21 +77,17 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCity(Guid id)
         {
-            var city = await _context.Cities.FindAsync(id);
+            var city = await _bll.City.FirstOrDefaultAsync(id);
             if (city == null)
             {
                 return NotFound();
             }
 
-            _context.Cities.Remove(city);
-            await _context.SaveChangesAsync();
+            _bll.City.Remove(city);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool CityExists(Guid id)
-        {
-            return _context.Cities.Any(e => e.Id == id);
-        }
     }
 }

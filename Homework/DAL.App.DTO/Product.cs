@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using DAL.App.DTO.Identity;
+using Domain.App.Identity;
 using Domain.Base;
+using AppUser = DAL.App.DTO.Identity.AppUser;
 
 namespace DAL.App.DTO
 {
     public class Product : DomainEntityId
     {
 
+        public ICollection<Material>? Material { get; set; }
         [MaxLength(500)] public string Description { get; set; } = default!;
-
         [MaxLength(64)] public string? Color { get; set; }
 
         public int? ProductAge { get; set; }
@@ -34,8 +35,7 @@ namespace DAL.App.DTO
         public Guid CategoryId { get; set;}
         public Category? Category { get; set; }
 
-
-        public Booking? Booking { get; set; }
+        public ICollection<Booking>? Booking { get; set; }
 
 
         public Guid? CityId { get; set;}
@@ -48,13 +48,18 @@ namespace DAL.App.DTO
 
 
         public ICollection<ProductMaterial>? ProductMaterials { get; set; }
-        public ICollection<UserBookedProducts>? UserBookedProducts { get; set; }
 
-
-        public DateTime? DateAdded { get; set; }
+        public DateTime DateAdded { get; set; }
 
         public Guid AppUserId { get; set; }
         public AppUser? AppUser { get; set; }
+
+        public string? CityName { get; set; }
+        public string? CountyName { get; set; }
+        public string? UnitName { get; set; }
+        public string? CategoryName { get; set; }
+        public string? ConditionName { get; set; }
+
 
 
     }

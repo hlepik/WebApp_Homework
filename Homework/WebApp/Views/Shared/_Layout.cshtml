@@ -26,7 +26,7 @@
                     @* </li> *@
 
                     <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="Bookings" asp-action="Index">My Booked Products</a>
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Bookings" asp-action="Index">Find a product</a>
                     </li>
 
                     @if (User.Identity?.IsAuthenticated ?? false)
@@ -49,13 +49,13 @@
                         {
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Product
+                            My Product
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                             <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">Products</a>
+                             <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">My Products</a>
 
-                            <a class="nav-link text-dark" asp-area="" asp-controller="ProductMaterials" asp-action="Index">Toote materjalid</a>
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Pictures" asp-action="Index">Pildid</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="ProductMaterials" asp-action="Index">Product Materials</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Pictures" asp-action="Index">Pictures</a>
 
                         </div>
                     </li>
@@ -109,7 +109,7 @@
 
 <footer class="border-top footer text-muted">
     <div class="container">
-        &copy; 2021 - WebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        &copy; 2021 - WebApp
     </div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>

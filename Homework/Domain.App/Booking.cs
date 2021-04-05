@@ -7,18 +7,18 @@ using Domain.Base;
 
 namespace Domain.App
 {
-    public class Booking : DomainEntityId
+    public class Booking : DomainEntityId, IDomainAppUserId, IDomainAppUser<AppUser>
     {
 
         public DateTime TimeBooked { get; set; } = DateTime.Now;
         public DateTime? Until { get; set; }
 
-
         public Guid ProductId { get; set; }
         public Product? Product { get; set; }
 
-        public Guid UserBookingId { get; set; }
-        public UserBookings? UserBookings { get; set; }
+        public Guid AppUserId { get; set; }
+        public AppUser? AppUser { get; set; }
 
+        public ICollection<UserBookedProducts>? UserBookedProducts { get; set; }
     }
 }

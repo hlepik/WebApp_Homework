@@ -8,9 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
+using Domain.App;
 using Domain.App.Identity;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
+using UserMessages = BLL.App.DTO.UserMessages;
 
 namespace WebApp.Controllers
 {
@@ -27,9 +29,7 @@ namespace WebApp.Controllers
         // GET: UserMessages
         public async Task<IActionResult> Index()
         {
-
-            return View(await _bll.UserMessages.GetAllMessagesAsync(User.GetUserEmail()));
-
+            return View(await _bll.UserMessages.GetAllMessagesAsync(User.GetUserId()!.Value));
         }
 
         // GET: UserMessages/Details/5
@@ -40,7 +40,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userMessage = await _bll.UserMessages.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var userMessage = await _bll.UserMessages.FirstOrDefaultUserMessagesAsync(id.Value, User.GetUserId()!.Value);
             if (userMessage== null)
             {
                 return NotFound();
@@ -60,13 +60,14 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( UserMessages userMessages)
+        public async Task<IActionResult> Create(BLL.App.DTO.UserMessages userMessages)
         {
             if (!ModelState.IsValid) return View(userMessages);
 
             _bll.UserMessages.Add(userMessages);
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+
         }
 
         // GET: UserMessages/Edit/5
@@ -77,7 +78,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userMessages= await _bll.UserMessages.FirstOrDefaultAsync(id.Value);
+            var userMessages= await _bll.UserMessages.FirstOrDefaultUserMessagesAsync(id.Value, User.GetUserId()!.Value);
             if (userMessages == null)
             {
                 return NotFound();
@@ -110,7 +111,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userMessages = await _bll.UserMessages.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var userMessages = await _bll.UserMessages.FirstOrDefaultUserMessagesAsync(id.Value, User.GetUserId()!.Value);
 
             if (userMessages == null)
             {

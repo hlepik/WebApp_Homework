@@ -1,21 +1,17 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
-using DAL.App.EF;
-using DAL.App.EF.Repositories;
 using Domain.App;
 using Extensions.Base;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using WebApp.ViewModels.ProductMaterial;
 
 
 namespace WebApp.Controllers
 {
+    [Authorize]
     public class ProductMaterialsController : Controller
     {
 
@@ -30,9 +26,7 @@ namespace WebApp.Controllers
         // GET: ProductMaterials
         public async Task<IActionResult> Index()
         {
-
             return View(await _bll.ProductMaterial.GetAllProductMaterialsAsync(User.GetUserId()!.Value));
-
         }
 
         // GET: ProductMaterials/Details/5
@@ -44,12 +38,8 @@ namespace WebApp.Controllers
             }
 
             var productMaterial = await _bll.ProductMaterial
-                .FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+                .FirstOrDefaultDTOAsync(id.Value, User.GetUserId()!.Value);
 
-            if (productMaterial == null)
-            {
-                return NotFound();
-            }
 
             return View(productMaterial);
         }
@@ -94,11 +84,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var productMaterial = await _bll.ProductMaterial.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
-            if (productMaterial == null)
-            {
-                return NotFound();
-            }
+            var productMaterial = await _bll.ProductMaterial.FirstOrDefaultDTOAsync(id.Value, User.GetUserId()!.Value);
+
 
             var vm = new ProductMaterialCreateEditViewModels();
             vm.ProductMaterial = productMaterial;
@@ -143,11 +130,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var productMaterial = await _bll.ProductMaterial.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
-            if (productMaterial == null)
-            {
-                return NotFound();
-            }
+            var productMaterial = await _bll.ProductMaterial.FirstOrDefaultDTOAsync(id.Value, User.GetUserId()!.Value);
 
             return View(productMaterial);
         }

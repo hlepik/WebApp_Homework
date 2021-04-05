@@ -1,47 +1,40 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Picture = Domain.App.Picture;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
     public class PicturesController : ControllerBase
     {
-        private readonly AppDbContext _context;
         private readonly IAppBLL _bll;
 
-        public PicturesController(AppDbContext context, IAppBLL bll)
+        public PicturesController(IAppBLL bll)
         {
-            _context = context;
             _bll = bll;
         }
 
         // GET: api/Pictures
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Picture>>> GetPictures()
+        public async Task<ActionResult<IEnumerable<BLL.App.DTO.Picture>>> GetPictures()
         {
-            return Ok(await _bll.Picture.GetAllAsync(User.GetUserId()!.Value));
+            return Ok(await _bll.Picture.GetAllPicturesAsync(User.GetUserId()!.Value));
         }
 
         // GET: api/Pictures/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Picture>> GetPicture(Guid id)
+        public async Task<ActionResult<BLL.App.DTO.Picture>> GetPicture(Guid id)
         {
-            var picture = await _context.Pictures.FindAsync(id);
+            var picture = await _bll.Picture.FirstOrDefaultAsync(id);
 
             if (picture == null)
             {
@@ -54,30 +47,15 @@ namespace WebApp.ApiControllers
         // PUT: api/Pictures/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPicture(Guid id, Picture picture)
+        public async Task<IActionResult> PutPicture(Guid id, BLL.App.DTO.Picture picture)
         {
             if (id != picture.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(picture).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PictureExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _bll.Picture.Update(picture);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
@@ -85,10 +63,10 @@ namespace WebApp.ApiControllers
         // POST: api/Pictures
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Picture>> PostPicture(Picture picture)
+        public async Task<ActionResult<Picture>> PostPicture(BLL.App.DTO.Picture picture)
         {
-            _context.Pictures.Add(picture);
-            await _context.SaveChangesAsync();
+            _bll.Picture.Add(picture);
+            await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetPicture", new { id = picture.Id }, picture);
         }
@@ -97,21 +75,17 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePicture(Guid id)
         {
-            var picture = await _context.Pictures.FindAsync(id);
+            var picture = await _bll.Picture.FirstOrDefaultAsync(id);
             if (picture == null)
             {
                 return NotFound();
             }
 
-            _context.Pictures.Remove(picture);
-            await _context.SaveChangesAsync();
+            _bll.Picture.Remove(picture);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool PictureExists(Guid id)
-        {
-            return _context.Pictures.Any(e => e.Id == id);
-        }
     }
 }

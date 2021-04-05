@@ -1,0 +1,28 @@
+@model BLL.App.DTO.UserMessages
+
+
+
+<dl class="row">
+    <dt class = "col-sm-2">
+       From
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.SenderEmail)
+    </dd>
+      <dt class = "col-sm-2">
+        Subject
+        </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.Subject)
+    </dd>
+    <dt class = "col-sm-2">
+             @Html.DisplayNameFor(model => model.Message)
+    </dt>
+
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.Message)
+    </dd>
+
+
+</dl>
+

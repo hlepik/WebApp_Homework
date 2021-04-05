@@ -21,7 +21,6 @@ namespace DAL.App.EF
         public DbSet<ProductMaterial> ProductMaterials { get; set; } = default!;
         public DbSet<Product> Products { get; set; } = default!;
 
-        public DbSet<UserBookings> UserBookings { get; set; } = default!;
         public DbSet<UserMessages> UserMessages { get; set; } = default!;
         public DbSet<Unit> Units { get; set; } = default!;
         public DbSet<City> Cities { get; set; } = default!;

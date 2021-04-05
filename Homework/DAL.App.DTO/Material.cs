@@ -11,7 +11,7 @@ namespace DAL.App.DTO
 
         [MaxLength(500)]public string? Comment { get; set; }
 
-        public ICollection<ProductMaterial>? ProductMaterials { get; set; }
+
 
     }
 }

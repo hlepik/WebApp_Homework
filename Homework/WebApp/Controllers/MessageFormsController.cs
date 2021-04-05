@@ -1,17 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
-using Domain.App.Identity;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
+using MessageForm = BLL.App.DTO.MessageForm;
+using UserMessages = BLL.App.DTO.UserMessages;
 
 namespace WebApp.Controllers
 {
@@ -20,7 +14,7 @@ namespace WebApp.Controllers
     {
         private readonly IAppBLL _bll;
 
-        public MessageFormsController(IAppUnitOfWork uow, IAppBLL bll)
+        public MessageFormsController(IAppBLL bll)
         {
             _bll = bll;
         }
@@ -38,8 +32,7 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-
-            var messageForm = await _bll.MessageForm.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var messageForm = await _bll.MessageForm.FirstOrDefaultMessagesAsync(id.Value);
             if (messageForm == null)
             {
                 return NotFound();
@@ -49,7 +42,7 @@ namespace WebApp.Controllers
         }
 
         // GET: MessageForms/Create
-        public async Task<IActionResult> Create()
+        public IActionResult Create()
         {
             return View();
         }
@@ -59,24 +52,26 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( MessageForm messageForm)
+        public async Task<IActionResult> Create(MessageForm messageForm)
         {
             if (ModelState.IsValid)
             {
                 messageForm.DateSent = DateTime.Now;
-                _bll.MessageForm.Add(messageForm);
                 messageForm.SenderId = User.GetUserId()!.Value;
 
-                await _bll.SaveChangesAsync();
-                    var userMessage = new UserMessages
+
+                var id = await _bll.UserMessages.GetId(messageForm.Email);
+
+                var userMessage = new UserMessages
                 {
-                    MessageFormId = messageForm.Id,
-                    UserId = User.GetUserId()!.Value,
+                    MessageForm = messageForm,
+                    AppUserId =  id,
+                    SenderEmail = User.GetUserEmail()
 
                 };
-
                 _bll.UserMessages.Add(userMessage);
                 await _bll.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             return View(messageForm);

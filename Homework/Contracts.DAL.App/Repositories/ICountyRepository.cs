@@ -1,10 +1,15 @@
 using Contracts.DAL.Base.Repositories;
-using Domain.App;
+using DAL.App.DTO;
+
 
 namespace Contracts.DAL.App.Repositories
 {
-    public interface ICountyRepository : IBaseRepository<County>
+    public interface ICountyRepository : IBaseRepository<County>,
+        ICountyRepositoryCustom<County>
     {
+    }
 
+    public interface ICountyRepositoryCustom<TEntity>
+    {
     }
 }

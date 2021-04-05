@@ -1,13 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
 using Domain.App;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
@@ -24,17 +19,13 @@ namespace WebApp.Controllers
         public ProductsController(IAppBLL bll)
         {
             _bll = bll;
-
-
         }
 
 
         // GET: Products
         public async Task<IActionResult> Index()
         {
-
-            return View(await _bll.Product.GetAllProductsAsync());
-
+            return View(await _bll.Product.GetAllProductsAsync(User.GetUserId()!.Value));
         }
 
         // GET: Products/Details/5
@@ -44,21 +35,14 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
+            var product = await _bll.Product.FirstOrDefaultDTOAsync(id.Value);
 
-            var product = await _bll.Product.FirstOrDefaultAsync(id.Value);
-            if (product == null)
-            {
-                return NotFound();
-            }
 
             return View(product);
+
         }
 
-        public async Task<IActionResult> MyProducts()
-        {
-            var res = await _bll.Product.GetAllAsync(User.GetUserId()!.Value);
-            return View(res);
-        }
+
 
         // GET: Products/Create
         public async Task<IActionResult> Create()
@@ -114,11 +98,9 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var product = await _bll.Product.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
-            if (product == null)
-            {
-                return NotFound();
-            }
+            var product = await _bll.Product.FirstOrDefaultDTOAsync(id.Value);
+
+
             var vm = new ProductCreateEditViewModels();
             vm.Product = product;
             vm.CitySelectList = new SelectList(await _bll.City.GetAllAsync(), nameof(City.Id),
@@ -174,11 +156,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var product = await _bll.Product.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
-            if (product == null)
-            {
-                return NotFound();
-            }
+            var product = await _bll.Product.FirstOrDefaultDTOAsync(id.Value);
 
             return View(product);
         }

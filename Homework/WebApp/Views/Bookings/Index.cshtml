@@ -1,4 +1,4 @@
-@model IEnumerable<DTO.App.BookingDTO>
+@model IEnumerable<BLL.App.DTO.Product>
 
 
 @{
@@ -16,21 +16,18 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Product!.Description)
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                Location
+            </th>
+            <th>
+                Pictures
+            </th>
+            <th>
+                is Booked?
             </th>
 
-            @* <th> *@
-            @*     @Html.DisplayNameFor(model => model.Product!.County) *@
-            @* </th> *@
-            <th>
-                @Html.DisplayNameFor(model => model.Product!.City)
-            </th>
-            @* <th> *@
-            @*     @Html.DisplayNameFor(model => model.Product!.Color) *@
-            @* </th> *@
-            @* <th> *@
-            @*     @Html.DisplayNameFor(model => model.Product!.Condition) *@
-            @* </th> *@
 
             <th></th>
         </tr>
@@ -40,24 +37,30 @@
         <tr>
 
             <td>
-                @Html.DisplayFor(modelItem => item.Product!.Description)
+                @Html.DisplayFor(modelItem => item.Description)
             </td>
-            @* <td> *@
-            @*     @Html.DisplayFor(modelItem => item.Product!.County!.Name) *@
-            @* </td> *@
-            @* *@
             <td>
-                @Html.DisplayFor(modelItem => item.Product!.City)
+            @if (item.CityName != null)
+            {
+                item.CountyName += ", " + item.CityName;
+            }
+            @if (item.LocationDescription != null)
+            {
+                item.CountyName += ", " + item.LocationDescription;
+            }
+
+                @Html.DisplayFor(modelItem => item.CountyName)
             </td>
-            @* <td> *@
-            @*     @Html.DisplayFor(modelItem => item.Product!.Color) *@
-            @* </td> *@
-            @* <td> *@
-            @*     @Html.DisplayFor(modelItem => item.Product!.Condition!.Description) *@
-            @* </td> *@
+
             <td>
-                <a asp-action="Details" asp-route-id="@item.ProductId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ProductId">Remove Product</a>
+                @Html.DisplayFor(modelItem => item.Pictures)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsBooked)
+            </td>
+
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
             </td>
         </tr>
 }

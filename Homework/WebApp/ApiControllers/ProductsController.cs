@@ -1,56 +1,48 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
-using DTO.App;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Product = BLL.App.DTO.Product;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
     public class ProductsController : ControllerBase
     {
-        private readonly AppDbContext _context;
         private readonly IAppBLL _bll;
 
 
-        public ProductsController(AppDbContext context, IAppBLL bll)
+        public ProductsController(IAppBLL bll)
         {
-            _context = context;
             _bll = bll;
         }
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<BLL.App.DTO.Product>>> GetProducts()
         {
-            return Ok(await _bll.Product.GetAllProductsAsync());
+            return Ok(await _bll.Product.GetAllProductsAsync(User.GetUserId()!.Value));
         }
 
         // GET: api/Products/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(Guid id)
+        public async Task<ActionResult<Product>> GetProduct(Guid? id)
         {
-            var product = await _context.Products.FindAsync(id);
-
-            if (product == null)
+            if (id == null)
             {
                 return NotFound();
             }
+            var product = await _bll.Product.FirstOrDefaultDTOAsync(id.Value);
 
-            return product;
+            return Ok(product);
+
         }
 
 
@@ -64,25 +56,13 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            _context.Entry(product).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            product.AppUserId = User.GetUserId()!.Value;
+            product.DateAdded = DateTime.Now.Date;
+            _bll.Product.Update(product);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
+
         }
 
         // POST: api/Products
@@ -90,31 +70,25 @@ namespace WebApp.ApiControllers
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(Product product)
         {
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
+            _bll.Product.Add(product);
+            await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetProduct", new { id = product.Id }, product);
         }
+
 
         // DELETE: api/Products/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
+            var product = await _bll.Product.FirstOrDefaultDTOAsync(id);
 
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+            _bll.Product.Remove(product);
+            await _bll.SaveChangesAsync();
 
-        private bool ProductExists(Guid id)
-        {
-            return _context.Products.Any(e => e.Id == id);
+            return Ok(product);
+
         }
     }
 }

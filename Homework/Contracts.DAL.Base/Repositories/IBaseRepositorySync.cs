@@ -4,8 +4,8 @@ using Contracts.Domain.Base;
 
 namespace Contracts.DAL.Base.Repositories
 {
-    public interface IBaseRepositorySync<TEntity, TKey>: IBaseRepositoryCommon<TEntity, TKey>
-        where TEntity : class, IDomainEntityId<TKey> // any more rules? maybe ID?
+    public interface IBaseRepositorySync<TEntity, TKey> : IBaseRepositoryCommon<TEntity, TKey>
+        where TEntity : class, IDomainEntityId<TKey>
         where TKey : IEquatable<TKey>
     {
         // non-async methods
@@ -13,7 +13,6 @@ namespace Contracts.DAL.Base.Repositories
         IEnumerable<TEntity> GetAll(TKey? userId = default, bool noTracking = true);
         bool Exists(TKey id, TKey? userId = default);
         TEntity Remove(TKey id, TKey? userId = default);
-
     }
 
 }

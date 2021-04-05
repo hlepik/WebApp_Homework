@@ -1,17 +1,18 @@
+using AutoMapper;
+using BLL.App.Mappers;
 using BLL.Base.Services;
 using Contracts.BLL.App.Services;
 using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
-using Domain.App;
+using BLLAppDTO = BLL.App.DTO;
+using DALAppDTO = DAL.App.DTO;
 
 namespace BLL.App.Services
 {
-    public class CountyService : BaseEntityService<IAppUnitOfWork, ICountyRepository, County>, ICountyService
+    public class CountyService :BaseEntityService<IAppUnitOfWork, ICountyRepository, BLLAppDTO.County, DALAppDTO.County>, ICountyService
     {
-        public CountyService(IAppUnitOfWork serviceUow, ICountyRepository serviceRepository) : base(serviceUow,
-            serviceRepository)
+        public CountyService(IAppUnitOfWork serviceUow, ICountyRepository serviceRepository, IMapper mapper) : base(serviceUow, serviceRepository, new CountyMapper(mapper))
         {
-
         }
 
     }

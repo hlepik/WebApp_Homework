@@ -1,11 +1,12 @@
 using Contracts.BLL.Base.Services;
 using Contracts.DAL.App.Repositories;
-using Domain.App;
+using BLLAppDTO = BLL.App.DTO;
+using DALAppDTO = DAL.App.DTO;
 
 
 namespace Contracts.BLL.App.Services
 {
-    public interface ICountyService: IBaseEntityService<County>, ICountyRepository
+    public interface ICountyService:  IBaseEntityService< BLLAppDTO.County, DALAppDTO.County>, ICountyRepositoryCustom<BLLAppDTO.County>
     {
 
     }

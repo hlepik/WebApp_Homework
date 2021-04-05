@@ -1,10 +1,16 @@
 using Contracts.DAL.Base.Repositories;
-using Domain.App;
+using DAL.App.DTO;
+
 
 namespace Contracts.DAL.App.Repositories
 {
-    public interface ICityRepository : IBaseRepository<City>
+    public interface ICityRepository : IBaseRepository<City>,
+        ICityRepositoryCustom<City>
     {
 
+    }
+
+    public interface ICityRepositoryCustom<TEntity>
+    {
     }
 }

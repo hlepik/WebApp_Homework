@@ -23,7 +23,6 @@ namespace Contracts.BLL.App
         IProductMaterialService ProductMaterial{ get; }
         IProductPicturesService ProductPictures { get; }
         IUnitService Unit { get; }
-        IUserBookingsService UserBookings { get; }
         IUserMessagesService UserMessages { get; }
     }
 }

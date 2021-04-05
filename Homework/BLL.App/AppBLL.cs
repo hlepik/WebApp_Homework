@@ -1,4 +1,5 @@
 ﻿using System;
+using AutoMapper;
 using BLL.App.Services;
 using BLL.Base;
 using BLL.Base.Services;
@@ -14,49 +15,49 @@ namespace BLL.App
 {
     public class AppBLL : BaseBLL<IAppUnitOfWork>, IAppBLL
     {
-        public AppBLL(IAppUnitOfWork uow) : base(uow)
+        protected IMapper Mapper;
+        public AppBLL(IAppUnitOfWork uow, IMapper mapper) : base(uow)
         {
+            Mapper = mapper;
         }
 
         public IProductService Product =>
-            GetService<IProductService>(() => new ProductService(Uow, Uow.Product));
+            GetService<IProductService>(() => new ProductService(Uow, Uow.Product, Mapper));
 
         public IProductPicturesService ProductPictures =>
-            GetService<IProductPicturesService>(() => new ProductPicturesService(Uow, Uow.ProductPictures));
+            GetService<IProductPicturesService>(() => new ProductPicturesService(Uow, Uow.ProductPictures, Mapper));
         public IBookingService Booking =>
-            GetService<IBookingService>(() => new BookingService(Uow, Uow.Booking));
+            GetService<IBookingService>(() => new BookingService(Uow, Uow.Booking, Mapper));
         public IUserBookedProductsService UserBookedProducts =>
-            GetService<IUserBookedProductsService>(() => new UserBookedProductsService(Uow, Uow.UserBookedProducts));
+            GetService<IUserBookedProductsService>(() => new UserBookedProductsService(Uow, Uow.UserBookedProducts, Mapper));
 
         public IMessageFormService MessageForm =>
-            GetService<IMessageFormService>(() => new MessageFormService(Uow, Uow.MessageForm));
+            GetService<IMessageFormService>(() => new MessageFormService(Uow, Uow.MessageForm, Mapper));
         public IPictureService Picture =>
-            GetService<IPictureService>(() => new PictureService(Uow, Uow.Picture));
+            GetService<IPictureService>(() => new PictureService(Uow, Uow.Picture, Mapper));
         public IProductMaterialService ProductMaterial =>
-            GetService<IProductMaterialService>(() => new ProductMaterialService(Uow, Uow.ProductMaterial));
+            GetService<IProductMaterialService>(() => new ProductMaterialService(Uow, Uow.ProductMaterial, Mapper));
 
         public ICategoryService Category =>
-            GetService<ICategoryService>(() => new CategoryService(Uow, Uow.Category));
+            GetService<ICategoryService>(() => new CategoryService(Uow, Uow.Category, Mapper));
 
         public ICityService City =>
-            GetService<ICityService>(() => new CityService(Uow, Uow.City));
+            GetService<ICityService>(() => new CityService(Uow, Uow.City, Mapper));
 
         public IConditionService Condition =>
-            GetService<IConditionService>(() => new ConditionService(Uow, Uow.Condition));
+            GetService<IConditionService>(() => new ConditionService(Uow, Uow.Condition, Mapper));
 
         public ICountyService County =>
-            GetService<ICountyService>(() => new CountyService(Uow, Uow.County));
+            GetService<ICountyService>(() => new CountyService(Uow, Uow.County, Mapper));
 
         public IMaterialService Material =>
-            GetService<IMaterialService>(() => new MaterialService(Uow, Uow.Material));
+            GetService<IMaterialService>(() => new MaterialService(Uow, Uow.Material, Mapper));
 
         public IUnitService Unit =>
-            GetService<IUnitService>(() => new UnitService(Uow, Uow.Unit));
+            GetService<IUnitService>(() => new UnitService(Uow, Uow.Unit, Mapper));
 
-        public IUserBookingsService UserBookings =>
-            GetService<IUserBookingsService>(() => new UserBookingsService(Uow, Uow.UserBookings));
 
         public IUserMessagesService UserMessages =>
-            GetService<IUserMessagesService>(() => new UserMessagesService(Uow, Uow.UserMessages));
+            GetService<IUserMessagesService>(() => new UserMessagesService(Uow, Uow.UserMessages, Mapper));
     }
 }

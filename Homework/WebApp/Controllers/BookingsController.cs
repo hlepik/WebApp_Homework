@@ -1,22 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using BLL.App.DTO;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
-using DTO.App;
 using Extensions.Base;
-using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels.Booking;
+using Product = Domain.App.Product;
+
 
 namespace WebApp.Controllers
 {
-    [Authorize]
+
     public class BookingsController : Controller
     {
         private readonly IAppBLL _bll;
@@ -31,7 +26,7 @@ namespace WebApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _bll.Booking.GetAllDTOAsync(User.GetUserId()!.Value));
+            return View(await _bll.Product.GetAllProductsAsync());
 
         }
 
@@ -44,12 +39,8 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var product = await _bll.Booking.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var product = await _bll.Booking.FirstOrDefaultDTOAsync(id.Value);
 
-            if (product == null)
-            {
-                return NotFound();
-            }
 
             return View(product);
         }
@@ -59,7 +50,7 @@ namespace WebApp.Controllers
         {
 
             var vm = new BookingCreateEditViewModels();
-            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(User.GetUserId()!.Value), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllProductsIsNotBookedAsync(), nameof(Product.Id),
                 nameof(Product.Description));
             return View(vm);
 
@@ -70,32 +61,32 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BookingCreateEditViewModels vm)
+        public async Task<IActionResult> Create(BookingCreateEditViewModels vm, BLL.App.DTO.Booking booking)
         {
             if (ModelState.IsValid)
             {
-                vm.Booking.UserBookingId = User.GetUserId()!.Value;
-
 
 
                 var product = await _bll.Product.ChangeBookingStatus(vm.Booking.ProductId);
                 product.IsBooked = true;
 
-                var userBookings = new UserBookedProducts
-                {
-                    ProductId = vm.Booking.ProductId,
-                    AppUserId = vm.Booking.UserBookingId
-                };
-
-                _bll.UserBookedProducts.Add(userBookings);
+                vm.Booking.AppUserId = User.GetUserId()!.Value;
                 vm.Booking.TimeBooked = DateTime.Now;
+
+                var myBookings = new UserBookedProducts
+                {
+                    Booking = vm.Booking
+                };
+                _bll.UserBookedProducts.Add(myBookings);
                 _bll.Booking.Add(vm.Booking);
                 _bll.Product.Update(product);
+
+
                 await _bll.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }
-            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllProductsIsNotBookedAsync(), nameof(Product.Id),
                 nameof(Product.Description), vm.Booking.ProductId);
 
             return View(vm);
@@ -110,14 +101,11 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var booking = await _bll.Booking.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
-            if (booking == null)
-            {
-                return NotFound();
-            }
+            var booking = await _bll.Booking.FirstOrDefaultDTOAsync(id.Value, User.GetUserId()!.Value);
+
             var vm = new BookingCreateEditViewModels();
             vm.Booking = booking;
-            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllProductsIsNotBookedAsync(), nameof(Product.Id),
                 nameof(Product.Description), vm.Booking.ProductId);
             return View(vm);
         }

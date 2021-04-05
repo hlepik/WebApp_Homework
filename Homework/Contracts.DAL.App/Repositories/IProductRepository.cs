@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Contracts.DAL.Base.Repositories;
-using Domain.App;
-using DTO.App;
+using DAL.App.DTO;
+
 
 namespace Contracts.DAL.App.Repositories
 {
-    public interface IProductRepository : IBaseRepository<Product>
+    public interface IProductRepository : IBaseRepository<Product>,
+        IProductRepositoryCustom<Product>
 
     {
-        Task<Product> ChangeBookingStatus(Guid id);
+    }
+    public interface IProductRepositoryCustom<TEntity>
+    {
+        Task<TEntity> ChangeBookingStatus(Guid id);
+        Task<IEnumerable<TEntity>> GetAllProductsIsNotBookedAsync();
 
-        Task<IEnumerable<Product>> GetAllProductsIsNotBookedAsync();
-        Task<Product> FirstOrDefaultWithoutOutIdAsync(Guid id);
-        Task<IEnumerable<ProductDTO>> GetAllProductsAsync(Guid? userId = default, bool noTracking = true);
+        Task<TEntity> FirstOrDefaultDTOAsync(Guid id);
+        Task<TEntity> FirstOrDefaultWithoutOutIdAsync(Guid id);
+        Task<IEnumerable<TEntity>> GetAllProductsAsync(Guid userId = default, bool noTracking = true);
     }
 }

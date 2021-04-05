@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Contracts.Domain.Base;
 using Domain.App.Identity;
 using Domain.Base;
 
 namespace Domain.App
 {
-    public class Product : DomainEntityId
+    public class Product : DomainEntityId, IDomainAppUserId, IDomainAppUser<AppUser>
     {
 
         [MaxLength(500)] public string Description { get; set; } = default!;
@@ -34,8 +35,7 @@ namespace Domain.App
         public Guid CategoryId { get; set;}
         public Category? Category { get; set; }
 
-
-        public Booking? Booking { get; set; }
+        public ICollection<Booking>? Booking { get; set; }
 
 
         public Guid? CityId { get; set;}
@@ -48,9 +48,8 @@ namespace Domain.App
 
 
         public ICollection<ProductMaterial>? ProductMaterials { get; set; }
-        public ICollection<UserBookedProducts>? UserBookedProducts { get; set; }
 
-        public DateTime DateAdded { get; set; } = default!;
+        public DateTime DateAdded { get; set; }
 
         public Guid AppUserId { get; set; }
         public AppUser? AppUser { get; set; }

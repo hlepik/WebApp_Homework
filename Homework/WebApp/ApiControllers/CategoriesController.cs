@@ -1,47 +1,40 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
-using DTO.App;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Category = Domain.App.Category;
 
 namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
 
     public class CategoriesController : ControllerBase
     {
-        private readonly AppDbContext _context;
         private readonly IAppBLL _bll;
 
-        public CategoriesController(AppDbContext context, IAppBLL bll)
+        public CategoriesController(IAppBLL bll)
         {
-            _context = context;
             _bll = bll;
         }
 
         // GET: api/Categories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategories()
+        public async Task<ActionResult<IEnumerable<BLL.App.DTO.Category>>> GetCategories()
         {
             return Ok(await _bll.Category.GetAllCategoriesAsync());
         }
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Category>> GetCategory(Guid id)
+        public async Task<ActionResult<BLL.App.DTO.Category>> GetCategory(Guid id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _bll.Category.FirstOrDefaultAsync(id);
 
             if (category == null)
             {
@@ -54,30 +47,15 @@ namespace WebApp.ApiControllers
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCategory(Guid id, Category category)
+        public async Task<IActionResult> PutCategory(Guid id, BLL.App.DTO.Category category)
         {
             if (id != category.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(category).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CategoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _bll.Category.Update(category);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
@@ -85,10 +63,10 @@ namespace WebApp.ApiControllers
         // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Category>> PostCategory(Category category)
+        public async Task<ActionResult<Category>> PostCategory(BLL.App.DTO.Category category)
         {
-            _context.Categories.Add(category);
-            await _context.SaveChangesAsync();
+            _bll.Category.Add(category);
+            await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetCategory", new { id = category.Id }, category);
         }
@@ -97,21 +75,17 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(Guid id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _bll.Category.FirstOrDefaultAsync(id);
             if (category == null)
             {
                 return NotFound();
             }
 
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
+            _bll.Category.Remove(category);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool CategoryExists(Guid id)
-        {
-            return _context.Categories.Any(e => e.Id == id);
-        }
     }
 }

@@ -1,26 +1,27 @@
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using BLL.App.Mappers;
 using BLL.Base.Services;
 using Contracts.BLL.App.Services;
 using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
-using Domain.App;
-using DTO.App;
+using BLLAppDTO = BLL.App.DTO;
+using DALAppDTO = DAL.App.DTO;
 
 namespace BLL.App.Services
 {
-    public class BookingService: BaseEntityService<IAppUnitOfWork, IBookingRepository, Booking>, IBookingService
+    public class BookingService: BaseEntityService<IAppUnitOfWork, IBookingRepository, BLLAppDTO.Booking, DALAppDTO.Booking>, IBookingService
     {
-        public BookingService(IAppUnitOfWork serviceUow, IBookingRepository serviceRepository) : base(serviceUow, serviceRepository)
+        public BookingService(IAppUnitOfWork serviceUow, IBookingRepository serviceRepository, IMapper mapper) : base(serviceUow, serviceRepository, new BookingMapper(mapper))
         {
         }
 
 
-        public async Task<IEnumerable<BookingDTO>> GetAllDTOAsync(Guid userId, bool noTracking = true)
+        public async Task<BLLAppDTO.Booking> FirstOrDefaultDTOAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
-            return await ServiceRepository.GetAllDTOAsync(userId);
+            return Mapper.Map(await ServiceRepository.FirstOrDefaultDTOAsync(id))!;
         }
     }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Contracts.Domain.Base;
 using Domain.App.Identity;
@@ -9,9 +10,10 @@ namespace Domain.App
 
     public class UserBookedProducts : DomainEntityId
     {
-        public Guid ProductId { get; set;}
-        public Product? Product { get; set; }
-        public Guid AppUserId { get; set; }
-        public AppUser? AppUser { get; set; }
+
+        public Guid BookingId { get; set;}
+        public Booking? Booking { get; set; }
+
+
     }
 }

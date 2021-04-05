@@ -1,4 +1,4 @@
-@model IEnumerable<DTO.App.UserMessagesDTO>
+@model IEnumerable<BLL.App.DTO.UserMessages>
 
 @{
     ViewData["Title"] = "Index";
@@ -10,7 +10,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.MessageForm!.Email)
+                From
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.MessageForm!.Subject)
@@ -29,16 +29,16 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.MessageForm!.Email)
+                @Html.DisplayFor(modelItem => item.SenderEmail)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.MessageForm!.Subject)
+                @Html.DisplayFor(modelItem => item.Subject)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.MessageForm!.Message)
+                @Html.DisplayFor(modelItem => item.Message)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.MessageForm!.DateSent)
+                @Html.DisplayFor(modelItem => item.DateSent)
             </td>
 
             <td>

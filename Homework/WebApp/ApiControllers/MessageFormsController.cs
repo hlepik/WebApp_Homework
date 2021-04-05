@@ -1,14 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
 using Domain.App;
+using Extensions.Base;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 
@@ -16,31 +12,29 @@ namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
     public class MessageFormsController : ControllerBase
     {
-        private readonly AppDbContext _context;
         private readonly IAppBLL _bll;
 
-        public MessageFormsController(AppDbContext context,  IAppBLL bll)
+        public MessageFormsController(IAppBLL bll)
         {
-            _context = context;
             _bll = bll;
         }
 
         // GET: api/MessageForms
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MessageForm>>> GetMessageForms()
+        public async Task<ActionResult<IEnumerable<BLL.App.DTO.MessageForm>>> GetMessageForms()
         {
-            return Ok(await _bll.MessageForm.GetAllAsync());
+            return Ok(await _bll.MessageForm.GetAllAsync(User.GetUserId()!.Value));
         }
 
         // GET: api/MessageForms/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<MessageForm>> GetMessageForm(Guid id)
+        public async Task<ActionResult<BLL.App.DTO.MessageForm>> GetMessageForm(Guid id)
         {
-            var messageForm = await _context.MessageForms.FindAsync(id);
+            var messageForm = await _bll.MessageForm.FirstOrDefaultMessagesAsync(id);
 
             if (messageForm == null)
             {
@@ -53,30 +47,14 @@ namespace WebApp.ApiControllers
         // PUT: api/MessageForms/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMessageForm(Guid id, MessageForm messageForm)
+        public async Task<IActionResult> PutMessageForm(Guid id, BLL.App.DTO.MessageForm messageForm)
         {
             if (id != messageForm.Id)
             {
                 return BadRequest();
             }
-
-            _context.Entry(messageForm).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MessageFormExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _bll.MessageForm.Update(messageForm);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
@@ -84,10 +62,10 @@ namespace WebApp.ApiControllers
         // POST: api/MessageForms
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<MessageForm>> PostMessageForm(MessageForm messageForm)
+        public async Task<ActionResult<MessageForm>> PostMessageForm(BLL.App.DTO.MessageForm messageForm)
         {
-            _context.MessageForms.Add(messageForm);
-            await _context.SaveChangesAsync();
+            _bll.MessageForm.Add(messageForm);
+            await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetMessageForm", new { id = messageForm.Id }, messageForm);
         }
@@ -96,21 +74,17 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMessageForm(Guid id)
         {
-            var messageForm = await _context.MessageForms.FindAsync(id);
+            var messageForm = await _bll.MessageForm.FirstOrDefaultAsync(id);
             if (messageForm == null)
             {
                 return NotFound();
             }
 
-            _context.MessageForms.Remove(messageForm);
-            await _context.SaveChangesAsync();
+            _bll.MessageForm.Remove(messageForm);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool MessageFormExists(Guid id)
-        {
-            return _context.MessageForms.Any(e => e.Id == id);
-        }
     }
 }

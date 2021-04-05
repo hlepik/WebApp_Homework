@@ -16,31 +16,31 @@ namespace WebApp.ApiControllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
 
     public class MaterialsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+
         private readonly IAppBLL _bll;
 
-        public MaterialsController(AppDbContext context, IAppBLL bll)
+        public MaterialsController(IAppBLL bll)
         {
-            _context = context;
             _bll = bll;
         }
 
         // GET: api/Materials
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Material>>> GetMaterials()
+        public async Task<ActionResult<IEnumerable<BLL.App.DTO.Material>>> GetMaterials()
         {
             return Ok(await _bll.Material.GetAllAsync());
         }
 
         // GET: api/Materials/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Material>> GetMaterial(Guid id)
+        public async Task<ActionResult<BLL.App.DTO.Material>> GetMaterial(Guid id)
         {
-            var material = await _context.Materials.FindAsync(id);
+            var material = await _bll.Material.FirstOrDefaultAsync(id);
 
             if (material == null)
             {
@@ -53,30 +53,15 @@ namespace WebApp.ApiControllers
         // PUT: api/Materials/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMaterial(Guid id, Material material)
+        public async Task<IActionResult> PutMaterial(Guid id, BLL.App.DTO.Material material)
         {
             if (id != material.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(material).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MaterialExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _bll.Material.Update(material);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
@@ -84,10 +69,10 @@ namespace WebApp.ApiControllers
         // POST: api/Materials
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Material>> PostMaterial(Material material)
+        public async Task<ActionResult<Material>> PostMaterial(BLL.App.DTO.Material material)
         {
-            _context.Materials.Add(material);
-            await _context.SaveChangesAsync();
+            _bll.Material.Add(material);
+            await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetMaterial", new { id = material.Id }, material);
         }
@@ -96,21 +81,17 @@ namespace WebApp.ApiControllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMaterial(Guid id)
         {
-            var material = await _context.Materials.FindAsync(id);
+            var material = await _bll.Material.FirstOrDefaultAsync(id);
             if (material == null)
             {
                 return NotFound();
             }
 
-            _context.Materials.Remove(material);
-            await _context.SaveChangesAsync();
+            _bll.Material.Remove(material);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool MaterialExists(Guid id)
-        {
-            return _context.Materials.Any(e => e.Id == id);
-        }
     }
 }

@@ -5,6 +5,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="10.1.1" />
+      <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="5.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Domain.App\Domain.App.csproj" />
       <ProjectReference Include="..\Domain.Base\Domain.Base.csproj" />
     </ItemGroup>
 

@@ -10,6 +10,7 @@ using Domain.App;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Material = BLL.App.DTO.Material;
 
 namespace WebApp.Controllers
 {
@@ -66,7 +67,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Material material)
+        public async Task<IActionResult> Create(BLL.App.DTO.Material material)
         {
             if (!ModelState.IsValid) return View(material);
 

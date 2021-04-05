@@ -1,14 +1,13 @@
-@model IEnumerable<DTO.App.ProductDTO>
+@model IEnumerable<BLL.App.DTO.Product>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Products</h1>
+<h1>My Products</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
-    <a asp-action="MyProducts">My Products</a>
 </p>
 <table class="table">
     <thead>
@@ -16,27 +15,30 @@
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
+
             <th>
                 @Html.DisplayNameFor(model => model.Color)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsBooked)
+                Has transport
+            </th>
+            <th>
+                Is Booked?
+            </th>
+            <th>
+                Location
+            </th>
+            <th>
+                Size
+            </th>
+            <th>
+                Condition
+            </th>
+            <th>
+               Material
             </th>
 
-            <th>
-                @Html.DisplayNameFor(model => model.County)
-            </th>
 
-            <th>
-                @Html.DisplayNameFor(model => model.City)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LocationDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateAdded)
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -45,28 +47,71 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
+
             <td>
                 @Html.DisplayFor(modelItem => item.Color)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HasTransport)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsBooked)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.County)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.City!)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LocationDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateAdded.Date)
+                @if (item.CityName != null)
+                {
+                    item.CountyName += ", " + item.CityName;
+                }
+                @if (item.LocationDescription != null)
+                {
+                    item.CountyName += ", " + item.LocationDescription;
+                }
+                @Html.DisplayFor(modelItem => item.CountyName)
+
             </td>
             <td>
 
+                @{
+                    var size = "";
+                }
 
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                @if (item.Height != null)
+                {
+                    size += "Height: " + item.Height + " " + item.UnitName;
+                }
+                @if (item.Width != null)
+                {
+                    if (size != "")
+                    {
+                        size += ", "+ "\n";
+                    }
+                    size += "Width: " + item.Width + " " + item.UnitName;
+                }
+                 @if (item.Depth != null)
+                {
+                    if (size != "")
+                    {
+                        size += ", "+ "\n";
+                    }
+                    size += "Depth: " +item.Depth + " " + item.UnitName;
+                }
+
+
+                @Html.DisplayFor(modelItem => size)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ConditionName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Material)
+            </td>
+
+
+            <td>
+
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+               <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+               <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
 
             </td>
         </tr>

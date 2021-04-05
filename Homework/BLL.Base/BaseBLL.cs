@@ -7,7 +7,7 @@ using Contracts.DAL.Base;
 namespace BLL.Base
 {
     public class BaseBLL<TUnitOfWork> : IBaseBLL
-        where TUnitOfWork : IBaseUnitOfWork
+        where TUnitOfWork: IBaseUnitOfWork
     {
         protected readonly TUnitOfWork Uow;
 

@@ -96,6 +96,9 @@ namespace WebApp
                     });
                 }
             );
+
+            services.AddAutoMapper(typeof(DAL.App.DTO.MappingProfiles.AutoMapperProfile),
+                typeof(BLL.App.DTO.MappingProfiles.AutoMapperProfile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

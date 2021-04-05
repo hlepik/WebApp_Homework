@@ -1,30 +1,35 @@
-@model IEnumerable<Domain.App.UserBookedProducts>
+@model IEnumerable<BLL.App.DTO.UserBookedProducts>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-
-
-
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Product)
+                @Html.DisplayNameFor(model => model.Description)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.TimeBooked)
+            </th>
+
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Product!.Description)
+                @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.ProductId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ProductId">Remove</a>
+                @Html.DisplayFor(modelItem => item.TimeBooked)
+            </td>
+
+
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Remove</a>
             </td>
         </tr>
 }

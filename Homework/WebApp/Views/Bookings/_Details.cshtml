@@ -1,22 +1,63 @@
-@model Domain.App.Booking
+@model BLL.App.DTO.Booking
 
 <dl class="row">
-    <dt class = "col-sm-2">
-        @Html.DisplayNameFor(model => model.TimeBooked)
-    </dt>
-    <dd class = "col-sm-10">
-        @Html.DisplayFor(model => model.TimeBooked)
-    </dd>
-    <dt class = "col-sm-2">
-        @Html.DisplayNameFor(model => model.Until)
-    </dt>
-    <dd class = "col-sm-10">
-        @Html.DisplayFor(model => model.Until)
-    </dd>
+
     <dt class = "col-sm-2">
         @Html.DisplayNameFor(model => model.Product)
     </dt>
     <dd class = "col-sm-10">
-        @Html.DisplayFor(model => model.Product!.Description)
+        @Html.DisplayFor(model => model.ProductName)
     </dd>
+    <dt class = "col-sm-2">
+        Location
+    </dt>
+    <dd class = "col-sm-10">
+    @{
+       var location = @Model.County;
+   }
+     @if (@Model.City != null)
+    {
+        location += ", " + @Model.City;
+    }
+    @if (@Model.LocationDescription != null)
+    {
+        location += ", " + @Model.LocationDescription;
+    }
+        @location
+    </dd>
+
+     <dt class = "col-sm-2">
+         Size
+
+        </dt>
+    <dd class="col-sm-10">
+       @{
+           var size = "";
+       }
+       @if (@Model.Height != null)
+       {
+           size += "Height: " + @Model.Height + " " + @Model.Unit;
+       }
+       @if (@Model.Width != null)
+       {
+           if (size != "")
+           {
+               size += ", "+ "\n";
+           }
+           size += "Width: " + @Model.Width + " " + @Model.Unit;
+       }
+       @if (@Model.Depth != null)
+       {
+           if (size != "")
+           {
+               size += ", "+ "\n";
+           }
+           size += "Depth: " +@Model.Depth + " " + @Model.Unit;
+       }
+        @size
+    </dd>
+
+
+
+
 </dl>

@@ -1,43 +1,76 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Contracts.DAL.App.Repositories;
-using DAL.App.DTO;
+using DAL.App.DTO.Identity;
+using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
+using Domain.App;
 using DTO.App;
 using Microsoft.EntityFrameworkCore;
-using UserMessages = Domain.App.Identity.UserMessages;
+using AppUser = Domain.App.Identity.AppUser;
 
 namespace DAL.App.EF.Repositories
 {
-    public class UserMessagesRepository : BaseRepository<UserMessages, AppDbContext>,IUserMessagesRepository
+    public class UserMessagesRepository : BaseRepository<DAL.App.DTO.UserMessages, Domain.App.UserMessages, AppDbContext>,IUserMessagesRepository
     {
-        public UserMessagesRepository(AppDbContext dbContext) : base(dbContext)
+        public UserMessagesRepository(AppDbContext dbContext, IMapper mapper) : base(dbContext, new UserMessagesMapper(mapper))
         {
         }
 
-        public async Task<IEnumerable<UserMessagesDTO>> GetAllMessagesAsync(string email)
-        {
-            var query = CreateQuery();
 
-            var resQuery = query.Select(p => new UserMessagesDTO()
+        public async Task<Guid> GetId(string email)
+        {
+            var query = RepoDbContext
+                .Users.Where(x => x.Email == email)
+                .Select(x => x.Id);
+
+            return await query.FirstAsync();
+        }
+
+        public async Task<IEnumerable<DAL.App.DTO.UserMessages>> GetAllMessagesAsync(Guid userId, bool noTracking = true)
+        {
+            var query = CreateQuery(userId, noTracking);
+
+
+            var resQuery = query
+                .Include(p => p.MessageForm).Select(p => new DAL.App.DTO.UserMessages()
                 {
                     Id = p.Id,
-                    AppUserId = p.UserId,
-                    MessageForm = new MessageForm
-                    {
-                        Message = p.MessageForm!.Message,
-                        Email = p.MessageForm.Email,
-                        Subject = p.MessageForm.Subject,
-                        DateSent = p.MessageForm.DateSent,
+                    SenderEmail = p.SenderEmail,
+                    Message = p.MessageForm!.Message,
+                    Subject = p.MessageForm.Subject,
+                    Email = p.MessageForm.Email,
+                    AppUserId = p.AppUserId,
+                    DateSent = p.MessageForm.DateSent
 
-                    }
 
-                })
-                .OrderByDescending(x => x.MessageForm!.DateSent);;
+                }).OrderBy(x => x.DateSent).Where(p => p.AppUserId == userId);
 
             return await resQuery.ToListAsync();
 
+        }
+        public async Task<DAL.App.DTO.UserMessages?> FirstOrDefaultUserMessagesAsync(Guid id, Guid userId = default, bool noTracking = true)
+        {
+            var query = CreateQuery(userId, noTracking);
+
+
+            var resQuery = query
+                .Select(p => new DAL.App.DTO.UserMessages()
+                {
+                    Id = p.Id,
+                    AppUserId = p.AppUserId,
+                    Subject = p.MessageForm!.Subject,
+                    Message = p.MessageForm.Message,
+                    SenderEmail = p.SenderEmail,
+                    DateSent = p.MessageForm.DateSent
+
+
+                }).FirstOrDefaultAsync(m => m.Id == id);
+
+            return await resQuery;
         }
     }
 }

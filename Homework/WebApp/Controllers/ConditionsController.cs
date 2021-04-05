@@ -1,15 +1,9 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
-using DAL.App.EF;
-using DAL.App.EF.Repositories;
-using Domain.App;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Condition = BLL.App.DTO.Condition;
 
 
 namespace WebApp.Controllers
@@ -65,7 +59,7 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( Condition condition)
+        public async Task<IActionResult> Create(Condition condition)
         {
             if (!ModelState.IsValid) return View(condition);
 
