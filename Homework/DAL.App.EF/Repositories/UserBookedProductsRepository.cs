@@ -21,15 +21,23 @@ namespace DAL.App.EF.Repositories
         {
             var query = CreateQuery(userId, noTracking);
 
-            if (userId != default)
-            {
-                query = query
-                    .Include(c => c.Booking!.Product)
-                    .Where(c => c.Booking!.AppUserId == userId);
-            }
 
-            var res = await query.Select(x => Mapper.Map(x)).ToListAsync();
-            return res!;
+            var resQuery = query
+                .Include(p => p.Booking)
+                .ThenInclude(p => p!.Product)
+                .Select(p => new DAL.App.DTO.UserBookedProducts()
+                {
+                    Id = p.Id,
+                    Description = p.Booking!.Product!.Description,
+                    AppUserId = p.Booking.AppUserId,
+                    Email = p.Booking.Product.AppUser!.Email,
+                    HasTransport = p.Booking.Product.HasTransport,
+                    TimeBooked = p.Booking.TimeBooked
+
+
+                }).Where(x => x.AppUserId == userId);
+
+            return await resQuery.ToListAsync();
         }
 
         public async Task<DAL.App.DTO.UserBookedProducts?> FirstOrDefaultBookedProductsAsync(Guid id, Guid userId = default, bool noTracking = true)
@@ -38,7 +46,8 @@ namespace DAL.App.EF.Repositories
 
 
             query = query
-                .Include(p => p.Booking);
+                .Include(p => p.Booking)
+                .ThenInclude(p => p!.Product);
 
 
             var resQuery = query
@@ -76,6 +85,35 @@ namespace DAL.App.EF.Repositories
 
             return await resQuery.ToListAsync();
 
+
+        }
+        public async Task<Guid> GetId(Guid id)
+        {
+            var query = RepoDbContext
+                .UserBookedProducts
+                .Where(x => x.Id == id)
+                .Select(x => x.BookingId);
+
+            return await query.FirstAsync();
+        }
+
+        public void RemoveUserBookedProductsAsync(Guid? id, Guid userId = default)
+        {
+            var query = CreateQuery(userId);
+
+            if (id != null)
+            {
+                query = query
+                    .Where(x => x.Booking!.ProductId == id);
+            }
+
+
+
+
+            foreach (var l in query)
+            {
+                RepoDbSet.Remove(l);
+            }
 
         }
     }

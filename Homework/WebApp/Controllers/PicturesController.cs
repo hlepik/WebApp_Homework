@@ -7,6 +7,7 @@ using Domain.App;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels.Picture;
+#pragma warning disable 1591
 
 namespace WebApp.Controllers
 {
@@ -68,7 +69,7 @@ namespace WebApp.Controllers
                 await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(), nameof(Product.Id),
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(User.GetUserId()!.Value), nameof(Product.Id),
                 nameof(Product.Description), vm.Picture.ProductId);
             return View(vm);
         }

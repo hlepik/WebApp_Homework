@@ -17,5 +17,7 @@ namespace Contracts.DAL.App.Repositories
     {
 
         Task<IEnumerable<TEntity>> GetAllPicturesAsync(Guid userId, bool noTracking = true);
+        Task<Guid> GetId(Guid id);
+        void RemovePictureAsync(Guid? id, Guid userId = default);
     }
 }

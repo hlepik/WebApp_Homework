@@ -1,15 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
 using Microsoft.AspNetCore.Mvc;
-using Domain.App;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using PublicApi.DTO.v1;
+using PublicApi.DTO.v1.Mappers;
+using County = Domain.App.County;
 
 namespace WebApp.ApiControllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// API controller for County
+    /// </summary>
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
@@ -17,74 +25,126 @@ namespace WebApp.ApiControllers
     public class CountiesController : ControllerBase
     {
         private readonly IAppBLL _bll;
+        private readonly CountyMapper _mapper = new CountyMapper();
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="bll"></param>
         public CountiesController(IAppBLL bll)
         {
             _bll = bll;
         }
 
-        // GET: api/Counties
+        /// <summary>
+        /// Get all counties
+        /// </summary>
+        /// <returns>Entities from db</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<County>>> GetCounties()
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.County), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.County>>> GetCounties()
         {
-            return Ok(await _bll.County.GetAllAsync());
+            return Ok((await _bll.County.GetAllAsync()).Select(s => new PublicApi.DTO.v1.County()
+            {
+                Id = s.Id,
+                Name = s.Name
+            }));
         }
 
-        // GET: api/Counties/5
+        /// <summary>
+        /// Get one county. Based on parameter: Id
+        /// </summary>
+        /// <param name="id">Id of object to retrieve, Guid</param>
+        /// <returns>County entity from db</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<BLL.App.DTO.County>> GetCounty(Guid id)
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.County), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
+        public async Task<ActionResult<PublicApi.DTO.v1.County>> GetCounty(Guid id)
         {
             var county = await _bll.County.FirstOrDefaultAsync(id);
 
             if (county == null)
             {
-                return NotFound();
+                return NotFound(new Message("County not found"));
             }
 
-            return county;
+            return Ok(_mapper.Map(county));
         }
 
-        // PUT: api/Counties/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update county
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="county"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCounty(Guid id, BLL.App.DTO.County county)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
+
+        public async Task<IActionResult> PutCounty(Guid id, PublicApi.DTO.v1.County county)
         {
             if (id != county.Id)
             {
-                return BadRequest();
+                return BadRequest(new Message("Id and county.id do not match"));
             }
 
-            _bll.County.Update(county);
+
+            _bll.County.Update(_mapper.Map(county));
             await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/Counties
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Post county
+        /// </summary>
+        /// <param name="county"></param>
+        /// <returns></returns>
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.County), StatusCodes.Status200OK)]
         [HttpPost]
-        public async Task<ActionResult<County>> PostCounty(BLL.App.DTO.County county)
+        public async Task<ActionResult<PublicApi.DTO.v1.County>> PostCounty(PublicApi.DTO.v1.County county)
         {
-            _bll.County.Add(county);
+            _bll.County.Add(_mapper.Map(county));
             await _bll.SaveChangesAsync();
 
-            return CreatedAtAction("GetCounty", new { id = county.Id }, county);
+            return CreatedAtAction("GetCounty",
+                new
+                {
+                    id = county.Id
+
+                }, county);
         }
 
-        // DELETE: api/Counties/5
+        /// <summary>
+        /// Delete county
+        /// </summary>
+        /// <param name="id">Guid id of item to delete</param>
+        /// <returns></returns>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpDelete("{id}")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PublicApi.DTO.v1.County))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
         public async Task<IActionResult> DeleteCounty(Guid id)
         {
             var county = await _bll.County.FirstOrDefaultAsync(id);
             if (county == null)
             {
-                return NotFound();
+                return NotFound(new Message("County not found"));
             }
 
             _bll.County.Remove(county);
             await _bll.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(county);
         }
 
     }

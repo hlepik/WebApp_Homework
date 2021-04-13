@@ -17,8 +17,9 @@ namespace DAL.App.DTO
         public string? Color { get; set; }
         public Guid AppUserId { get; set; }
         public string Description { get; set; }= default!;
+        public string Email { get; set; }= default!;
         public Guid BookingId { get; set;}
-        public Booking? Booking { get; set; }
+
 
     }
 }

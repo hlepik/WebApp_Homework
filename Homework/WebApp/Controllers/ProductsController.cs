@@ -7,6 +7,7 @@ using Domain.App;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels.Products;
+#pragma warning disable 1591
 
 namespace WebApp.Controllers
 {
@@ -27,6 +28,7 @@ namespace WebApp.Controllers
         {
             return View(await _bll.Product.GetAllProductsAsync(User.GetUserId()!.Value));
         }
+
 
         // GET: Products/Details/5
         public async Task<IActionResult> Details(Guid? id)
@@ -102,9 +104,9 @@ namespace WebApp.Controllers
 
 
             var vm = new ProductCreateEditViewModels();
-            vm.Product = product;
+            vm.Product = product!;
             vm.CitySelectList = new SelectList(await _bll.City.GetAllAsync(), nameof(City.Id),
-                nameof(City.Name), vm.Product.CityId);
+                nameof(City.Name), vm.Product!.CityId);
             vm.CountySelectList = new SelectList(await _bll.County.GetAllAsync(), nameof(County.Id),
                 nameof(County.Name), vm.Product.CountyId);
             vm.ConditionSelectList = new SelectList(await _bll.Condition.GetAllAsync(), nameof(Condition.Id),
@@ -156,7 +158,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var product = await _bll.Product.FirstOrDefaultDTOAsync(id.Value);
+            var product = await _bll.Product.FirstOrDefaultAsync(id.Value);
 
             return View(product);
         }
@@ -166,8 +168,14 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _bll.Product.RemoveAsync(id, User.GetUserId()!.Value);
+
+            _bll.ProductMaterial.RemoveProductMaterialsAsync(id);
+            _bll.UserBookedProducts.RemoveUserBookedProductsAsync(id);
+            _bll.Booking.RemoveBookingAsync(id);
+            _bll.Picture.RemovePictureAsync(id);
+            _bll.Product.RemoveProductAsync(id);
             await _bll.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

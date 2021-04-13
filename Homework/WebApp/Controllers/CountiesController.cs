@@ -4,6 +4,7 @@ using Contracts.BLL.App;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using County = BLL.App.DTO.County;
+#pragma warning disable 1591
 
 
 namespace WebApp.Controllers

@@ -1,89 +1,161 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
 using Microsoft.AspNetCore.Mvc;
-using Domain.App;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using PublicApi.DTO.v1;
+using PublicApi.DTO.v1.Mappers;
+using MessageForm = Domain.App.MessageForm;
 
 namespace WebApp.ApiControllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// API controller for MessageForm
+    /// </summary>
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
     public class MessageFormsController : ControllerBase
     {
         private readonly IAppBLL _bll;
+        private readonly MessageFormMapper _mapper = new MessageFormMapper();
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="bll"></param>
         public MessageFormsController(IAppBLL bll)
         {
             _bll = bll;
         }
 
-        // GET: api/MessageForms
+        /// <summary>
+        /// Get all messageForms
+        /// </summary>
+        /// <returns>Entities from db</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BLL.App.DTO.MessageForm>>> GetMessageForms()
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.MessageForm), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.MessageForm>>> GetMessageForms()
         {
-            return Ok(await _bll.MessageForm.GetAllAsync(User.GetUserId()!.Value));
+            return Ok((await _bll.MessageForm.GetAllAsync()).Select(s => new PublicApi.DTO.v1.MessageForm()
+            {
+                Id = s.Id,
+                Message = s.Message,
+                Email = s.Email,
+                Subject = s.Subject,
+                DateSent = s.DateSent,
+                SenderId = s.SenderId
+            }));
         }
 
-        // GET: api/MessageForms/5
+        /// <summary>
+        /// Get one Message form. Based on parameter: Id
+        /// </summary>
+        /// <param name="id">Id of object to retrieve, Guid</param>
+        /// <returns>MessageForm entity from db</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<BLL.App.DTO.MessageForm>> GetMessageForm(Guid id)
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.MessageForm), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
+        public async Task<ActionResult<PublicApi.DTO.v1.MessageForm>> GetMessageForm(Guid id)
         {
             var messageForm = await _bll.MessageForm.FirstOrDefaultMessagesAsync(id);
 
             if (messageForm == null)
             {
-                return NotFound();
+                return NotFound(new Message("Message form not found"));
             }
 
-            return messageForm;
+            return Ok(_mapper.Map(messageForm));
         }
 
-        // PUT: api/MessageForms/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update messageForm
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="messageForm"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMessageForm(Guid id, BLL.App.DTO.MessageForm messageForm)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
+
+        public async Task<IActionResult> PutMessageForm(Guid id, PublicApi.DTO.v1.MessageForm messageForm)
         {
             if (id != messageForm.Id)
             {
-                return BadRequest();
+                return BadRequest(new Message("Id and messageForm.id do not match"));
             }
-            _bll.MessageForm.Update(messageForm);
+
+            if (!await _bll.UserMessages.ExistsAsync(messageForm.Id, User.GetUserId()!.Value))
+            {
+                return NotFound(new Message($"Current user does not have send messages with this id {id}"));
+            }
+            _bll.MessageForm.Update(_mapper.Map(messageForm));
             await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/MessageForms
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Post messageForm
+        /// </summary>
+        /// <param name="messageForm"></param>
+        /// <returns></returns>
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.MessageForm), StatusCodes.Status200OK)]
         [HttpPost]
-        public async Task<ActionResult<MessageForm>> PostMessageForm(BLL.App.DTO.MessageForm messageForm)
+        public async Task<ActionResult<PublicApi.DTO.v1.MessageForm>> PostMessageForm(PublicApi.DTO.v1.MessageForm messageForm)
         {
-            _bll.MessageForm.Add(messageForm);
+            _bll.MessageForm.Add(_mapper.Map(messageForm));
             await _bll.SaveChangesAsync();
 
-            return CreatedAtAction("GetMessageForm", new { id = messageForm.Id }, messageForm);
+            return CreatedAtAction("GetMessageForm",
+                new
+                {
+                    id = messageForm.Id,
+                    version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0"
+
+                }, messageForm);
         }
 
-        // DELETE: api/MessageForms/5
+        /// <summary>
+        /// Delete messageForm
+        /// </summary>
+        /// <param name="id">Guid id of item to delete</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PublicApi.DTO.v1.MessageForm))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
         public async Task<IActionResult> DeleteMessageForm(Guid id)
         {
             var messageForm = await _bll.MessageForm.FirstOrDefaultAsync(id);
             if (messageForm == null)
             {
-                return NotFound();
+                return NotFound(new Message("Message form not found"));
             }
 
-            _bll.MessageForm.Remove(messageForm);
+
+            await _bll.UserMessages.GetByMessageFormId(id);
+
+            _bll.MessageForm.RemoveMessagesAsync(id);
             await _bll.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(messageForm);
         }
 
     }

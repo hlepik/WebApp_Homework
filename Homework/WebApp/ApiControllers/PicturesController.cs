@@ -1,90 +1,151 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
 using Microsoft.AspNetCore.Mvc;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Picture = Domain.App.Picture;
+using Microsoft.AspNetCore.Http;
+using PublicApi.DTO.v1;
+using PublicApi.DTO.v1.Mappers;
+
 
 namespace WebApp.ApiControllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// API controller for Pictures
+    /// </summary>
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
     public class PicturesController : ControllerBase
     {
         private readonly IAppBLL _bll;
+        private readonly PictureMapper _mapper = new PictureMapper();
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="bll"></param>
         public PicturesController(IAppBLL bll)
         {
             _bll = bll;
         }
 
-        // GET: api/Pictures
+        /// <summary>
+        /// Get all pictures
+        /// </summary>
+        /// <returns>Entities from db</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BLL.App.DTO.Picture>>> GetPictures()
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.Picture), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.Picture>>> GetPictures()
         {
-            return Ok(await _bll.Picture.GetAllPicturesAsync(User.GetUserId()!.Value));
+            return Ok((await _bll.Picture
+                .GetAllPicturesAsync(User.GetUserId()!.Value)).Select(s => new PublicApi.DTO.v1.Picture()
+            {
+                Id = s.Id,
+                Url = s.Url,
+                ProductId = s.ProductId,
+                ProductName = s.Product
+            }));
+
         }
 
-        // GET: api/Pictures/5
+        /// <summary>
+        /// Get one picture. Based on parameter: Id
+        /// </summary>
+        /// <param name="id">Id of object to retrieve, Guid</param>
+        /// <returns>Picture entity from db</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<BLL.App.DTO.Picture>> GetPicture(Guid id)
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.Picture), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
+        public async Task<ActionResult<PublicApi.DTO.v1.Picture>> GetPicture(Guid id)
         {
             var picture = await _bll.Picture.FirstOrDefaultAsync(id);
-
             if (picture == null)
             {
-                return NotFound();
+                return NotFound(new Message("Picture not found"));
             }
 
-            return picture;
+            return Ok(_mapper.Map(picture));
         }
 
-        // PUT: api/Pictures/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update picture
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="picture"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutPicture(Guid id, BLL.App.DTO.Picture picture)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
+
+        public async Task<IActionResult> PutPicture(Guid id, PublicApi.DTO.v1.Picture picture)
         {
             if (id != picture.Id)
             {
-                return BadRequest();
+                return BadRequest(new Message("Id and picture.id do not match"));
             }
 
-            _bll.Picture.Update(picture);
+
+            _bll.Picture.Update(_mapper.Map(picture));
             await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/Pictures
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Post picture
+        /// </summary>
+        /// <param name="picture"></param>
+        /// <returns></returns>
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.Picture), StatusCodes.Status200OK)]
         [HttpPost]
-        public async Task<ActionResult<Picture>> PostPicture(BLL.App.DTO.Picture picture)
+        public async Task<ActionResult<PublicApi.DTO.v1.Picture>> PostPicture(PublicApi.DTO.v1.Picture picture)
         {
-            _bll.Picture.Add(picture);
+            _bll.Picture.Add(_mapper.Map(picture));
             await _bll.SaveChangesAsync();
 
-            return CreatedAtAction("GetPicture", new { id = picture.Id }, picture);
+            return CreatedAtAction("GetPicture",
+                new
+                {
+                    id = picture.Id
+                }, picture);
         }
 
-        // DELETE: api/Pictures/5
+        /// <summary>
+        /// Delete picture
+        /// </summary>
+        /// <param name="id">Guid id of item to delete</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PublicApi.DTO.v1.Picture))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
         public async Task<IActionResult> DeletePicture(Guid id)
         {
             var picture = await _bll.Picture.FirstOrDefaultAsync(id);
             if (picture == null)
             {
-                return NotFound();
+                return NotFound(new Message("Picture not found"));
             }
 
             _bll.Picture.Remove(picture);
             await _bll.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(picture);
         }
 
     }

@@ -4,6 +4,7 @@ using Contracts.BLL.App;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using City = BLL.App.DTO.City;
+#pragma warning disable 1591
 
 
 namespace WebApp.Controllers

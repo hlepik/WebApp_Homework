@@ -1,18 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App;
-using Domain.App.Identity;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
 using UserMessages = BLL.App.DTO.UserMessages;
+#pragma warning disable 1591
 
 namespace WebApp.Controllers
 {
@@ -126,7 +119,7 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _bll.UserMessages.RemoveAsync(id);
+            _bll.UserMessages.RemoveUserMessagesAsync(id, User.GetUserId()!.Value);
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

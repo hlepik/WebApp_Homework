@@ -1,28 +1,26 @@
 using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using BLL.App;
 using Contracts.BLL.App;
 using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
 using DAL.App.EF;
 using DAL.App.EF.AppDataInit;
-using DAL.App.EF.Repositories;
 using Domain.App.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.SwaggerGen;
+#pragma warning disable 1591
 
 namespace WebApp
 {
@@ -76,6 +74,17 @@ namespace WebApp
                         };
                     }
                 );
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = new[]
+                {
+                    new CultureInfo(name: "en-GB"),
+                    new CultureInfo(name: "et-EE")
+                };
+                options.DefaultRequestCulture = new RequestCulture(culture: "en-GB", uiCulture: "en-GB");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
 
 
             services
@@ -99,10 +108,24 @@ namespace WebApp
 
             services.AddAutoMapper(typeof(DAL.App.DTO.MappingProfiles.AutoMapperProfile),
                 typeof(BLL.App.DTO.MappingProfiles.AutoMapperProfile));
+
+            // add support for api versioning
+            services.AddApiVersioning(options =>
+            {
+                options.ReportApiVersions = true;
+            });
+            // add support for m2m api documentation
+            services.AddVersionedApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+            });
+            // add support to generate human readable documentation from m2m docs
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider apiVersionDescriptionProvider)
         {
             SetupAppData(app, Configuration);
 
@@ -119,6 +142,19 @@ namespace WebApp
             }
 
             app.UseHttpsRedirection();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                foreach (var apiVersionDescription in apiVersionDescriptionProvider.ApiVersionDescriptions)
+                {
+                    options.SwaggerEndpoint(
+                        $"/swagger/{apiVersionDescription.GroupName}/swagger.json",
+                        apiVersionDescription.GroupName.ToUpperInvariant()
+                    );
+                }
+            });
+
             app.UseStaticFiles();
 
             app.UseCors("CorsAllowAll");
@@ -127,7 +163,6 @@ namespace WebApp
 
             app.UseAuthentication();
             app.UseAuthorization();
-
 
 
             app.UseEndpoints(endpoints =>
@@ -175,7 +210,8 @@ namespace WebApp
                     }
                     else
                     {
-                        Console.Write($"No user manager {(userManager == null ? "null" : "ok")} or role manager {(roleManager == null ? "null" : "ok")}!" );
+                        Console.Write(
+                            $"No user manager {(userManager == null ? "null" : "ok")} or role manager {(roleManager == null ? "null" : "ok")}!");
                     }
                 }
 
@@ -188,6 +224,5 @@ namespace WebApp
 
             //C# will dispose all the usings here
         }
-
     }
 }

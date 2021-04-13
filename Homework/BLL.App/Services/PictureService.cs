@@ -27,5 +27,14 @@ namespace BLL.App.Services
 
         }
 
+        public async Task<Guid> GetId(Guid id)
+        {
+            return await ServiceRepository.GetId(id);
+        }
+
+        public void RemovePictureAsync(Guid? id, Guid userId = default)
+        {
+            ServiceRepository.RemovePictureAsync(id);
+        }
     }
 }

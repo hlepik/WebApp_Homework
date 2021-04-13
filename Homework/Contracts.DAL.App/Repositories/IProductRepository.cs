@@ -15,11 +15,15 @@ namespace Contracts.DAL.App.Repositories
     }
     public interface IProductRepositoryCustom<TEntity>
     {
-        Task<TEntity> ChangeBookingStatus(Guid id);
+        Task<TEntity> ChangeBookingStatus(Guid? id);
         Task<IEnumerable<TEntity>> GetAllProductsIsNotBookedAsync();
 
-        Task<TEntity> FirstOrDefaultDTOAsync(Guid id);
-        Task<TEntity> FirstOrDefaultWithoutOutIdAsync(Guid id);
+        Task<TEntity?> FirstOrDefaultDTOAsync(Guid id);
+
         Task<IEnumerable<TEntity>> GetAllProductsAsync(Guid userId = default, bool noTracking = true);
+
+        void RemoveProductAsync(Guid id, Guid userId = default);
+        void DeleteAll(Guid userId);
+        Task<IEnumerable<TEntity?>> GetId(Guid userId);
     }
 }

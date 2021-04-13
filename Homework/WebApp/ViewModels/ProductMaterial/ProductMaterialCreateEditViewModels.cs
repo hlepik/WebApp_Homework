@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
+#pragma warning disable 1591
 
 namespace WebApp.ViewModels.ProductMaterial
 {

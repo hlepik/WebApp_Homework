@@ -22,5 +22,11 @@ namespace BLL.App.Services
         {
             return Mapper.Map(await ServiceRepository.FirstOrDefaultMessagesAsync(id))!;
         }
+
+        public void RemoveMessagesAsync(Guid id)
+        {
+            ServiceRepository.RemoveMessagesAsync(id);
+
+        }
     }
 }

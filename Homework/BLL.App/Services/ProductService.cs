@@ -8,6 +8,7 @@ using BLL.Base.Services;
 using Contracts.BLL.App.Services;
 using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
+using Domain.App;
 using BLLAppDTO = BLL.App.DTO;
 using DALAppDTO = DAL.App.DTO;
 
@@ -19,7 +20,7 @@ namespace BLL.App.Services
         {
         }
 
-        public async  Task<BLLAppDTO.Product> ChangeBookingStatus(Guid id)
+        public async Task<BLLAppDTO.Product> ChangeBookingStatus(Guid? id)
         {
             return Mapper.Map(await ServiceRepository.ChangeBookingStatus(id))!;
         }
@@ -29,19 +30,32 @@ namespace BLL.App.Services
             return (await ServiceRepository.GetAllProductsIsNotBookedAsync()).Select(x => Mapper.Map(x))!;
         }
 
-        public async Task<BLLAppDTO.Product> FirstOrDefaultDTOAsync(Guid id)
+        public async Task<BLLAppDTO.Product?> FirstOrDefaultDTOAsync(Guid id)
         {
             return Mapper.Map(await ServiceRepository.FirstOrDefaultDTOAsync(id))!;
         }
 
-        public async Task<BLLAppDTO.Product> FirstOrDefaultWithoutOutIdAsync(Guid id)
-        {
-            return Mapper.Map(await ServiceRepository.FirstOrDefaultWithoutOutIdAsync(id))!;
-        }
 
-        public async Task<IEnumerable<BLLAppDTO.Product>> GetAllProductsAsync(Guid userId = default, bool noTracking = true)
+        public async Task<IEnumerable<BLLAppDTO.Product>> GetAllProductsAsync(Guid userId = default,
+            bool noTracking = true)
         {
             return (await ServiceRepository.GetAllProductsAsync(userId, noTracking)).Select(x => Mapper.Map(x))!;
         }
+
+        public void RemoveProductAsync(Guid id, Guid userId = default)
+        {
+            ServiceRepository.RemoveProductAsync(id, userId);
+        }
+
+        public void DeleteAll(Guid userId)
+        {
+            ServiceRepository.DeleteAll(userId);
+        }
+
+        public async Task<IEnumerable<BLLAppDTO.Product?>> GetId(Guid userId)
+        {
+            return (await ServiceRepository.GetId(userId)).Select(x => Mapper.Map(x))!;
+        }
+
     }
 }

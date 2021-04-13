@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Domain.App;
 using Domain.App.Identity;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Rendering;
+#pragma warning disable 1591
 
 namespace WebApp.Areas.Admin.ViewModels
 {

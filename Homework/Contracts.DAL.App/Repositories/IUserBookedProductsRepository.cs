@@ -19,6 +19,9 @@ namespace Contracts.DAL.App.Repositories
 
         Task<TEntity?> FirstOrDefaultBookedProductsAsync(Guid id, Guid userId = default,
             bool noTracking = true);
+
+        Task<Guid> GetId(Guid id);
+        void RemoveUserBookedProductsAsync(Guid? id, Guid userId = default);
     }
 
 }

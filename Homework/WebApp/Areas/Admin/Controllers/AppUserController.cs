@@ -1,14 +1,14 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+#pragma warning disable 1591
 
 namespace WebApp.Areas.Admin.Controllers
 {
@@ -16,14 +16,15 @@ namespace WebApp.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class AppUserController : Controller
     {
-
+        private readonly IAppBLL _bll;
         private readonly UserManager<AppUser> _userManager;
         private readonly AppDbContext _context;
 
-        public AppUserController( UserManager<AppUser> userManager, AppDbContext context)
+        public AppUserController( UserManager<AppUser> userManager, AppDbContext context, IAppBLL bll)
         {
             _userManager = userManager;
             _context = context;
+            _bll = bll;
         }
 
         // GET: Admin/AppUser
@@ -152,6 +153,32 @@ namespace WebApp.Areas.Admin.Controllers
         {
             var appUser = await _userManager.FindByIdAsync(id.ToString());
 
+            if (appUser.Email == "admin@admin.com")
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var productId = await _bll.Product.GetId(id);
+
+            foreach (var each in productId)
+            {
+                _bll.ProductMaterial.RemoveProductMaterialsAsync(each!.Id);
+                _bll.Picture.RemovePictureAsync(each.Id);
+            }
+
+            var bookingId = await _bll.Booking.GetUsersBookings(id);
+            foreach (var each in bookingId)
+            {
+                _bll.UserBookedProducts.RemoveUserBookedProductsAsync(each!.Id);
+                var bookingStatus = await _bll.Product.ChangeBookingStatus(each.ProductId);
+                bookingStatus.IsBooked = false;
+                _bll.Product.Update(bookingStatus);
+
+            }
+            _bll.Booking.RemoveBookingAsync(null, appUser.Id);
+            _bll.Product.DeleteAll(id);
+
+            _bll.UserMessages.RemoveUserMessagesByUser(id);
             await _userManager.DeleteAsync(appUser);
             return RedirectToAction(nameof(Index));
         }

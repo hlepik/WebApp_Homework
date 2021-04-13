@@ -1,63 +1,39 @@
-@model BLL.App.DTO.Booking
+@model BLL.App.DTO.Product
+
 
 <dl class="row">
 
     <dt class = "col-sm-2">
-        @Html.DisplayNameFor(model => model.Product)
+        @Html.DisplayNameFor(model => model.Description)
     </dt>
     <dd class = "col-sm-10">
-        @Html.DisplayFor(model => model.ProductName)
+        @Html.DisplayFor(model => model.Description)
     </dd>
     <dt class = "col-sm-2">
-        Location
+        County
     </dt>
     <dd class = "col-sm-10">
-    @{
-       var location = @Model.County;
-   }
-     @if (@Model.City != null)
-    {
-        location += ", " + @Model.City;
-    }
-    @if (@Model.LocationDescription != null)
-    {
-        location += ", " + @Model.LocationDescription;
-    }
-        @location
+        @Html.DisplayFor(model => model.CountyName)
     </dd>
-
-     <dt class = "col-sm-2">
-         Size
-
-        </dt>
-    <dd class="col-sm-10">
-       @{
-           var size = "";
-       }
-       @if (@Model.Height != null)
-       {
-           size += "Height: " + @Model.Height + " " + @Model.Unit;
-       }
-       @if (@Model.Width != null)
-       {
-           if (size != "")
-           {
-               size += ", "+ "\n";
-           }
-           size += "Width: " + @Model.Width + " " + @Model.Unit;
-       }
-       @if (@Model.Depth != null)
-       {
-           if (size != "")
-           {
-               size += ", "+ "\n";
-           }
-           size += "Depth: " +@Model.Depth + " " + @Model.Unit;
-       }
-        @size
+    <dt class = "col-sm-2">
+       City
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.CityName)
     </dd>
+    <dt class="col-sm-2">
+        Location description
+    </dt>
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.LocationDescription)
+    </dd>
+    <dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.Color)
+    </dt>
 
-
-
+    <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.Color)
+    </dd>
 
 </dl>
+

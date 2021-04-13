@@ -14,7 +14,9 @@ namespace Contracts.DAL.App.Repositories
 
     public interface IProductMaterialRepositoryCustom<TEntity>
     {
-        Task<TEntity> FirstOrDefaultDTOAsync(Guid id, Guid userId, bool noTracking = true);
+        Task<TEntity?> FirstOrDefaultDTOAsync(Guid id, Guid userId, bool noTracking = true);
         Task<IEnumerable<TEntity>> GetAllProductMaterialsAsync(Guid userId, bool noTracking = true);
+        Task<Guid> GetId(Guid id);
+        void RemoveProductMaterialsAsync(Guid? id, Guid userId = default);
     }
 }

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Contracts.BLL.App;
 using Contracts.DAL.App.Repositories;
+using DAL.App.DTO;
 using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +15,10 @@ namespace DAL.App.EF.Repositories
 {
     public class ProductRepository: BaseRepository<DAL.App.DTO.Product, Product, AppDbContext>,IProductRepository
     {
+
         public ProductRepository(AppDbContext dbContext, IMapper mapper) : base(dbContext, new ProductMapper(mapper))
         {
+
         }
 
         public async Task<IEnumerable<DAL.App.DTO.Product>> GetAllProductsIsNotBookedAsync()
@@ -31,46 +35,44 @@ namespace DAL.App.EF.Repositories
 
         }
 
-
         public async Task<IEnumerable<DAL.App.DTO.Product>> GetAllProductsAsync(Guid userId = default, bool noTracking = true)
         {
-            var query = CreateQuery(default, noTracking);
+            var query = CreateQuery(userId, noTracking);
 
             query = query.Include(x => x.City)
                 .Include(x => x.County)
                 .Include(x => x.Category)
-                .Include(x => x.Unit);
+                .Include(x => x.Unit)
+                .Include(p => p.ProductMaterials);
 
+
+            if (userId != default)
+            {
+                query = query.Where(x => x.AppUserId == userId);
+            }
             var resQuery = query
                 .Select(p => new DAL.App.DTO.Product()
             {
                 Id = p.Id,
                 Description = p.Description,
-                Height = p.Height,
-                Depth = p.Depth,
-                Width = p.Width,
-                LocationDescription = p.LocationDescription,
-                IsBooked = p.IsBooked,
-                HasTransport = p.HasTransport,
                 Color = p.Color,
-                DateAdded = p.DateAdded,
                 CityName = p.City!.Name,
-                CityId = p.CityId,
                 CountyName = p.County!.Name,
-                CountyId = p.CountyId,
                 CategoryName = p.Category!.Name,
-                CategoryId = p.CategoryId,
                 UnitName = p.Unit!.Name,
-                UnitId = p.UnitId,
                 ConditionName = p.Condition!.Description,
-                ConditionId = p.ConditionId
+                DateAdded = p.DateAdded,
+                Material = p.ProductMaterials!.Select(x => x.Material!.Name),
+                Height = p.Height,
+                Width = p.Width,
+                Depth = p.Depth
 
             }).OrderBy(p => p.DateAdded);
 
             return await resQuery.ToListAsync();
         }
 
-        public async Task<DAL.App.DTO.Product> FirstOrDefaultDTOAsync(Guid id)
+        public async Task<DAL.App.DTO.Product?> FirstOrDefaultDTOAsync(Guid id)
         {
             var query = CreateQuery();
 
@@ -92,31 +94,13 @@ namespace DAL.App.EF.Repositories
                 UnitName = p.Unit!.Name,
                 UnitId = p.UnitId,
 
-
-
             }).FirstOrDefaultAsync(m => m.Id == id);
 
             return await resQuery;
 
         }
-        public async Task<DAL.App.DTO.Product> FirstOrDefaultWithoutOutIdAsync(Guid id)
-        {
-            var query = CreateQuery();
 
-            query = query
-                .Include(p => p.City)
-                .Include(c => c.County)
-                .Include(c => c.Condition)
-                .Include(c => c.Category)
-                .Include(c => c.Unit);
-
-            var res = await query.FirstOrDefaultAsync(m => m.Id == id);
-
-            return Mapper.Map(res)!;
-        }
-
-
-        public async Task<DAL.App.DTO.Product> ChangeBookingStatus(Guid id)
+        public async Task<DTO.Product> ChangeBookingStatus(Guid? id)
         {
 
             var query = CreateQuery();
@@ -133,7 +117,7 @@ namespace DAL.App.EF.Repositories
             if (userId != default)
             {
                 query = query
-                    .Where(c => c.AppUserId == userId);
+                    .Include(x => x.City).Where(c => c.AppUserId == userId);
             }
 
             var res = await query.Select(x => Mapper.Map(x)).ToListAsync();
@@ -157,6 +141,50 @@ namespace DAL.App.EF.Repositories
 
             return Mapper.Map(res);
         }
+
+        public void RemoveProductAsync(Guid id, Guid userId = default)
+        {
+            var query = CreateQuery();
+
+            query = query
+                .Where(x => x.Id == id);
+
+            foreach (var l in query)
+            {
+
+                RepoDbSet.Remove(l);
+            }
+        }
+
+        public async Task<IEnumerable<DAL.App.DTO.Product?>> GetId(Guid userId)
+        {
+            var query = CreateQuery();
+            var resQuery= query
+                .Where(c => c.AppUserId == userId);
+
+            var res = await resQuery.Select(x => Mapper.Map(x)).ToListAsync();
+
+            return res!;
+        }
+
+
+        public void DeleteAll(Guid userId)
+        {
+            var query = CreateQuery();
+
+            query = query
+                .Where(x => x.AppUserId == userId);
+
+            foreach (var l in query)
+            {
+
+                RepoDbSet.Remove(l);
+            }
+
+
+        }
+
+
 
 
     }

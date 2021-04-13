@@ -17,5 +17,7 @@ namespace Contracts.DAL.App.Repositories
     {
         Task<TEntity?> FirstOrDefaultMessagesAsync(Guid id, Guid userId = default,
             bool noTracking = true);
+
+        void RemoveMessagesAsync(Guid id);
     }
 }

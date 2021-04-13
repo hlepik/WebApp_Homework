@@ -1,5 +1,7 @@
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using BLL.App.Mappers;
@@ -22,6 +24,21 @@ namespace BLL.App.Services
         public async Task<BLLAppDTO.Booking> FirstOrDefaultDTOAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
             return Mapper.Map(await ServiceRepository.FirstOrDefaultDTOAsync(id))!;
+        }
+
+        public async Task<Guid?> GetId(Guid id)
+        {
+            return await ServiceRepository.GetId(id);
+        }
+
+        public void RemoveBookingAsync(Guid? id, Guid userId = default)
+        {
+            ServiceRepository.RemoveBookingAsync(id, userId);
+        }
+
+        public async Task<IEnumerable<BLLAppDTO.Booking?>> GetUsersBookings(Guid userId)
+        {
+            return (await ServiceRepository.GetUsersBookings(userId)).Select(x => Mapper.Map(x))!;;
         }
     }
 

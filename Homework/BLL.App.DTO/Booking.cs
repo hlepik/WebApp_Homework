@@ -19,9 +19,9 @@ namespace BLL.App.DTO
         public DateTime? Until { get; set; }
 
         public Guid ProductId { get; set; }
-        public Product? Product { get; set; }
+        public string Product { get; set; } = default!;
         public Guid AppUserId { get; set; }
-        public AppUser? AppUser { get; set; }
+
 
     }
 }

@@ -10,7 +10,7 @@ namespace Domain.App
     public class UserMessages: DomainEntityId, IDomainAppUserId, IDomainAppUser<AppUser>
     {
 
-        public Guid MessageFormId { get; set; }
+        public Guid? MessageFormId { get; set; }
         public MessageForm? MessageForm { get; set; }
 
         public Guid AppUserId { get; set; }

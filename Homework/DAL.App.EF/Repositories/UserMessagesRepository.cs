@@ -72,5 +72,45 @@ namespace DAL.App.EF.Repositories
 
             return await resQuery;
         }
+
+        public void RemoveUserMessagesAsync(Guid id, Guid userId)
+        {
+            var query = CreateQuery();
+
+            query = query
+                .Where(x => x.Id == id && x.AppUserId == userId);
+
+            foreach (var l in query)
+            {
+                RepoDbSet.Remove(l);
+            }
+        }
+
+        public void RemoveUserMessagesByUser(Guid userId)
+        {
+            var query = CreateQuery();
+
+            query = query
+                .Where(x => x.AppUserId == userId);
+
+            foreach (var l in query)
+            {
+                RepoDbSet.Remove(l);
+            }
+        }
+
+        public async Task<DTO.UserMessages> GetByMessageFormId(Guid id)
+        {
+            var query = CreateQuery();
+            var res = await query.FirstOrDefaultAsync(m => m.MessageFormId == id);
+
+
+            res.MessageFormId = new Guid();
+            RepoDbContext.Update(res);
+
+            return Mapper.Map(res)!;
+        }
+
+
     }
 }

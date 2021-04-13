@@ -5,6 +5,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\BLL.App\BLL.App.csproj" />
+      <ProjectReference Include="..\DAL.Base.EF\DAL.Base.EF.csproj" />
       <ProjectReference Include="..\Domain.Base\Domain.Base.csproj" />
     </ItemGroup>
 

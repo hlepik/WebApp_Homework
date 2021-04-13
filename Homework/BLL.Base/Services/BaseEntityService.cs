@@ -32,7 +32,7 @@ namespace BLL.Base.Services
         protected TUnitOfWork ServiceUow;
         protected TRepository ServiceRepository;
         protected IBaseMapper<TBllEntity, TDalentity> Mapper;
-
+        private readonly Dictionary<TBllEntity, TDalentity> _entityCache = new();
         public BaseEntityService(TUnitOfWork serviceUow, TRepository serviceRepository, IBaseMapper<TBllEntity, TDalentity> mapper)
         {
             ServiceUow = serviceUow;
@@ -42,7 +42,21 @@ namespace BLL.Base.Services
 
         public TBllEntity Add(TBllEntity entity)
         {
-            return Mapper.Map(ServiceRepository.Add(Mapper.Map(entity)!))!;
+            var dalEntity = Mapper.Map(entity)!;
+            var updatedDalEntity = ServiceRepository.Add(dalEntity);
+            var returnBllEntity = Mapper.Map(updatedDalEntity)!;
+
+            _entityCache.Add(entity, dalEntity);
+
+            return returnBllEntity;
+        }
+
+        public TBllEntity GetUpdatedEntityAfterSaveChanges(TBllEntity entity)
+        {
+            var dalEntity = _entityCache[entity]!;
+            var updatedDalEntity = ServiceRepository.GetUpdatedEntityAfterSaveChanges(dalEntity);
+            var bllEntity = Mapper.Map(updatedDalEntity)!;
+            return bllEntity;
         }
 
         public TBllEntity Update(TBllEntity entity)
@@ -54,6 +68,8 @@ namespace BLL.Base.Services
         {
             return Mapper.Map(ServiceRepository.Remove(Mapper.Map(entity)!, userId))!;
         }
+
+
 
         public async Task<IEnumerable<TBllEntity>> GetAllAsync(TKey? userId = default, bool noTracking = true)
         {

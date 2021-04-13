@@ -41,13 +41,8 @@ namespace DAL.App.EF
             {
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;
             }
-            // builder.Entity<DTO.Booking>()
-            //     .HasOne(a => a.Product)
-            //     .WithOne(b => b!.Booking!)
-            //     .HasForeignKey<Booking>(a => a.ProductId);
+
         }
-
-
 
     }
 }

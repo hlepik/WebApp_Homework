@@ -1,6 +1,6 @@
-using System;
-using BLL.App.DTO;
+
 using Microsoft.AspNetCore.Mvc.Rendering;
+#pragma warning disable 1591
 
 namespace WebApp.ViewModels.Picture
 {
@@ -9,6 +9,5 @@ namespace WebApp.ViewModels.Picture
         public BLL.App.DTO.Picture Picture { get; set; } = default!;
 
         public SelectList? ProductSelectList { get; set; }
-
     }
 }

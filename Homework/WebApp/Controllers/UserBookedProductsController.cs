@@ -1,17 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
 using Domain.App;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels.UserBookedProducts;
+#pragma warning disable 1591
 
 namespace WebApp.Controllers
 {
@@ -29,7 +25,7 @@ namespace WebApp.Controllers
         // GET: UserBookedProducts
         public async Task<IActionResult> Index()
         {
-            return View(await _bll.UserBookedProducts.GetAllBookedProductsAsync(User.GetUserId()!.Value));
+            return View(await _bll.UserBookedProducts.GetAllAsync(User.GetUserId()!.Value));
 
         }
 
@@ -148,7 +144,13 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _bll.UserBookedProducts.RemoveAsync(id, User.GetUserId()!.Value);
+            var booking = await _bll.UserBookedProducts.GetId(id);
+            var product = await _bll.Booking.GetId(booking);
+            var bookingStatus = await _bll.Product.ChangeBookingStatus(product);
+            bookingStatus.IsBooked = false;
+            _bll.Product.Update(bookingStatus);
+            _bll.UserBookedProducts.RemoveUserBookedProductsAsync(product);
+            _bll.Booking.RemoveBookingAsync(booking);
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

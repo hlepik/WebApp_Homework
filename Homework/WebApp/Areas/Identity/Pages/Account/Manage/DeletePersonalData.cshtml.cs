@@ -1,11 +1,14 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Contracts.BLL.App;
 using Domain.App.Identity;
+using Extensions.Base;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+#pragma warning disable 1591
 
 namespace WebApp.Areas.Identity.Pages.Account.Manage
 {
@@ -14,15 +17,18 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
+        private readonly IAppBLL _bll;
 
         public DeletePersonalDataModel(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            ILogger<DeletePersonalDataModel> logger)
+            ILogger<DeletePersonalDataModel> logger, IAppBLL bll)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _bll = bll;
+
         }
 
         [BindProperty]
@@ -67,7 +73,29 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
                 }
             }
 
+            var id = await _bll.Product.GetId(User.GetUserId()!.Value);
+
+            foreach (var each in id)
+            {
+                _bll.ProductMaterial.RemoveProductMaterialsAsync(each!.Id);
+                _bll.Picture.RemovePictureAsync(each.Id);
+            }
+
+            var bookingId = await _bll.Booking.GetUsersBookings(User.GetUserId()!.Value);
+            foreach (var each in bookingId)
+            {
+                _bll.UserBookedProducts.RemoveUserBookedProductsAsync(each!.ProductId);
+                var bookingStatus = await _bll.Product.ChangeBookingStatus(each.ProductId);
+                bookingStatus.IsBooked = false;
+                _bll.Product.Update(bookingStatus);
+
+            }
+            _bll.Booking.RemoveBookingAsync(null, User.GetUserId()!.Value);
+            _bll.Product.DeleteAll(User.GetUserId()!.Value);
+
+            _bll.UserMessages.RemoveUserMessagesByUser(User.GetUserId()!.Value);
             var result = await _userManager.DeleteAsync(user);
+
             var userId = await _userManager.GetUserIdAsync(user);
             if (!result.Succeeded)
             {

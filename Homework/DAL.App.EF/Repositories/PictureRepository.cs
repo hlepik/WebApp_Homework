@@ -48,10 +48,10 @@ namespace DAL.App.EF.Repositories
                 Url = p.Url,
                 ProductId = p.ProductId,
                 ProductOwner = p.Product!.AppUserId,
-                ProductName = p.Product!.Description
+                Product = p.Product!.Description
 
             }).Where(p => p.ProductOwner == userId)
-                .OrderBy(x => x.ProductName);
+                .OrderBy(x => x.Product);
 
             return await resQuery.ToListAsync();
 
@@ -68,13 +68,34 @@ namespace DAL.App.EF.Repositories
                 {
                     Id = p.Id,
                     Url = p.Url,
-                    ProductName = p.Product!.Description,
+                    Product = p.Product!.Description,
                     ProductId = p.Product.Id,
                     ProductOwner = p.Product.AppUserId
 
             }).FirstOrDefaultAsync(m => m.Id == id);
 
             return await resQuery;
+        }
+        public async Task<Guid> GetId(Guid id)
+        {
+            var query = RepoDbContext
+                .Pictures
+                .Where(x => x.ProductId == id)
+                .Select(x => x.Id);
+
+            return await query.FirstAsync();
+        }
+        public void RemovePictureAsync(Guid? id, Guid userId = default)
+        {
+            var query = CreateQuery(userId);
+
+            query = query
+                .Where(x => x.ProductId == id);
+
+            foreach (var l in query)
+            {
+                RepoDbSet.Remove(l);
+            }
         }
     }
 

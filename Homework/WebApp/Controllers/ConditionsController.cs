@@ -4,6 +4,7 @@ using Contracts.BLL.App;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Condition = BLL.App.DTO.Condition;
+#pragma warning disable 1591
 
 
 namespace WebApp.Controllers

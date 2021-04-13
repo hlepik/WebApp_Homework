@@ -248,7 +248,7 @@ namespace DAL.App.EF.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MessageFormId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MessageFormId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SenderEmail = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },

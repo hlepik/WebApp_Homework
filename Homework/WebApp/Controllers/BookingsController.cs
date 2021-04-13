@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Extensions.Base;
 using WebApp.ViewModels.Booking;
 using Product = Domain.App.Product;
+#pragma warning disable 1591
 
 
 namespace WebApp.Controllers
@@ -26,6 +27,7 @@ namespace WebApp.Controllers
 
         public async Task<IActionResult> Index()
         {
+
             return View(await _bll.Product.GetAllProductsAsync());
 
         }
@@ -39,7 +41,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var product = await _bll.Booking.FirstOrDefaultDTOAsync(id.Value);
+            var product = await _bll.Product.FirstOrDefaultDTOAsync(id.Value);
 
 
             return View(product);
@@ -61,11 +63,10 @@ namespace WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BookingCreateEditViewModels vm, BLL.App.DTO.Booking booking)
+        public async Task<IActionResult> Create(BookingCreateEditViewModels vm)
         {
             if (ModelState.IsValid)
             {
-
 
                 var product = await _bll.Product.ChangeBookingStatus(vm.Booking.ProductId);
                 product.IsBooked = true;
@@ -75,12 +76,10 @@ namespace WebApp.Controllers
 
                 var myBookings = new UserBookedProducts
                 {
-                    Booking = vm.Booking
+                    BookingId = vm.Booking.Id
                 };
                 _bll.UserBookedProducts.Add(myBookings);
-                _bll.Booking.Add(vm.Booking);
                 _bll.Product.Update(product);
-
 
                 await _bll.SaveChangesAsync();
 
@@ -157,11 +156,11 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
+
+
             await _bll.Booking.RemoveAsync(id, User.GetUserId()!.Value);
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-
     }
 }

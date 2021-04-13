@@ -31,7 +31,6 @@ namespace Domain.App
 
         public Guid? UnitId { get; set;}
         public Unit? Unit { get; set; }
-
         public Guid CategoryId { get; set;}
         public Category? Category { get; set; }
 

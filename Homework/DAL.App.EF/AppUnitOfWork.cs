@@ -38,7 +38,6 @@ namespace DAL.App.EF
 
         public IProductRepository Product => GetRepository(() => new ProductRepository(UowDbContext, Mapper));
 
-        public IProductPicturesRepository ProductPictures => GetRepository(() => new ProductPicturesRepository(UowDbContext, Mapper));
 
 
     }

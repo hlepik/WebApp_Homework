@@ -4,6 +4,7 @@ using Contracts.BLL.App;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Category = BLL.App.DTO.Category;
+#pragma warning disable 1591
 
 
 namespace WebApp.Controllers
@@ -22,6 +23,7 @@ namespace WebApp.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
+
             return View(await _bll.Category.GetAllCategoriesAsync());
 
         }

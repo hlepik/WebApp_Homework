@@ -8,13 +8,19 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using Domain.App;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using PublicApi.DTO.v1;
+using PublicApi.DTO.v1.Mappers;
+using Material = Domain.App.Material;
 
 namespace WebApp.ApiControllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// API controller for Material
+    /// </summary>
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
@@ -23,74 +29,128 @@ namespace WebApp.ApiControllers
     {
 
         private readonly IAppBLL _bll;
+        private readonly MaterialMapper _mapper = new MaterialMapper();
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="bll"></param>
         public MaterialsController(IAppBLL bll)
         {
             _bll = bll;
         }
 
-        // GET: api/Materials
+        /// <summary>
+        /// Get all materials
+        /// </summary>
+        /// <returns>Entities from db</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BLL.App.DTO.Material>>> GetMaterials()
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.Material), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.Material>>> GetMaterials()
         {
-            return Ok(await _bll.Material.GetAllAsync());
+            return Ok((await _bll.Material.GetAllAsync()).Select(s => new PublicApi.DTO.v1.Material()
+            {
+                Id = s.Id,
+                Name = s.Name,
+                Comment = s.Comment
+            }));
         }
 
-        // GET: api/Materials/5
+        /// <summary>
+        /// Get one material. Based on parameter: Id
+        /// </summary>
+        /// <param name="id">Id of object to retrieve, Guid</param>
+        /// <returns>Material entity from db</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<BLL.App.DTO.Material>> GetMaterial(Guid id)
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.Material), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
+        public async Task<ActionResult<PublicApi.DTO.v1.Material>> GetMaterial(Guid id)
         {
             var material = await _bll.Material.FirstOrDefaultAsync(id);
 
             if (material == null)
             {
-                return NotFound();
+                return NotFound(new Message("Material not found"));
             }
 
-            return material;
+            return Ok(_mapper.Map(material));
         }
 
-        // PUT: api/Materials/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update material
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="material"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMaterial(Guid id, BLL.App.DTO.Material material)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
+
+        public async Task<IActionResult> PutMaterial(Guid id, PublicApi.DTO.v1.Material material)
         {
             if (id != material.Id)
             {
-                return BadRequest();
+                return BadRequest(new Message("Id and material.id do not match"));
             }
 
-            _bll.Material.Update(material);
+
+            _bll.Material.Update(_mapper.Map(material));
             await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/Materials
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Post material
+        /// </summary>
+        /// <param name="material"></param>
+        /// <returns></returns>
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.Material), StatusCodes.Status200OK)]
         [HttpPost]
-        public async Task<ActionResult<Material>> PostMaterial(BLL.App.DTO.Material material)
+        public async Task<ActionResult<PublicApi.DTO.v1.Material>> PostMaterial(PublicApi.DTO.v1.Material material)
         {
-            _bll.Material.Add(material);
+            _bll.Material.Add(_mapper.Map(material));
             await _bll.SaveChangesAsync();
 
-            return CreatedAtAction("GetMaterial", new { id = material.Id }, material);
+            return CreatedAtAction("GetMaterial",
+                new
+                {
+                    id = material.Id,
+                    version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0"
+
+                }, material);
         }
 
-        // DELETE: api/Materials/5
+        /// <summary>
+        /// Delete material
+        /// </summary>
+        /// <param name="id">Guid id of item to delete</param>
+        /// <returns></returns>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "admin")]
         [HttpDelete("{id}")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PublicApi.DTO.v1.Material))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
         public async Task<IActionResult> DeleteMaterial(Guid id)
         {
             var material = await _bll.Material.FirstOrDefaultAsync(id);
             if (material == null)
             {
-                return NotFound();
+                 return NotFound(new Message("Material not found"));
             }
 
             _bll.Material.Remove(material);
             await _bll.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(material);
         }
 
     }

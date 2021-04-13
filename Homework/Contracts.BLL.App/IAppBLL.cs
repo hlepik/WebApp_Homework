@@ -21,7 +21,6 @@ namespace Contracts.BLL.App
         IMessageFormService MessageForm { get; }
         IPictureService Picture { get; }
         IProductMaterialService ProductMaterial{ get; }
-        IProductPicturesService ProductPictures { get; }
         IUnitService Unit { get; }
         IUserMessagesService UserMessages { get; }
     }

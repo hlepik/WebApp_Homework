@@ -16,7 +16,6 @@ namespace BLL.App.DTO.MappingProfiles
             CreateMap<Picture, DAL.App.DTO.Picture>().ReverseMap();
             CreateMap<Product, DAL.App.DTO.Product>().ReverseMap();
             CreateMap<ProductMaterial, DAL.App.DTO.ProductMaterial>().ReverseMap();
-            CreateMap<ProductPictures, DAL.App.DTO.ProductPictures>().ReverseMap();
             CreateMap<Unit, DAL.App.DTO.Unit>().ReverseMap();
             CreateMap<UserBookedProducts, DAL.App.DTO.UserBookedProducts>().ReverseMap();
             CreateMap<UserMessages, DAL.App.DTO.UserMessages>().ReverseMap();

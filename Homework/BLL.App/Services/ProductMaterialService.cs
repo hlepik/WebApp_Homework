@@ -22,7 +22,7 @@ namespace BLL.App.Services
         }
 
 
-        public async Task<BLLAppDTO.ProductMaterial> FirstOrDefaultDTOAsync(Guid id, Guid userId,
+        public async Task<BLLAppDTO.ProductMaterial?> FirstOrDefaultDTOAsync(Guid id, Guid userId,
             bool noTracking = true)
         {
             return Mapper.Map(await ServiceRepository.FirstOrDefaultDTOAsync(id, userId, noTracking))!;
@@ -33,6 +33,17 @@ namespace BLL.App.Services
         {
             return (await ServiceRepository.GetAllProductMaterialsAsync(userId, noTracking)).Select(x => Mapper.Map(x))!;
 
+        }
+
+        public async Task<Guid> GetId(Guid id)
+        {
+            return await ServiceRepository.GetId(id);
+
+        }
+
+        public void RemoveProductMaterialsAsync(Guid? id, Guid userId = default)
+        {
+            ServiceRepository.RemoveProductMaterialsAsync(id);
         }
     }
 }

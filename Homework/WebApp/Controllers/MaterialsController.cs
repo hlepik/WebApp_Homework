@@ -1,16 +1,10 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
-using Contracts.DAL.App;
-using Contracts.DAL.App.Repositories;
-using DAL.App.EF;
-using DAL.App.EF.Repositories;
-using Domain.App;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Material = BLL.App.DTO.Material;
+#pragma warning disable 1591
 
 namespace WebApp.Controllers
 {

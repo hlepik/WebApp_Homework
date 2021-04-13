@@ -30,5 +30,15 @@ namespace BLL.App.Services
              return Mapper.Map(await ServiceRepository.FirstOrDefaultBookedProductsAsync(id, userId, noTracking));
 
         }
+
+        public async Task<Guid> GetId(Guid id)
+        {
+            return await ServiceRepository.GetId(id);
+        }
+
+        public void RemoveUserBookedProductsAsync(Guid? id, Guid userId = default)
+        {
+            ServiceRepository.RemoveUserBookedProductsAsync(id);
+        }
     }
 }

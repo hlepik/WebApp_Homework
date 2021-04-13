@@ -21,7 +21,7 @@ namespace DAL.App.EF.Repositories
         }
 
 
-        public async Task<DAL.App.DTO.ProductMaterial> FirstOrDefaultDTOAsync(Guid id = default, Guid userId = default,
+        public async Task<DAL.App.DTO.ProductMaterial?> FirstOrDefaultDTOAsync(Guid id = default, Guid userId = default,
             bool noTracking = true)
         {
             var query = CreateQuery(default, noTracking);
@@ -31,8 +31,8 @@ namespace DAL.App.EF.Repositories
                 .Select(p => new DAL.App.DTO.ProductMaterial()
             {
                 Id = p.Id,
-                ProductName = p.Products!.Description,
-                MaterialName = p.Material!.Name,
+                Product = p.Products!.Description,
+                Material = p.Material!.Name,
                 ProductOwner = p.Products.AppUserId,
                 ProductId = p.ProductId,
                 MaterialId = p.MaterialId
@@ -51,16 +51,41 @@ namespace DAL.App.EF.Repositories
             var resQuery = query.Select(p => new DAL.App.DTO.ProductMaterial()
                 {
                     Id = p.Id,
-                    ProductName = p.Products!.Description,
-                    MaterialName = p.Material!.Name,
+                    Product = p.Products!.Description,
+                    Material = p.Material!.Name,
                     ProductOwner = p.Products.AppUserId,
                     ProductId = p.ProductId,
                     MaterialId = p.MaterialId
 
                 }).Where(p => p.ProductOwner == userId)
-                .OrderBy(x => x.ProductName);
+                .OrderBy(x => x.Product);
 
             return await resQuery.ToListAsync();
+        }
+
+        public async Task<Guid> GetId(Guid id)
+        {
+            var query = RepoDbContext
+                .ProductMaterials
+                .Where(x => x.ProductId == id)
+                .Select(x => x.Id);
+
+            return await query.FirstAsync();
+        }
+
+
+        public void RemoveProductMaterialsAsync(Guid? id, Guid userId = default)
+        {
+            var query = CreateQuery();
+
+            query = query
+                .Where(x => x.ProductId == id || x.Id == id);
+
+            foreach (var l in query)
+            {
+                RepoDbSet.Remove(l);
+            }
+
         }
 
 

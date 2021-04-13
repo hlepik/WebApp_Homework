@@ -6,6 +6,7 @@ using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
 using MessageForm = BLL.App.DTO.MessageForm;
 using UserMessages = BLL.App.DTO.UserMessages;
+#pragma warning disable 1591
 
 namespace WebApp.Controllers
 {
@@ -64,7 +65,7 @@ namespace WebApp.Controllers
 
                 var userMessage = new UserMessages
                 {
-                    MessageForm = messageForm,
+                    MessageFormId = messageForm.Id,
                     AppUserId =  id,
                     SenderEmail = User.GetUserEmail()
 
@@ -123,7 +124,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var messageForm = await _bll.MessageForm.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var messageForm = await _bll.MessageForm.FirstOrDefaultMessagesAsync(id.Value);
 
             if (messageForm == null)
             {
@@ -138,7 +139,10 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _bll.MessageForm.RemoveAsync(id);
+
+            await _bll.UserMessages.GetByMessageFormId(id);
+
+            _bll.MessageForm.RemoveMessagesAsync(id);
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using WebApp.ViewModels.ProductMaterial;
+#pragma warning disable 1591
 
 
 namespace WebApp.Controllers
@@ -88,9 +89,9 @@ namespace WebApp.Controllers
 
 
             var vm = new ProductMaterialCreateEditViewModels();
-            vm.ProductMaterial = productMaterial;
+            vm.ProductMaterial = productMaterial!;
             vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(User.GetUserId()!.Value), nameof(Product.Id),
-                nameof(Product.Description), vm.ProductMaterial.ProductId);
+                nameof(Product.Description), vm.ProductMaterial!.ProductId);
             vm.MaterialSelectList = new SelectList(await _bll.Material.GetAllAsync(), nameof(Material.Id),
                 nameof(Material.Name), vm.ProductMaterial.MaterialId);
             return View(vm);
@@ -140,7 +141,7 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            await _bll.ProductMaterial.RemoveAsync(id);
+            _bll.ProductMaterial.RemoveProductMaterialsAsync(id);
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 

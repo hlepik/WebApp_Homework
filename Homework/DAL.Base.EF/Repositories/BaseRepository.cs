@@ -34,6 +34,8 @@ namespace DAL.Base.EF.Repositories
         protected readonly DbSet<TDomainEntity> RepoDbSet;
         protected readonly IBaseMapper<TDalEntity, TDomainEntity> Mapper;
 
+        private readonly Dictionary<TDalEntity, TDomainEntity> _entityCache = new();
+
         public BaseRepository(TDbContext dbContext, IBaseMapper<TDalEntity, TDomainEntity> mapper)
         {
             RepoDbContext = dbContext;
@@ -74,14 +76,31 @@ namespace DAL.Base.EF.Repositories
             bool noTracking = true)
         {
             var query = CreateQuery(userId, noTracking);
-
-            return await query.Select(d => Mapper.Map(d)).FirstOrDefaultAsync(e => e!.Id.Equals(id));
+            return Mapper.Map(await query.FirstOrDefaultAsync(e => e!.Id.Equals(id)));
+            // var query = CreateQuery(userId, noTracking);
+            // return await query.Select(d => Mapper.Map(d)).FirstOrDefaultAsync(e => e!.Id.Equals(id));
         }
 
         public virtual TDalEntity Add(TDalEntity entity)
         {
-            return Mapper.Map(RepoDbSet.Add(Mapper.Map(entity)!).Entity)!;
+            var domainEntity = Mapper.Map(entity)!;
+            var updatedDomainEntity = RepoDbSet.Add(domainEntity).Entity;
+            var dalEntity = Mapper.Map(updatedDomainEntity)!;
+
+            _entityCache.Add(entity, domainEntity);
+
+            return dalEntity;
         }
+
+
+        public TDalEntity GetUpdatedEntityAfterSaveChanges(TDalEntity entity)
+        {
+            var updatedEntity = _entityCache[entity]!;
+            var dalEntity = Mapper.Map(updatedEntity)!;
+
+            return dalEntity;
+        }
+
 
         public virtual TDalEntity Update(TDalEntity entity)
         {
@@ -101,6 +120,7 @@ namespace DAL.Base.EF.Repositories
 
             return Mapper.Map(RepoDbSet.Remove(Mapper.Map(entity)!).Entity)!;
         }
+
 
         public virtual async Task<TDalEntity> RemoveAsync(TKey id, TKey? userId = default)
         {

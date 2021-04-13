@@ -25,7 +25,7 @@ namespace DAL.App.EF.Repositories
 
 
             query = query
-                .Where(x => x.SenderId == userId);
+                .Where(x => x.SenderId == userId).OrderBy(x => x.DateSent);
 
             var res = await query.Select(x => Mapper.Map(x)).ToListAsync();
             return res!;
@@ -52,6 +52,18 @@ namespace DAL.App.EF.Repositories
 
             return await resQuery;
 
+        }
+        public void RemoveMessagesAsync(Guid id)
+        {
+            var query = CreateQuery();
+
+            query = query
+                .Where(x => x.Id == id);
+
+            foreach (var l in query)
+            {
+                RepoDbSet.Remove(l);
+            }
         }
     }
 

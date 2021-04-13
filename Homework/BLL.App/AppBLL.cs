@@ -24,8 +24,7 @@ namespace BLL.App
         public IProductService Product =>
             GetService<IProductService>(() => new ProductService(Uow, Uow.Product, Mapper));
 
-        public IProductPicturesService ProductPictures =>
-            GetService<IProductPicturesService>(() => new ProductPicturesService(Uow, Uow.ProductPictures, Mapper));
+
         public IBookingService Booking =>
             GetService<IBookingService>(() => new BookingService(Uow, Uow.Booking, Mapper));
         public IUserBookedProductsService UserBookedProducts =>

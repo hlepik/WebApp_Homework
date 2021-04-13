@@ -1,20 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Contracts.DAL.App;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.App.Identity;
-using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Razor.TagHelpers;
 using WebApp.Areas.Admin.ViewModels;
+#pragma warning disable 1591
 
 namespace WebApp.Areas.Admin.Controllers
 {
@@ -169,10 +164,7 @@ namespace WebApp.Areas.Admin.Controllers
         //Get: Admin/Roles/AddRole
         public async Task<IActionResult> AddRole(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+
             var role = await _roleManager.FindByIdAsync(id.ToString());
             var vm = new AppUserAddRoleViewModel();
             vm.Role = role;

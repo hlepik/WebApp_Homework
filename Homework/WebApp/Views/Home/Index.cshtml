@@ -1,8 +1,71 @@
-﻿@{
+﻿@model IEnumerable<BLL.App.DTO.Product>
+@{
     ViewData["Title"] = "Home Page";
 }
+<div class="text-centre">
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+    <h2>Reasently added products</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                Location
+            </th>
+            <th>
+                Pictures
+            </th>
+            <th>
+                is Booked?
+            </th>
+
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+
+            @{
+                var count = 0;
+            }
+            @if (count < 10)
+            {
+                count++;
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @if (item.CityName != null)
+                    {
+                        item.CountyName += ", " + item.CityName;
+                    }
+                    @if (item.LocationDescription != null)
+                    {
+                        item.CountyName += ", " + item.LocationDescription;
+                    }
+
+                    @Html.DisplayFor(modelItem => item.CountyName)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Pictures)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsBooked)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                </td>
+            }
+        </tr>
+}
+    </tbody>
+</table>
 </div>

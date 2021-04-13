@@ -15,11 +15,8 @@ namespace DAL.App.DTO
         public string? Subject { get; set; }
         public DateTime DateSent { get; set; }
 
-        public Guid MessageFormId { get; set; }
-        public MessageForm? MessageForm { get; set; }
-
+        public Guid? MessageFormId { get; set; }
         public Guid AppUserId { get; set; }
-        public AppUser? AppUser { get; set; }
         public string SenderEmail { get; set; } = default!;
 
     }

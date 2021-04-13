@@ -1,85 +1,155 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Contracts.BLL.App;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PublicApi.DTO.v1;
+using PublicApi.DTO.v1.Mappers;
+
 
 
 namespace WebApp.ApiControllers
 {
-    [Route("api/[controller]")]
+    /// <summary>
+    /// API controller for Booking
+    /// </summary>
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
 
     public class BookingsController : ControllerBase
     {
 
         private readonly IAppBLL _bll;
+        private readonly BookingMapper _mapper = new BookingMapper();
+        private readonly ProductMapper _mapperProduct = new ProductMapper();
 
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="bll"></param>
         public BookingsController(IAppBLL bll)
         {
             _bll = bll;
+
         }
 
-        // GET: api/Bookings
+        /// <summary>
+        /// Get all products
+        /// </summary>
+        /// <returns>Entities from db</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BLL.App.DTO.Booking>>> GetBookings()
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.Product), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.Product>>> GetBookings()
         {
+            return Ok((await _bll.Product.GetAllProductsAsync()).Select(s => new PublicApi.DTO.v1.Product()
+            {
+                Id = s.Id,
+                Description = s.Description,
+                IsBooked = s.IsBooked,
+                AppUserId = s.AppUserId,
+                CityName = s.CityName,
+                CountyName = s.CountyName,
+                LocationDescription = s.LocationDescription,
 
-            return Ok(await _bll.Product.GetAllProductsAsync());
-
+            }));
         }
-
-        // GET: api/Bookings/5
+        /// <summary>
+        /// Get one Product. Based on parameter: Id
+        /// </summary>
+        /// <param name="id">Id of object to retrieve, Guid</param>
+        /// <returns>Product entity from db</returns>
         [HttpGet("{id}")]
-        public async Task<ActionResult<BLL.App.DTO.Booking>> GetBooking(Guid id)
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.Product), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
+        public async Task<ActionResult<PublicApi.DTO.v1.Product>> GetBooking(Guid id)
         {
-            var booking = await _bll.Booking.FirstOrDefaultDTOAsync(id);
+            var product = await _bll.Product.FirstOrDefaultDTOAsync(id);
 
-            return booking;
+            if (product == null)
+            {
+                return NotFound(new Message("Product not found"));
+            }
+
+            return Ok(_mapperProduct.Map(product));
         }
-
-        // PUT: api/Bookings/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update booking
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="booking"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBooking(Guid id, BLL.App.DTO.Booking booking)
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
+        public async Task<IActionResult> PutBooking(Guid id, PublicApi.DTO.v1.Booking booking)
         {
             if (id != booking.Id)
             {
-                return BadRequest();
+                return BadRequest(new Message("Id and booking.id do not match"));
             }
 
-            _bll.Booking.Update(booking);
+
+            _bll.Booking.Update(_mapper.Map(booking));
             await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/Bookings
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Post Booking
+        /// </summary>
+        /// <param name="booking"></param>
+        /// <returns></returns>
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.Product), StatusCodes.Status200OK)]
         [HttpPost]
-        public async Task<ActionResult<DAL.App.DTO.Booking>> PostBooking(BLL.App.DTO.Booking booking)
+        public async Task<ActionResult<PublicApi.DTO.v1.Booking>> PostBooking(PublicApi.DTO.v1.Booking booking)
         {
-            _bll.Booking.Add(booking);
+            _bll.Booking.Add(_mapper.Map(booking));
             await _bll.SaveChangesAsync();
 
-            return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
+            return CreatedAtAction(
+                "GetBooking",
+                new
+                {
+                    id = booking.Id
+
+                }, booking);
         }
 
-        // DELETE: api/Bookings/5
+        /// <summary>
+        /// Delete booking
+        /// </summary>
+        /// <param name="id">Guid id of item to delete</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PublicApi.DTO.v1.Booking))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
         public async Task<IActionResult> DeleteBooking(Guid id)
         {
             var booking = await _bll.Booking.FirstOrDefaultAsync(id);
             if (booking == null)
             {
-                return NotFound();
+                return NotFound(new Message($"Booking with id {id} not found"));
             }
 
             _bll.Booking.Remove(booking);
             await _bll.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(booking);
         }
 
     }
