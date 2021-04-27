@@ -4,25 +4,23 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
-
-<h4>Booking</h4>
+<h4>@Resources.BLL.App.DTO.Bookings.Booking</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="All" class="text-danger"></div>
 
               <partial name="_CreateEdit" model="Model"/>
             <div class="form-group">
-                <input type="submit" value="Reserve" class="btn btn-primary" />
+                <input type="submit" value=@Resources.BLL.App.DTO.Bookings.Reserve class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">@Resources.Views.Crud.CRUD.Index</a>
 </div>
 
 @section Scripts {

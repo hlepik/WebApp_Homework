@@ -50,12 +50,21 @@ namespace WebApp.ApiControllers
                 .Select(s => new PublicApi.DTO.v1.Product()
                 {
                     Description = s.Description,
-                    CityName = s.CityName,
-                    CountyName = s.CountyName,
+                    City = s.City,
+                    County = s.County,
                     LocationDescription = s.LocationDescription,
                     AppUserId = s.AppUserId,
                     IsBooked = s.IsBooked,
                     DateAdded = s.DateAdded,
+                    Color = s.Color,
+                    Condition = s.Condition,
+                    Material = s.Material!,
+                    Width = s.Width,
+                    Height = s.Height,
+                    Depth = s.Depth,
+                    HasTransport = s.HasTransport,
+                    Unit = s.Unit,
+                    Id = s.Id
 
                 }));
         }
@@ -124,7 +133,7 @@ namespace WebApp.ApiControllers
         /// <returns></returns>
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(PublicApi.DTO.v1.Product), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Product))]
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(PublicApi.DTO.v1.Product product)
         {

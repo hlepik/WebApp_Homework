@@ -4,9 +4,9 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
+<h1>@Resources.Views.Crud.CRUD.Delete</h1>
 
-<h3>Are you sure you want to remove this?</h3>
+<h3>@Resources.Views.Crud.CRUD.Confirmation</h3>
 <div>
 
     <hr />
@@ -16,7 +16,7 @@
 
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Remove" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input type="submit" value=@Resources.Views.Shared.Buttons.Remove class="btn btn-danger" /> |
+        <a asp-action="Index">@Resources.Views.Crud.CRUD.Index</a>
     </form>
 </div>

@@ -8,7 +8,7 @@
 <p>
     @if (User.IsInRole("Admin"))
         {
-            <a asp-action="Create">Create New</a>
+            <a asp-action="Create">@Resources.Views.Crud.CRUD.Create</a>
         }
 
 </p>
@@ -30,14 +30,14 @@
             <td>
                 @if (User.IsInRole("Admin"))
                    {
-                       <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                       <a asp-action="Edit" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Edit</a>
                        <text> | </text>
-                       <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                       <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Details</a>
 
                    }
                    else
                    {
-                       <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                       <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Details</a>
                    }
             </td>
         </tr>

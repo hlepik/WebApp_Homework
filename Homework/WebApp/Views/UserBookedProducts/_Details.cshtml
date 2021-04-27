@@ -7,20 +7,20 @@
          @Html.DisplayFor(model => model.Description)
      </dd>
       <dt class = "col-sm-2">
-         @Html.DisplayNameFor(model => model.Color)
+        @Html.DisplayNameFor(model => model.Color)
      </dt>
      <dd class = "col-sm-10">
          @Html.DisplayFor(model => model.Color)
      </dd>
      <dt class = "col-sm-2">
-         Time booked
+     @Html.DisplayNameFor(model => model.TimeBooked)
      </dt>
 
      <dd class = "col-sm-10">
          @Html.DisplayFor(model => model.TimeBooked)
      </dd>
      <dt class = "col-sm-2">
-         @Html.DisplayNameFor(model => model.Until)
+           @Html.DisplayNameFor(model => model.Until)
      </dt>
 
      <dd class = "col-sm-10">
@@ -28,7 +28,7 @@
      </dd>
 
     <dt class = "col-sm-2">
-        Location
+   @Html.DisplayFor(model => model.LocationDescription)
     </dt>
     <dd class = "col-sm-10">
     @{
@@ -45,7 +45,7 @@
         @location
     </dd>
     <dt class = "col-sm-2">
-        Does product has transport?
+        @Html.DisplayNameFor(model => model.HasTransport)
     </dt>
     <dd class = "col-sm-10">
         @Html.DisplayFor(model => model.HasTransport)

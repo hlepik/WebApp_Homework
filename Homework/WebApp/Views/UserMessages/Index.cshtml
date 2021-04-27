@@ -4,13 +4,13 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Messages</h1>
+<h1>@Resources.BLL.App.DTO.UserMessage.UserMessages</h1>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                From
+                @Html.DisplayNameFor(model => model.SenderEmail)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Subject)
@@ -42,9 +42,9 @@
             </td>
 
             <td>
-                <a asp-action="Edit"  asp-route-id="@item.Id">Reply</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">View</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit"  asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Reply</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.View</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Delete</a>
             </td>
         </tr>
 }

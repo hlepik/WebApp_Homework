@@ -115,7 +115,7 @@ namespace WebApp.ApiControllers
         /// <returns></returns>
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(PublicApi.DTO.v1.UserBookedProducts), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserBookedProducts))]
         [HttpPost]
         public async Task<ActionResult<PublicApi.DTO.v1.UserBookedProducts>> PostUserBookedProducts(PublicApi.DTO.v1.UserBookedProducts userBookedProducts)
         {

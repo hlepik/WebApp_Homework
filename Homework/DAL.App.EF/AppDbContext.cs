@@ -2,6 +2,7 @@
 using System.Linq;
 using Domain.App;
 using Domain.App.Identity;
+using Domain.Base;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,10 @@ namespace DAL.App.EF
         public DbSet<UserMessages> UserMessages { get; set; } = default!;
         public DbSet<Unit> Units { get; set; } = default!;
         public DbSet<City> Cities { get; set; } = default!;
+        public DbSet<LangString> LangStrings { get; set; } = default!;
+        public DbSet<Translation> Translations { get; set; } = default!;
+
+
 
 
 
@@ -34,7 +39,12 @@ namespace DAL.App.EF
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+
+
             base.OnModelCreating(builder);
+            builder.Entity<Translation>().HasKey(k => new { k.Culture, k.LangStringId});
+
+
 
             // disable cascade delete initially for everything
             foreach (var relationship in builder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))

@@ -6,9 +6,9 @@
     <span asp-validation-for="Picture.Url" class="text-danger"></span>
 </div>
 <div class="form-group">
-    <label asp-for="Picture.ProductId" class="control-label"></label>
+    <label asp-for="Picture.ProductId" class="control-label">@Resources.BLL.App.DTO.Pictures.ProductName</label>
     <select asp-for="Picture.ProductId" class="form-control" asp-items="Model.ProductSelectList">
-        <option>--- Please select ---</option>
+        <option>--- @Resources.DropDown.DropDown.Select ---</option>
     </select>
     <span asp-validation-for="Picture.ProductId" class="text-danger"></span>
 </div>

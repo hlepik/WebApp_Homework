@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Contracts.BLL.App;
+using Extensions.Base;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PublicApi.DTO.v1;
@@ -54,9 +55,10 @@ namespace WebApp.ApiControllers
                 Description = s.Description,
                 IsBooked = s.IsBooked,
                 AppUserId = s.AppUserId,
-                CityName = s.CityName,
-                CountyName = s.CountyName,
+                City = s.City,
+                County = s.County,
                 LocationDescription = s.LocationDescription,
+                DateAdded = s.DateAdded
 
             }));
         }
@@ -90,12 +92,12 @@ namespace WebApp.ApiControllers
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
         public async Task<IActionResult> PutBooking(Guid id, PublicApi.DTO.v1.Booking booking)
         {
             if (id != booking.Id)
             {
-                return BadRequest(new Message("Id and booking.id do not match"));
+                return NotFound(new Message("Id and booking.id do not match"));
             }
 
 
@@ -112,10 +114,18 @@ namespace WebApp.ApiControllers
         /// <returns></returns>
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(PublicApi.DTO.v1.Product), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Booking))]
         [HttpPost]
         public async Task<ActionResult<PublicApi.DTO.v1.Booking>> PostBooking(PublicApi.DTO.v1.Booking booking)
         {
+
+            var product = await _bll.Product.ChangeBookingStatus(booking.ProductId);
+            product.IsBooked = true;
+
+            booking.AppUserId = User.GetUserId()!.Value;
+            booking.TimeBooked = DateTime.Now;
+
+            _bll.Product.Update(product);
             _bll.Booking.Add(_mapper.Map(booking));
             await _bll.SaveChangesAsync();
 

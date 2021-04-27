@@ -84,13 +84,13 @@ namespace WebApp.ApiControllers
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
 
         public async Task<IActionResult> PutCondition(Guid id, PublicApi.DTO.v1.Condition condition)
         {
             if (id != condition.Id)
             {
-                return BadRequest(new Message("Id and condition.id do not match"));
+                return NotFound(new Message("Id and condition.id do not match"));
             }
 
             _bll.Condition.Update(_mapper.Map(condition));
@@ -105,7 +105,7 @@ namespace WebApp.ApiControllers
         /// <returns></returns>
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(PublicApi.DTO.v1.Condition), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Condition))]
         [HttpPost]
         public async Task<ActionResult<PublicApi.DTO.v1.Condition>> PostCondition(PublicApi.DTO.v1.Condition condition)
         {

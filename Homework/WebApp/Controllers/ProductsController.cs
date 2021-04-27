@@ -132,6 +132,7 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
+                vm.Product.AppUserId = User.GetUserId()!.Value;
                 _bll.Product.Update(vm.Product);
                 await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

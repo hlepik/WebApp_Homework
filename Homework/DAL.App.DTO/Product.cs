@@ -11,6 +11,7 @@ namespace DAL.App.DTO
     {
 
         public IEnumerable<string>? Material { get; set; }
+
         [MaxLength(500)] public string Description { get; set; } = default!;
         [MaxLength(64)] public string? Color { get; set; }
 
@@ -38,17 +39,17 @@ namespace DAL.App.DTO
 
         public ICollection<ProductMaterial>? ProductMaterials { get; set; }
 
-        public DateTime DateAdded { get; set; }
+        [DataType(DataType.Date)]public DateTime DateAdded { get; set; }
 
         public Guid AppUserId { get; set; }
 
         [MaxLength(128)]
-        public string? CityName { get; set; }
+        public string? City { get; set; }
         [MaxLength(128)]
-        public string? CountyName { get; set; }
-        public string? UnitName { get; set; }
-        public string? CategoryName { get; set; }
-        public string? ConditionName { get; set; }
+        public string? County { get; set; }
+        public string? Unit { get; set; }
+        public string? Category { get; set; }
+        public string? Condition { get; set; }
 
     }
 }

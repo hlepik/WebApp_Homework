@@ -4,8 +4,6 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
 <div>
     <hr />
    <dl class="row">
@@ -17,19 +15,19 @@
            @Html.DisplayFor(model => model.Description)
        </dd>
        <dt class = "col-sm-2">
-           County
+          @Html.DisplayNameFor(model => model.County)
        </dt>
        <dd class = "col-sm-10">
-           @Html.DisplayFor(model => model.CountyName)
+           @Html.DisplayFor(model => model.County)
        </dd>
         <dt class = "col-sm-2">
-          City
+          @Html.DisplayNameFor(model => model.City)
       </dt>
       <dd class = "col-sm-10">
-          @Html.DisplayFor(model => model.CityName)
+          @Html.DisplayFor(model => model.City)
       </dd>
        <dt class="col-sm-2">
-           Location description
+             @Html.DisplayNameFor(model => model.LocationDescription)
        </dt>
       <dd class = "col-sm-10">
           @Html.DisplayFor(model => model.LocationDescription)
@@ -45,5 +43,5 @@
    </dl>
 </div>
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">@Resources.Views.Crud.CRUD.Index</a>
 </div>

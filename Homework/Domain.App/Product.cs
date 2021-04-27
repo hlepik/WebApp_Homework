@@ -48,7 +48,7 @@ namespace Domain.App
 
         public ICollection<ProductMaterial>? ProductMaterials { get; set; }
 
-        public DateTime DateAdded { get; set; }
+        [DataType(DataType.Date)]public DateTime DateAdded { get; set; }
 
         public Guid AppUserId { get; set; }
         public AppUser? AppUser { get; set; }

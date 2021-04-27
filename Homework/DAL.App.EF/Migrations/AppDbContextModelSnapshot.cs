@@ -440,6 +440,41 @@ namespace DAL.App.EF.Migrations
                     b.ToTable("UserMessages");
                 });
 
+            modelBuilder.Entity("Domain.Base.LangString", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LangStrings");
+                });
+
+            modelBuilder.Entity("Domain.Base.Translation", b =>
+                {
+                    b.Property<string>("Culture")
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<Guid>("LangStringId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(10240)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Culture", "LangStringId");
+
+                    b.HasIndex("LangStringId");
+
+                    b.ToTable("Translations");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
@@ -668,6 +703,17 @@ namespace DAL.App.EF.Migrations
                     b.Navigation("MessageForm");
                 });
 
+            modelBuilder.Entity("Domain.Base.Translation", b =>
+                {
+                    b.HasOne("Domain.Base.LangString", "LangString")
+                        .WithMany("Translations")
+                        .HasForeignKey("LangStringId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("LangString");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Domain.App.Identity.AppRole", null)
@@ -766,6 +812,11 @@ namespace DAL.App.EF.Migrations
             modelBuilder.Entity("Domain.App.Unit", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Domain.Base.LangString", b =>
+                {
+                    b.Navigation("Translations");
                 });
 #pragma warning restore 612, 618
         }

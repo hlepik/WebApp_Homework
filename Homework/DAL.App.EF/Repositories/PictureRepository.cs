@@ -47,17 +47,15 @@ namespace DAL.App.EF.Repositories
                 Id = p.Id,
                 Url = p.Url,
                 ProductId = p.ProductId,
-                ProductOwner = p.Product!.AppUserId,
-                Product = p.Product!.Description
+                ProductName = p.Product!.Description
 
-            }).Where(p => p.ProductOwner == userId)
-                .OrderBy(x => x.Product);
+            }).OrderBy(x => x.ProductName);
 
             return await resQuery.ToListAsync();
 
         }
 
-        public override async Task<DAL.App.DTO.Picture?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
+        public  async Task<DAL.App.DTO.Picture?> FirstOrDefaultDTOAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
             var query = CreateQuery(default, noTracking);
 
@@ -68,9 +66,9 @@ namespace DAL.App.EF.Repositories
                 {
                     Id = p.Id,
                     Url = p.Url,
-                    Product = p.Product!.Description,
+                    ProductName = p.Product!.Description,
                     ProductId = p.Product.Id,
-                    ProductOwner = p.Product.AppUserId
+
 
             }).FirstOrDefaultAsync(m => m.Id == id);
 

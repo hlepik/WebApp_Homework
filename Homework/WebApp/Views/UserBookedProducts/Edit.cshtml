@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>@Resources.Views.Crud.CRUD.Edit</h1>
 
 <hr />
 <div class="row">
@@ -13,16 +13,15 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <partial name="_CreateEdit" model="Model"/>
 
-            @* <input type="hidden" asp-for="UserBookedProducts.Id" /> *@
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value=@Resources.Views.Shared.Buttons.Save class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">@Resources.Views.Crud.CRUD.Index</a>
 </div>
 
 @section Scripts {

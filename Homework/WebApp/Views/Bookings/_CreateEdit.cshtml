@@ -7,9 +7,9 @@
 </div>
 
 <div class="form-group">
-    <label asp-for="Booking.ProductId" class="control-label"></label>
+    <label asp-for="Booking.ProductId" class="control-label">@Resources.BLL.App.DTO.Products.Product</label>
     <select asp-for="Booking.ProductId" class="form-control" asp-items="Model.ProductSelectList">
-        <option>--- Please select ---</option>
+        <option>--- @Resources.DropDown.DropDown.Select ---</option>
     </select>
     <span asp-validation-for="Booking.ProductId" class="text-danger"></span>
 </div>

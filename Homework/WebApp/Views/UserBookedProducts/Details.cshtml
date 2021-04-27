@@ -4,7 +4,7 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>@Resources.Views.Crud.CRUD.Details</h1>
 
 <div>
 
@@ -13,6 +13,6 @@
 
 </div>
 <div>
-    <a asp-action="Delete" asp-route-id="@Model.Id">Remove</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id">@Resources.Views.Crud.CRUD.Delete</a> |
+    <a asp-action="Index">@Resources.Views.Crud.CRUD.Index</a>
 </div>

@@ -1,0 +1,77 @@
+<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Description" xml:space="preserve">
+        <value>Toote kirjeldus</value>
+    </data>
+    <data name="Color" xml:space="preserve">
+        <value>Värv</value>
+    </data>
+    <data name="IsBooked" xml:space="preserve">
+        <value>Broneeritud</value>
+    </data>
+    <data name="ProductAge" xml:space="preserve">
+        <value>Toote vanus</value>
+    </data>
+    <data name="City" xml:space="preserve">
+        <value>Linn</value>
+    </data>
+    <data name="County" xml:space="preserve">
+        <value>Maakond</value>
+    </data>
+    <data name="LocationDescription" xml:space="preserve">
+        <value>Täpsem asukoht</value>
+    </data>
+    <data name="Width" xml:space="preserve">
+        <value>Laius</value>
+    </data>
+    <data name="Depth" xml:space="preserve">
+        <value>Sügavus</value>
+    </data>
+    <data name="Height" xml:space="preserve">
+        <value>Kõrgus</value>
+    </data>
+    <data name="DateAdded" xml:space="preserve">
+        <value>Lisatud</value>
+    </data>
+    <data name="Picture" xml:space="preserve">
+        <value>Pildid</value>
+    </data>
+    <data name="Material" xml:space="preserve">
+        <value>Materjalid</value>
+    </data>
+    <data name="HasTransport" xml:space="preserve">
+        <value>Transport</value>
+    </data>
+    <data name="Unit" xml:space="preserve">
+        <value>Mõõtühik</value>
+    </data>
+    <data name="Condition" xml:space="preserve">
+        <value>Seisukord</value>
+    </data>
+    <data name="Category" xml:space="preserve">
+        <value>Kategooria</value>
+    </data>
+    <data name="Product" xml:space="preserve">
+        <value>Toode</value>
+    </data>
+    <data name="MyProduct" xml:space="preserve">
+        <value>Minu tooted</value>
+    </data>
+    <data name="ReasentlyAddedProducts" xml:space="preserve">
+        <value>Viimati lisatud asjad</value>
+    </data>
+    <data name="Location" xml:space="preserve">
+        <value>Asukoht</value>
+    </data>
+</root>

@@ -4,9 +4,9 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>@Resources.Views.Crud.CRUD.Create</h1>
 
-<h4>AppUser</h4>
+<h4>@Resources.Views.AppUser.AppUser.AppUsers</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -15,14 +15,14 @@
             <partial name="_CreateEdit" model="Model"/>
 
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value=@Resources.Views.Shared.Buttons.Create class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">@Resources.Views.Crud.CRUD.Index</a>
 </div>
 
 @section Scripts {

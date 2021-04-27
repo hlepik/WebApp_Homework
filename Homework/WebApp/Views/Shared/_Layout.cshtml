@@ -27,20 +27,19 @@
                     @* </li> *@
 
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Bookings" asp-action="Index">Find a product</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Bookings" asp-action="Index">@Resources.BLL.App.DTO.Bookings.FindAProduct</a>
                     </li>
 
                     @if (User.Identity?.IsAuthenticated ?? false)
                     {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Kasutaja valikud
+                                 @Resources.Views.Shared._Layout.UserMessages
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-                                <a class="nav-link text-dark" asp-area="" asp-controller="MessageForms" asp-action="Index">Send Message</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="UserBookedProducts" asp-action="Index">My Bookings</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="UserMessages" asp-action="Index">New Messages</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="MessageForms" asp-action="Index">@Resources.BLL.App.DTO.MessageForms.SendMessage</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="UserMessages" asp-action="Index">@Resources.BLL.App.DTO.UserMessage.NewMessage</a>
 
                             </div>
                         </li>
@@ -50,13 +49,13 @@
                     {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                My Product
+                               @Resources.BLL.App.DTO.Products.MyProduct
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">My Products</a>
-
-                                <a class="nav-link text-dark" asp-area="" asp-controller="ProductMaterials" asp-action="Index">Product Materials</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Pictures" asp-action="Index">Pictures</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">@Resources.BLL.App.DTO.Products.MyProduct</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="UserBookedProducts" asp-action="Index">@Resources.BLL.App.DTO.UserBookedProduct.UserBookedProducts</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="ProductMaterials" asp-action="Index">@Resources.BLL.App.DTO.ProductMaterials.ProductMaterial</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Pictures" asp-action="Index">@Resources.BLL.App.DTO.Pictures.Picture</a>
 
                             </div>
                         </li>
@@ -68,15 +67,15 @@
                     {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Search
+                              @Resources.Views.Shared._Layout.Search
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Categories" asp-action="Index">Categories</a>
-                                <a class="nav-link text-dark"  asp-area="" asp-controller="Materials" asp-action="Index">Materials</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Cities" asp-action="Index">Cities</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Counties" asp-action="Index">Counties</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Conditions" asp-action="Index">Condition</a>
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Units" asp-action="Index">Units</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Categories" asp-action="Index">@Resources.BLL.App.DTO.Categories.Category</a>
+                                <a class="nav-link text-dark"  asp-area="" asp-controller="Materials" asp-action="Index">@Resources.BLL.App.DTO.Materials.Material</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Cities" asp-action="Index">@Resources.BLL.App.DTO.Cities.City</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Counties" asp-action="Index">@Resources.BLL.App.DTO.Counties.County</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Conditions" asp-action="Index">@Resources.BLL.App.DTO.Conditions.Condition</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Units" asp-action="Index">@Resources.BLL.App.DTO.Units.Unit</a>
 
                             </div>
                         </li>
@@ -86,11 +85,11 @@
                     {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Users
+                            @Resources.Views.Shared._Layout.Users
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="AppUser" asp-action="Index">Users</a>
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Roles" asp-action="Index">Roles</a>
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="AppUser" asp-action="Index">@Resources.Views.Shared._Layout.Users</a>
+                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Roles" asp-action="Index">@Resources.Views.Shared._Layout.Roles</a>
 
                             </div>
                         </li>

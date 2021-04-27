@@ -52,7 +52,7 @@ namespace WebApp.ApiControllers
                 Id = s.Id,
                 Url = s.Url,
                 ProductId = s.ProductId,
-                ProductName = s.Product
+                ProductName = s.ProductName
             }));
 
         }
@@ -68,7 +68,7 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
         public async Task<ActionResult<PublicApi.DTO.v1.Picture>> GetPicture(Guid id)
         {
-            var picture = await _bll.Picture.FirstOrDefaultAsync(id);
+            var picture = await _bll.Picture.FirstOrDefaultDTOAsync(id, User.GetUserId()!.Value);
             if (picture == null)
             {
                 return NotFound(new Message("Picture not found"));
@@ -87,20 +87,26 @@ namespace WebApp.ApiControllers
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
+
 
         public async Task<IActionResult> PutPicture(Guid id, PublicApi.DTO.v1.Picture picture)
         {
             if (id != picture.Id)
             {
-                return BadRequest(new Message("Id and picture.id do not match"));
+                return NotFound(new Message("Id and picture.id do not match"));
             }
 
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new Message("Fields can't be empty!"));
+            }
 
             _bll.Picture.Update(_mapper.Map(picture));
             await _bll.SaveChangesAsync();
-
             return NoContent();
+
         }
 
         /// <summary>
@@ -110,18 +116,35 @@ namespace WebApp.ApiControllers
         /// <returns></returns>
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(PublicApi.DTO.v1.Picture), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Picture))]
         [HttpPost]
-        public async Task<ActionResult<PublicApi.DTO.v1.Picture>> PostPicture(PublicApi.DTO.v1.Picture picture)
+        public async Task<ActionResult<PublicApi.DTO.v1.Picture>> PostPicture(PublicApi.DTO.v1.PictureAdd picture)
         {
-            _bll.Picture.Add(_mapper.Map(picture));
+
+            var bllPicture = new BLL.App.DTO.Picture()
+            {
+                Url = picture.Url,
+                ProductId = picture.ProductId,
+            };
+
+            var addedPicture = _bll.Picture.Add(bllPicture);
+
             await _bll.SaveChangesAsync();
+
+            var returnPicture = new PublicApi.DTO.v1.Picture()
+            {
+                Id = addedPicture.Id,
+                Url = addedPicture.Url,
+                ProductId = addedPicture.ProductId,
+
+            };
 
             return CreatedAtAction("GetPicture",
                 new
                 {
-                    id = picture.Id
-                }, picture);
+                    id = returnPicture.Id,
+                    version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0"
+                }, returnPicture);
         }
 
         /// <summary>

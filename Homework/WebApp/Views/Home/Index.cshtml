@@ -5,7 +5,7 @@
 <div class="text-centre">
 
 
-    <h2>Reasently added products</h2>
+    <h2>@Resources.BLL.App.DTO.Products.ReasentlyAddedProducts</h2>
 
 <table class="table">
     <thead>
@@ -14,13 +14,13 @@
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                Location
+                 @Resources.BLL.App.DTO.Products.Location
             </th>
             <th>
-                Pictures
+               @Resources.BLL.App.DTO.Pictures.Picture
             </th>
             <th>
-                is Booked?
+                @Html.DisplayNameFor(model => model.IsBooked)
             </th>
 
 
@@ -42,16 +42,16 @@
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
-                    @if (item.CityName != null)
+                    @if (item.City != null)
                     {
-                        item.CountyName += ", " + item.CityName;
+                        item.County += ", " + item.City;
                     }
                     @if (item.LocationDescription != null)
                     {
-                        item.CountyName += ", " + item.LocationDescription;
+                        item.County += ", " + item.LocationDescription;
                     }
 
-                    @Html.DisplayFor(modelItem => item.CountyName)
+                    @Html.DisplayFor(modelItem => item.County)
                 </td>
 
                 <td>
@@ -61,7 +61,7 @@
                     @Html.DisplayFor(modelItem => item.IsBooked)
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Details</a>
                 </td>
             }
         </tr>

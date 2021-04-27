@@ -1,0 +1,215 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Views\Shared\_Layout.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>_Layout.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\Shared\_Layout.et.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>_Layout.et.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Areas\Identity\Pages\Account\Login.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Login.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Areas\Identity\Shared\PasswordRequirementsTooltip.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>PasswordRequirementsTooltip.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="BLL.App.DTO\Products.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Products.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="BLL.App.DTO\Pictures.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Pictures.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="BLL.App.DTO\Cities.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Cities.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="BLL.App.DTO\Units.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Units.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="BLL.App.DTO\UserMessage.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>UserMessage.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="BLL.App.DTO\Bookings.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Bookings.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="BLL.App.DTO\Categories.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Categories.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="BLL.App.DTO\Conditions.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Conditions.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="BLL.App.DTO\Counties.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Counties.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="BLL.App.DTO\Materials.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Materials.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="BLL.App.DTO\MessageForms.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>MessageForms.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="BLL.App.DTO\ProductMaterials.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>ProductMaterials.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="BLL.App.DTO\UserBookedProduct.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>UserBookedProduct.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\Crud\CRUD.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>CRUD.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="DropDown\DropDown.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>DropDown.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\Shared\_LoginPartial.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>_LoginPartial.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\Shared\Buttons.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>Buttons.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\AppUser\AppUser.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>AppUser.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Views\AppRole\AppRoles.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>AppRoles.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Views\Shared\_Layout.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>_Layout.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Areas\Identity\Pages\Account\Login.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Login.resx</DependentUpon>
+      </Compile>
+      <Compile Update="BLL.App.DTO\Products.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Products.resx</DependentUpon>
+      </Compile>
+      <Compile Update="BLL.App.DTO\Pictures.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Pictures.resx</DependentUpon>
+      </Compile>
+      <Compile Update="BLL.App.DTO\Cities.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Cities.resx</DependentUpon>
+      </Compile>
+      <Compile Update="BLL.App.DTO\Units.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Units.resx</DependentUpon>
+      </Compile>
+      <Compile Update="BLL.App.DTO\UserMessage.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>UserMessage.resx</DependentUpon>
+      </Compile>
+      <Compile Update="BLL.App.DTO\Bookings.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Bookings.resx</DependentUpon>
+      </Compile>
+      <Compile Update="BLL.App.DTO\Categories.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Categories.resx</DependentUpon>
+      </Compile>
+      <Compile Update="BLL.App.DTO\Conditions.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Conditions.resx</DependentUpon>
+      </Compile>
+      <Compile Update="BLL.App.DTO\Counties.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Counties.resx</DependentUpon>
+      </Compile>
+      <Compile Update="BLL.App.DTO\Materials.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Materials.resx</DependentUpon>
+      </Compile>
+      <Compile Update="BLL.App.DTO\MessageForms.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>MessageForms.resx</DependentUpon>
+      </Compile>
+      <Compile Update="BLL.App.DTO\ProductMaterials.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ProductMaterials.resx</DependentUpon>
+      </Compile>
+      <Compile Update="BLL.App.DTO\UserBookedProduct.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>UserBookedProduct.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\Crud\CRUD.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>CRUD.resx</DependentUpon>
+      </Compile>
+      <Compile Update="DropDown\DropDown.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>DropDown.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\Shared\_Layout.et.Designer.cs">
+        <AutoGen>True</AutoGen>
+        <DependentUpon>_Layout.et.resx</DependentUpon>
+        <DesignTime>True</DesignTime>
+      </Compile>
+      <Compile Update="Views\Shared\_LoginPartial.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>_LoginPartial.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\Shared\Buttons.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Buttons.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\AppUser\AppUser.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>AppUser.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\AppRole\AppRoles.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>AppRoles.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+</Project>

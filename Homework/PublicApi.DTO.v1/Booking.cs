@@ -8,5 +8,6 @@ namespace PublicApi.DTO.v1
         public Guid ProductId { get; set;}
         public DateTime TimeBooked { get; set;}
         public DateTime Until { get; set;}
+        public Guid AppUserId { get; set; }
     }
 }

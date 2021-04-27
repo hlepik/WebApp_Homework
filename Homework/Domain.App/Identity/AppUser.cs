@@ -8,8 +8,12 @@ namespace Domain.App.Identity
     public class AppUser : IdentityUser<Guid>
     {
         [StringLength(128, MinimumLength = 1)]
+        [Display(ResourceType = typeof(Resources.Views.AppUser.AppUser), Name = "Firstname")]
+
         public string Firstname { get; set; } = default!;
         [StringLength(128, MinimumLength = 1)]
+        [Display(ResourceType = typeof(Resources.Views.AppUser.AppUser), Name = "Lastname")]
+
         public string Lastname { get; set; } = default!;
 
 

@@ -4,15 +4,15 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>@Resources.Views.Crud.CRUD.Details</h1>
 
 <div>
-    <h4>Product</h4>
+    <h4>@Resources.BLL.App.DTO.Products.Product</h4>
     <hr />
     <partial name="_Details" model="Model"/>
 
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">@Resources.Views.Crud.CRUD.Edit</a> |
+    <a asp-action="Index">@Resources.Views.Crud.CRUD.Index</a>
 </div>

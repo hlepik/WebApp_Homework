@@ -84,13 +84,13 @@ namespace WebApp.ApiControllers
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
 
         public async Task<IActionResult> PutCounty(Guid id, PublicApi.DTO.v1.County county)
         {
             if (id != county.Id)
             {
-                return BadRequest(new Message("Id and county.id do not match"));
+                return NotFound(new Message("Id and county.id do not match"));
             }
 
 
@@ -107,7 +107,7 @@ namespace WebApp.ApiControllers
         /// <returns></returns>
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(PublicApi.DTO.v1.County), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(County))]
         [HttpPost]
         public async Task<ActionResult<PublicApi.DTO.v1.County>> PostCounty(PublicApi.DTO.v1.County county)
         {

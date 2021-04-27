@@ -74,13 +74,13 @@ namespace WebApp.Controllers
                 vm.Booking.AppUserId = User.GetUserId()!.Value;
                 vm.Booking.TimeBooked = DateTime.Now;
 
-                var myBookings = new UserBookedProducts
-                {
-                    BookingId = vm.Booking.Id
-                };
-                _bll.UserBookedProducts.Add(myBookings);
                 _bll.Product.Update(product);
 
+                var myBookings = new UserBookedProducts
+                {
+                    Booking = vm.Booking
+                };
+                _bll.UserBookedProducts.Add(myBookings);
                 await _bll.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));

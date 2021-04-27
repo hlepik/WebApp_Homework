@@ -117,7 +117,7 @@ namespace WebApp.ApiControllers
         /// <returns></returns>
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(PublicApi.DTO.v1.UserMessages), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserMessages))]
         [HttpPost]
         public async Task<ActionResult<PublicApi.DTO.v1.UserMessages>> PostUserMessages(PublicApi.DTO.v1.UserMessages userMessages)
         {

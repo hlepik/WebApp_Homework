@@ -4,6 +4,7 @@ using Contracts.BLL.App;
 using Microsoft.AspNetCore.Mvc;
 using Extensions.Base;
 using Microsoft.AspNetCore.Authorization;
+using PublicApi.DTO.v1;
 using MessageForm = BLL.App.DTO.MessageForm;
 using UserMessages = BLL.App.DTO.UserMessages;
 #pragma warning disable 1591
@@ -14,6 +15,7 @@ namespace WebApp.Controllers
     public class MessageFormsController : Controller
     {
         private readonly IAppBLL _bll;
+
 
         public MessageFormsController(IAppBLL bll)
         {
@@ -45,6 +47,7 @@ namespace WebApp.Controllers
         // GET: MessageForms/Create
         public IActionResult Create()
         {
+
             return View();
         }
 
@@ -61,12 +64,17 @@ namespace WebApp.Controllers
                 messageForm.SenderId = User.GetUserId()!.Value;
 
 
+
                 var id = await _bll.UserMessages.GetId(messageForm.Email);
 
+                if (id == Guid.Empty)
+                {
+                    return View();
+                }
                 var userMessage = new UserMessages
                 {
                     MessageFormId = messageForm.Id,
-                    AppUserId =  id,
+                    AppUserId =  id!.Value,
                     SenderEmail = User.GetUserEmail()
 
                 };

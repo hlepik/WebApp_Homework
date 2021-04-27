@@ -4,10 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>My Products</h1>
+<h1>@Resources.BLL.App.DTO.Products.MyProduct</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">@Resources.Views.Crud.CRUD.Create</a>
 
 </p>
 <table class="table">
@@ -21,22 +21,22 @@
                 @Html.DisplayNameFor(model => model.Color)
             </th>
             <th>
-                Has transport
+              @Html.DisplayNameFor(model => model.HasTransport)
             </th>
             <th>
-                Is Booked?
+            @Html.DisplayNameFor(model => model.IsBooked)
             </th>
             <th>
-                Location
+             @Html.DisplayNameFor(model => model.LocationDescription)
             </th>
             <th>
-                Size
+            @Html.DisplayNameFor(model => model.Height)
             </th>
             <th>
-                Condition
+               @Html.DisplayNameFor(model => model.Condition)
             </th>
             <th>
-               Material
+                 @Html.DisplayNameFor(model => model.Material)
             </th>
 
 
@@ -59,15 +59,15 @@
                 @Html.DisplayFor(modelItem => item.IsBooked)
             </td>
             <td>
-                @if (item.CityName != null)
+                @if (item.City != null)
                 {
-                    item.CountyName += ", " + item.CityName;
+                    item.County += ", " + item.City;
                 }
                 @if (item.LocationDescription != null)
                 {
-                    item.CountyName += ", " + item.LocationDescription;
+                    item.County += ", " + item.LocationDescription;
                 }
-                @Html.DisplayFor(modelItem => item.CountyName)
+                @Html.DisplayFor(modelItem => item.County)
 
             </td>
             <td>
@@ -78,7 +78,7 @@
 
                 @if (item.Height != null)
                 {
-                    size += "Height: " + item.Height + " " + item.UnitName;
+                    size += "Height: " + item.Height + " " + item.Unit;
                 }
                 @if (item.Width != null)
                 {
@@ -86,7 +86,7 @@
                     {
                         size += ", "+ "\n";
                     }
-                    size += "Width: " + item.Width + " " + item.UnitName;
+                    size += "Width: " + item.Width + " " + item.Unit;
                 }
                  @if (item.Depth != null)
                 {
@@ -94,14 +94,14 @@
                     {
                         size += ", "+ "\n";
                     }
-                    size += "Depth: " +item.Depth + " " + item.UnitName;
+                    size += "Depth: " +item.Depth + " " + item.Unit;
                 }
 
 
                 @Html.DisplayFor(modelItem => size)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ConditionName)
+                @Html.DisplayFor(modelItem => item.Condition)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Material)
@@ -110,9 +110,9 @@
 
             <td>
 
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-               <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-               <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Edit</a> |
+               <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Details</a> |
+               <a asp-action="Delete" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Delete</a>
 
             </td>
         </tr>

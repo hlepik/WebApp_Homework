@@ -37,7 +37,7 @@ namespace DAL.App.EF.Repositories
             var resQuery = query.Select(p => new DAL.App.DTO.Booking()
             {
                 Id = p.Id,
-                ProductName = p.Product!.Description,
+                Product = p.Product!.Description,
                 TimeBooked = p.TimeBooked,
                 ProductId = p.ProductId,
                 AppUserId = p.AppUserId,

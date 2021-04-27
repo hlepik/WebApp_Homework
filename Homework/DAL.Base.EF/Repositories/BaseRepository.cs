@@ -77,8 +77,6 @@ namespace DAL.Base.EF.Repositories
         {
             var query = CreateQuery(userId, noTracking);
             return Mapper.Map(await query.FirstOrDefaultAsync(e => e!.Id.Equals(id)));
-            // var query = CreateQuery(userId, noTracking);
-            // return await query.Select(d => Mapper.Map(d)).FirstOrDefaultAsync(e => e!.Id.Equals(id));
         }
 
         public virtual TDalEntity Add(TDalEntity entity)
@@ -104,7 +102,10 @@ namespace DAL.Base.EF.Repositories
 
         public virtual TDalEntity Update(TDalEntity entity)
         {
-            return Mapper.Map(RepoDbSet.Update(Mapper.Map(entity)!).Entity)!;
+            var domainEntity = Mapper.Map(entity);
+            var updatedEntity = RepoDbSet.Update(domainEntity!).Entity;
+            var dalEntity = Mapper.Map(updatedEntity);
+            return dalEntity!;
         }
 
         public virtual TDalEntity Remove(TDalEntity entity, TKey? userId = default)

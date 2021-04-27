@@ -19,7 +19,7 @@ namespace Contracts.DAL.App.Repositories
     public interface  IUserMessagesRepositoryCustom<TEntity>
     {
         Task<IEnumerable<TEntity>> GetAllMessagesAsync(Guid userId, bool noTracking = true);
-        Task<Guid> GetId(string email);
+        Task<Guid?> GetId(string email);
 
         Task<TEntity?> FirstOrDefaultUserMessagesAsync(Guid id, Guid userId = default,
             bool noTracking = true);

@@ -8,7 +8,7 @@
 
 <form method="post">
 
-    <h2 class="bg-info p-1 text-white">Add To @Model.Role.Name</h2>
+    <h2 class="bg-info p-1 text-white">@Resources.Views.AppRole.AppRoles.AddTo @Model.Role.Name</h2>
 <table class="table table-bordered table-sm">
 
 @foreach (AppUser user in Model.NonMembers!)
@@ -23,7 +23,7 @@
 
 </table>
 
-<h2 class="bg-info p-1 text-white">Remove From @Model.Role.Name</h2>
+<h2 class="bg-info p-1 text-white">@Resources.Views.AppRole.AppRoles.RemoveFrom @Model.Role.Name</h2>
 <table class="table table-bordered table-sm">
 
 @foreach (AppUser user in Model.Members!)
@@ -38,5 +38,5 @@
 }
 
 </table>
-<button type="submit" class="btn btn-primary">Save</button>
+<button type="submit" class="btn btn-primary">@Resources.Views.Shared.Buttons.Save</button>
 </form>

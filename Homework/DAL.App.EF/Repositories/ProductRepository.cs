@@ -56,16 +56,18 @@ namespace DAL.App.EF.Repositories
                 Id = p.Id,
                 Description = p.Description,
                 Color = p.Color,
-                CityName = p.City!.Name,
-                CountyName = p.County!.Name,
-                CategoryName = p.Category!.Name,
-                UnitName = p.Unit!.Name,
-                ConditionName = p.Condition!.Description,
+                City = p.City!.Name,
+                County = p.County!.Name,
+                Category = p.Category!.Name,
+                Unit = p.Unit!.Name,
+                Condition = p.Condition!.Description,
                 DateAdded = p.DateAdded,
                 Material = p.ProductMaterials!.Select(x => x.Material!.Name),
                 Height = p.Height,
                 Width = p.Width,
-                Depth = p.Depth
+                Depth = p.Depth,
+                IsBooked = p.IsBooked,
+                AppUserId = p.AppUserId
 
             }).OrderBy(p => p.DateAdded);
 
@@ -83,16 +85,25 @@ namespace DAL.App.EF.Repositories
             {
                 Id = p.Id,
                 Description = p.Description,
-                CountyName = p.County!.Name,
+                County = p.County!.Name,
                 CountyId = p.CountyId,
-                CityName = p.City!.Name,
+                City = p.City!.Name,
                 CityId = p.CityId,
-                CategoryName = p.Category!.Name,
+                Category = p.Category!.Name,
                 CategoryId = p.CategoryId,
-                ConditionName = p.Condition!.Description,
+                Condition = p.Condition!.Description,
                 ConditionId = p.ConditionId,
-                UnitName = p.Unit!.Name,
+                Unit = p.Unit!.Name,
                 UnitId = p.UnitId,
+                Color = p.Color,
+                Width = p.Width,
+                Height = p.Height,
+                Depth = p.Depth,
+                AppUserId = p.AppUserId,
+                DateAdded = p.DateAdded,
+                IsBooked = p.IsBooked,
+                HasTransport = p.HasTransport
+
 
             }).FirstOrDefaultAsync(m => m.Id == id);
 

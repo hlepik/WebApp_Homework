@@ -1,26 +1,24 @@
 @model IEnumerable<Domain.App.Identity.AppRole>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = @Resources.Views.Crud.CRUD.Index;
 }
 
-<h1>Index</h1>
-
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">@Resources.Views.Crud.CRUD.Create</a>
 </p>
 <table class="table">
     <thead>
     <tr>
 
         <th>
-            @Html.DisplayNameFor(model => model.Name)
+        @Resources.Views.AppRole.AppRoles.Name
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.NormalizedName)
+           @Resources.Views.AppRole.AppRoles.NormalizedName
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.ConcurrencyStamp)
+            @Resources.Views.AppRole.AppRoles.ConcurrencyStamp
         </th>
         <th></th>
     </tr>
@@ -40,10 +38,10 @@
 
 
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> |
-                <a asp-action="AddRole" asp-route-id="@item.Id" >Change user roles</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Delete</a> |
+                <a asp-action="AddRole" asp-route-id="@item.Id" >@Resources.Views.Crud.CRUD.ChangeUserRoles</a>
             </td>
         </tr>
 }

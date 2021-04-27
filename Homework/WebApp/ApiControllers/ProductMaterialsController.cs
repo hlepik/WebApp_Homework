@@ -92,13 +92,13 @@ namespace WebApp.ApiControllers
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
 
         public async Task<IActionResult> PutProductMaterial(Guid id, PublicApi.DTO.v1.ProductMaterial productMaterial)
         {
             if (id != productMaterial.Id)
             {
-                return BadRequest(new Message("Id and productMaterial.id do not match"));
+                return NotFound(new Message("Id and productMaterial.id do not match"));
             }
 
 
@@ -115,7 +115,7 @@ namespace WebApp.ApiControllers
         /// <returns></returns>
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(PublicApi.DTO.v1.ProductMaterial), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(ProductMaterial))]
         [HttpPost]
         public async Task<ActionResult<PublicApi.DTO.v1.ProductMaterial>> PostProductMaterial(PublicApi.DTO.v1.ProductMaterial productMaterial)
         {

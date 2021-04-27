@@ -8,7 +8,7 @@
 @if (User.Identity!.IsAuthenticated)
 {
     <p>
-        <a asp-action="Create">Reserve</a>
+        <a asp-action="Create">@Resources.BLL.App.DTO.Bookings.Reserve</a>
     </p>
 }
 
@@ -19,17 +19,19 @@
                 @Html.DisplayNameFor(model => model.Description)
             </th>
             <th>
-                Location
+                @Html.DisplayNameFor(model => model.LocationDescription)
             </th>
             <th>
-                Pictures
+                @Html.DisplayNameFor(model => model.Pictures)
             </th>
             <th>
-                is Booked?
+                  @Html.DisplayNameFor(model => model.IsBooked)
+            </th>
+            <th>
+               @Html.DisplayNameFor(model => model.DateAdded)
             </th>
 
 
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -40,16 +42,16 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-            @if (item.CityName != null)
+            @if (item.City != null)
             {
-                item.CountyName += ", " + item.CityName;
+                item.County += ", " + item.City;
             }
             @if (item.LocationDescription != null)
             {
-                item.CountyName += ", " + item.LocationDescription;
+                item.County += ", " + item.LocationDescription;
             }
 
-                @Html.DisplayFor(modelItem => item.CountyName)
+                @Html.DisplayFor(modelItem => item.County)
             </td>
 
             <td>
@@ -58,9 +60,13 @@
             <td>
                 @Html.DisplayFor(modelItem => item.IsBooked)
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateAdded)
+            </td>
+
 
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Details</a>
             </td>
         </tr>
 }

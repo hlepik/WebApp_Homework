@@ -84,13 +84,13 @@ namespace WebApp.ApiControllers
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
 
         public async Task<IActionResult> PutCategory(Guid id, PublicApi.DTO.v1.Category category)
         {
             if (id != category.Id)
             {
-                return BadRequest(new Message("Id and category.id do not match"));
+                return NotFound(new Message("Id and category.id do not match"));
             }
 
             _bll.Category.Update(_mapper.Map(category));
@@ -106,7 +106,7 @@ namespace WebApp.ApiControllers
         /// <returns></returns>
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(PublicApi.DTO.v1.Category), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Category))]
         [HttpPost]
         public async Task<ActionResult<PublicApi.DTO.v1.Category>> PostCategory(PublicApi.DTO.v1.Category category)
         {

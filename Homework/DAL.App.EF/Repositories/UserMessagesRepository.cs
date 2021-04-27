@@ -21,13 +21,16 @@ namespace DAL.App.EF.Repositories
         }
 
 
-        public async Task<Guid> GetId(string email)
+        public async Task<Guid?> GetId(string email)
         {
             var query = RepoDbContext
                 .Users.Where(x => x.Email == email)
-                .Select(x => x.Id);
+                .Select(x => x.Id );
 
-            return await query.FirstAsync();
+            var result = await query.FirstAsync();
+
+
+            return result;
         }
 
         public async Task<IEnumerable<DAL.App.DTO.UserMessages>> GetAllMessagesAsync(Guid userId, bool noTracking = true)

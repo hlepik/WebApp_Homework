@@ -19,7 +19,7 @@ namespace WebApp.ApiControllers
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
 
     public class UnitsController : ControllerBase
     {
@@ -44,6 +44,7 @@ namespace WebApp.ApiControllers
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(typeof(PublicApi.DTO.v1.Unit), StatusCodes.Status200OK)]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.Unit>>> GetUnits()
         {
             return Ok((await _bll.Unit.GetAllAsync()).Select(s => new PublicApi.DTO.v1.Unit()
@@ -62,6 +63,7 @@ namespace WebApp.ApiControllers
         [Produces("application/json")]
         [ProducesResponseType(typeof(PublicApi.DTO.v1.Unit), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
+        [AllowAnonymous]
         public async Task<ActionResult<PublicApi.DTO.v1.Unit>> GetUnit(Guid id)
         {
             var unit = await _bll.Unit.FirstOrDefaultAsync(id);
@@ -84,13 +86,13 @@ namespace WebApp.ApiControllers
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
 
         public async Task<IActionResult> PutUnit(Guid id, PublicApi.DTO.v1.Unit unit)
         {
             if (id != unit.Id)
             {
-                return BadRequest(new Message("Id and unit.id do not match"));
+                return NotFound(new Message("Id and unit.id do not match"));
             }
 
 
@@ -107,7 +109,7 @@ namespace WebApp.ApiControllers
         /// <returns></returns>
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(PublicApi.DTO.v1.Unit), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Unit))]
         [HttpPost]
         public async Task<ActionResult<PublicApi.DTO.v1.Unit>> PostUnit(PublicApi.DTO.v1.Unit unit)
         {
@@ -117,8 +119,7 @@ namespace WebApp.ApiControllers
             return CreatedAtAction("GetUnit",
                 new
                 {
-                    id = unit.Id,
-                    version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0"
+                    id = unit.Id
 
                 }, unit);
         }

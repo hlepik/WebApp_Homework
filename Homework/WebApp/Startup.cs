@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +22,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using WebApp.Helpers;
+
 #pragma warning disable 1591
 
 namespace WebApp
@@ -84,7 +88,15 @@ namespace WebApp
                 options.DefaultRequestCulture = new RequestCulture(culture: "en-GB", uiCulture: "en-GB");
                 options.SupportedCultures = supportedCultures;
                 options.SupportedUICultures = supportedCultures;
+                options.SetDefaultCulture("en-GB");
+                options.RequestCultureProviders = new List<IRequestCultureProvider>()
+                {
+                    new QueryStringRequestCultureProvider(),
+                    new CookieRequestCultureProvider()
+                };
             });
+
+            services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureModelBindingLocalization>();
 
 
             services
@@ -164,6 +176,9 @@ namespace WebApp
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseRequestLocalization(
+                app.ApplicationServices
+                    .GetService<IOptions<RequestLocalizationOptions>>()?.Value);
 
             app.UseEndpoints(endpoints =>
             {

@@ -97,6 +97,17 @@ namespace DAL.App.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LangStrings",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LangStrings", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Materials",
                 columns: table => new
                 {
@@ -239,6 +250,26 @@ namespace DAL.App.EF.Migrations
                         name: "FK_AspNetUserTokens_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Translations",
+                columns: table => new
+                {
+                    Culture = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    LangStringId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Value = table.Column<string>(type: "nvarchar(max)", maxLength: 10240, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Translations", x => new { x.Culture, x.LangStringId });
+                    table.ForeignKey(
+                        name: "FK_Translations_LangStrings_LangStringId",
+                        column: x => x.LangStringId,
+                        principalTable: "LangStrings",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -516,6 +547,11 @@ namespace DAL.App.EF.Migrations
                 column: "UnitId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Translations_LangStringId",
+                table: "Translations",
+                column: "LangStringId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserBookedProducts_BookingId",
                 table: "UserBookedProducts",
                 column: "BookingId");
@@ -555,6 +591,9 @@ namespace DAL.App.EF.Migrations
                 name: "ProductMaterials");
 
             migrationBuilder.DropTable(
+                name: "Translations");
+
+            migrationBuilder.DropTable(
                 name: "UserBookedProducts");
 
             migrationBuilder.DropTable(
@@ -565,6 +604,9 @@ namespace DAL.App.EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "Materials");
+
+            migrationBuilder.DropTable(
+                name: "LangStrings");
 
             migrationBuilder.DropTable(
                 name: "Bookings");

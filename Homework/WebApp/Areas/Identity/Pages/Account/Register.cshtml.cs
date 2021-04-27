@@ -17,7 +17,6 @@ using Microsoft.Extensions.Logging;
 
 namespace WebApp.Areas.Identity.Pages.Account
 {
-    [AllowAnonymous]
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<AppUser> _signInManager;
@@ -37,44 +36,61 @@ namespace WebApp.Areas.Identity.Pages.Account
             _emailSender = emailSender;
         }
 
-        [BindProperty]
-        public InputModel Input { get; set; } = default!;
+        [BindProperty] public InputModel Input { get; set; } = default!;
 
-        public string ReturnUrl { get; set; } = default!;
+        public PasswordRequirementsViewModel? PasswordRequirements { get; set; }
+
+        public string? ReturnUrl { get; set; }
 
         public IList<AuthenticationScheme> ExternalLogins { get; set; } = default!;
 
+        public class PasswordRequirementsViewModel
+        {
+            public bool RequireDigit { get; set; }
+            public int RequiredLength { get; set; }
+            public bool RequireLowercase { get; set; }
+            public bool RequireUppercase { get; set; }
+            public int RequiredUniqueChars { get; set; }
+            public bool RequireNonAlphanumeric { get; set; }
+        }
         public class InputModel
         {
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
-            public string Email { get; set; } = default!;
+            public string Email { get; set; }= default!;
 
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
-            public string Password { get; set; } = default!;
+            public string Password { get; set; }= default!;
 
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            public string ConfirmPassword { get; set; }= default!;
 
-            public string ConfirmPassword { get; set; } = default!;
+            [MaxLength(128)] public virtual string FirstName { get; set; } = default!;
 
-            [Display(Name = "First name")]
-            [StringLength(128, MinimumLength = 1)]
-            public string FirstName { get; set; } = default!;
-            [Display(Name = "Last name")]
-            [StringLength(128, MinimumLength = 1)]
-            public string LastName { get; set; } = default!;
+            [MaxLength(128)] public virtual string LastName { get; set; } = default!;
+
         }
 
         public async Task OnGetAsync(string? returnUrl = null)
         {
-            ReturnUrl = returnUrl!;
+            ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            PasswordRequirements = new PasswordRequirementsViewModel()
+            {
+                RequireDigit = _userManager.Options.Password.RequireDigit,
+                RequiredLength = _userManager.Options.Password.RequiredLength,
+                RequireLowercase = _userManager.Options.Password.RequireLowercase,
+                RequireUppercase = _userManager.Options.Password.RequireUppercase,
+                RequiredUniqueChars = _userManager.Options.Password.RequiredUniqueChars,
+                RequireNonAlphanumeric = _userManager.Options.Password.RequireNonAlphanumeric
+            };
         }
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
@@ -87,7 +103,7 @@ namespace WebApp.Areas.Identity.Pages.Account
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+                    _logger.LogInformation("User created a new account with password");
 
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -121,3 +137,4 @@ namespace WebApp.Areas.Identity.Pages.Account
         }
     }
 }
+

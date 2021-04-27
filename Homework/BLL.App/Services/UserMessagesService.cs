@@ -24,7 +24,7 @@ namespace BLL.App.Services
             return (await ServiceRepository.GetAllMessagesAsync(userId, noTracking)).Select(x => Mapper.Map(x))!;
         }
 
-        public Task<Guid> GetId(string email)
+        public Task<Guid?> GetId(string email)
         {
             return ServiceRepository.GetId(email);
 

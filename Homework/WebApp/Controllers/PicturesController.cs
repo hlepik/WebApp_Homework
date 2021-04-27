@@ -38,7 +38,7 @@ namespace WebApp.Controllers
             }
 
             var picture = await _bll.Picture
-                .FirstOrDefaultAsync(id.Value);
+                .FirstOrDefaultDTOAsync(id.Value, User.GetUserId()!.Value);
             if (picture == null)
             {
                 return NotFound();
@@ -82,7 +82,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var picture = await _bll.Picture.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var picture = await _bll.Picture.FirstOrDefaultDTOAsync(id.Value, User.GetUserId()!.Value);
             if (picture == null)
             {
                 return NotFound();
@@ -125,7 +125,7 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var picture = await _bll.Picture.FirstOrDefaultAsync(id.Value, User.GetUserId()!.Value);
+            var picture = await _bll.Picture.FirstOrDefaultDTOAsync(id.Value, User.GetUserId()!.Value);
             if (picture == null)
             {
                 return NotFound();

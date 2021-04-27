@@ -36,5 +36,10 @@ namespace BLL.App.Services
         {
             ServiceRepository.RemovePictureAsync(id);
         }
+
+        public async Task<BLLAppDTO.Picture?> FirstOrDefaultDTOAsync(Guid id, Guid userId, bool noTracking = true)
+        {
+            return Mapper.Map(await ServiceRepository.FirstOrDefaultDTOAsync(id, userId, noTracking))!;
+        }
     }
 }

@@ -95,12 +95,12 @@ namespace WebApp.ApiControllers
         {
             if (id != messageForm.Id)
             {
-                return BadRequest(new Message("Id and messageForm.id do not match"));
+                return NotFound(new Message("Id and messageForm.id do not match"));
             }
 
             if (!await _bll.UserMessages.ExistsAsync(messageForm.Id, User.GetUserId()!.Value))
             {
-                return NotFound(new Message($"Current user does not have send messages with this id {id}"));
+                return BadRequest(new Message($"Current user does not have send messages with this id {id}"));
             }
             _bll.MessageForm.Update(_mapper.Map(messageForm));
             await _bll.SaveChangesAsync();
@@ -115,7 +115,7 @@ namespace WebApp.ApiControllers
         /// <returns></returns>
         [Produces("application/json")]
         [Consumes("application/json")]
-        [ProducesResponseType(typeof(PublicApi.DTO.v1.MessageForm), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(MessageForm))]
         [HttpPost]
         public async Task<ActionResult<PublicApi.DTO.v1.MessageForm>> PostMessageForm(PublicApi.DTO.v1.MessageForm messageForm)
         {

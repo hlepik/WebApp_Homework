@@ -6,11 +6,16 @@ namespace BLL.App.DTO
 {
     public class Picture : DomainEntityId
     {
-        [MaxLength(500)] public string Url { get; set; } = default!;
+        [Required(ErrorMessageResourceType = typeof(Resources.Base.Common), ErrorMessageResourceName = "Required")]
+        [Display(ResourceType = typeof(Resources.BLL.App.DTO.Pictures), Name = "Url")]
+        [MaxLength(500, ErrorMessageResourceType = typeof(Resources.Base.Common), ErrorMessageResourceName = "ErrorMessageMaxLength"),
+         MinLength(2, ErrorMessageResourceType = typeof(Resources.Base.Common), ErrorMessageResourceName = "ErrorMessageMinLength")]
+        public string Url { get; set; } = default!;
 
-        public Guid? ProductOwner { get; set; }
         public Guid ProductId { get; set;}
-        public string Product { get; set; }= default!;
+        public Product? Product { get; set; }
+        [Display(ResourceType = typeof(Resources.BLL.App.DTO.Pictures), Name = "ProductName")]
+        public string? ProductName { get; set; }
 
 
     }
