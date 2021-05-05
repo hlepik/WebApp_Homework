@@ -8,7 +8,10 @@ namespace Domain.App
     public class Unit : DomainEntityId
     {
 
-        [MaxLength(54)] public string Name { get; set; } = default!;
+        public Guid NameId { get; set; }
+
+        [MaxLength(54)] public LangString? Name { get; set; } = default!;
+        // [MaxLength(54)] public string Name { get; set; } = default!;
 
 
         public ICollection<Product>? Products { get; set; }

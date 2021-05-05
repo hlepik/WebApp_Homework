@@ -7,7 +7,6 @@ using Contracts.DAL.App.Repositories;
 using DAL.App.DTO;
 using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
-using DTO.App;
 using Microsoft.EntityFrameworkCore;
 using ProductMaterial = Domain.App.ProductMaterial;
 

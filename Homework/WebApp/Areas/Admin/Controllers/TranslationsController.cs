@@ -7,27 +7,40 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.Base;
+#pragma warning disable 1591
 
 namespace WebApp.Areas.Admin.Controllers
 {
+
     [Area("Admin")]
     public class TranslationsController : Controller
     {
         private readonly AppDbContext _context;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="context"></param>
         public TranslationsController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: Admin/Translations
+        /// <summary>
+        /// Get all Translations
+        /// </summary>
+        /// <returns>Entities from db</returns>
         public async Task<IActionResult> Index()
         {
             var appDbContext = _context.Translations.Include(t => t.LangString);
             return View(await appDbContext.ToListAsync());
         }
 
-        // GET: Admin/Translations/Details/5
+        /// <summary>
+        /// Get one Translation. Based on parameter: Id
+        /// </summary>
+        /// <param name="id">Id of object to retrieve, Guid</param>
+        /// <returns>UserMessages entity from db</returns>
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -101,22 +114,7 @@ namespace WebApp.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(translation);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TranslationExists(translation.Culture))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["LangStringId"] = new SelectList(_context.LangStrings, "Id", "Id", translation.LangStringId);
@@ -153,9 +151,5 @@ namespace WebApp.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TranslationExists(string id)
-        {
-            return _context.Translations.Any(e => e.Culture == id);
-        }
     }
 }

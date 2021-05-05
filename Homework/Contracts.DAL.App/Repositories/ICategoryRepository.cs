@@ -14,7 +14,6 @@ namespace Contracts.DAL.App.Repositories
     public interface ICategoryRepositoryCustom<TEntity>
     {
 
-        Task<IEnumerable<TEntity>> GetAllCategoriesAsync();
     }
 
 

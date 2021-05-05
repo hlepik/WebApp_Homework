@@ -46,7 +46,7 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(typeof(PublicApi.DTO.v1.Category), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.Category>>> GetCategories()
         {
-            return Ok((await _bll.Category.GetAllCategoriesAsync()).Select(s => new PublicApi.DTO.v1.Category()
+            return Ok((await _bll.Category.GetAllAsync()).Select(s => new PublicApi.DTO.v1.Category()
             {
                 Id = s.Id,
                 Name = s.Name

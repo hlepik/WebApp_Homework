@@ -17,9 +17,14 @@ namespace DAL.App.EF.Repositories
         {
         }
 
+
         public override async Task<DAL.App.DTO.County?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
             var query = CreateQuery(userId, noTracking);
+
+            query = query
+                .Include(c => c.Name)
+                .ThenInclude(t => t!.Translations);
 
             var res = await query.FirstOrDefaultAsync(m => m.Id == id);
 
@@ -30,10 +35,27 @@ namespace DAL.App.EF.Repositories
             var query = CreateQuery(userId, noTracking);
 
             query = query
+                .Include(x => x.Name)
+                .ThenInclude(x => x!.Translations)
                 .OrderBy(x => x.Name);
 
             var res = await query.Select(x => Mapper.Map(x)).ToListAsync();
             return res!;
+        }
+
+        public override DTO.County Update(DTO.County county)
+        {
+
+            var domainEntity = Mapper.Map(county);
+            domainEntity!.Name = RepoDbContext.LangStrings
+                .Include(x => x.Translations)
+                .First(x => x.Id == domainEntity.NameId);
+            domainEntity!.Name.SetTranslation(county.Name);
+
+            var updatedEntity = RepoDbSet.Update(domainEntity!).Entity;
+            var dalEntity = Mapper.Map(updatedEntity);
+            return dalEntity!;
+
         }
     }
 }

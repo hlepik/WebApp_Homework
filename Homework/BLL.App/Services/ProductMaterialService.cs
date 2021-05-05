@@ -8,8 +8,6 @@ using BLL.Base.Services;
 using Contracts.BLL.App.Services;
 using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
-using Domain.App;
-using DTO.App;
 using BLLAppDTO = BLL.App.DTO;
 using DALAppDTO = DAL.App.DTO;
 

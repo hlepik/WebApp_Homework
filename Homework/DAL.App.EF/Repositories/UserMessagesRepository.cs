@@ -7,8 +7,6 @@ using Contracts.DAL.App.Repositories;
 using DAL.App.DTO.Identity;
 using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
-using Domain.App;
-using DTO.App;
 using Microsoft.EntityFrameworkCore;
 using AppUser = Domain.App.Identity.AppUser;
 

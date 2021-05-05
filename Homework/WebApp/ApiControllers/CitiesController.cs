@@ -51,7 +51,8 @@ namespace WebApp.ApiControllers
             return Ok((await _bll.City.GetAllAsync()).Select(s => new PublicApi.DTO.v1.City()
             {
                 Id = s.Id,
-                Name = s.Name
+                Name = s.Name,
+                NameId = s.NameId
             }));
         }
 

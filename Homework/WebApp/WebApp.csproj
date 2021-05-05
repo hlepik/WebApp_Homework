@@ -30,7 +30,6 @@
     <ProjectReference Include="..\BLL.App\BLL.App.csproj" />
     <ProjectReference Include="..\Contracts.BLL.App\Contracts.BLL.App.csproj" />
     <ProjectReference Include="..\DAL.App.EF\DAL.App.EF.csproj" />
-    <ProjectReference Include="..\DTO.App\DTO.App.csproj" />
     <ProjectReference Include="..\Extensions.Base\Extensions.Base.csproj" />
     <ProjectReference Include="..\PublicApi.DTO.v1\PublicApi.DTO.v1.csproj" />
   </ItemGroup>

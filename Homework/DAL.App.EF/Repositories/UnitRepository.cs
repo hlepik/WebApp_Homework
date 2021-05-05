@@ -16,10 +16,27 @@ namespace DAL.App.EF.Repositories
         public UnitRepository(AppDbContext dbContext, IMapper mapper) : base(dbContext, new UnitMapper(mapper))
         {
         }
+        public override DTO.Unit Update(DTO.Unit unit)
+        {
+            var domainEntity = Mapper.Map(unit);
+            domainEntity!.Name = RepoDbContext.LangStrings
+                .Include(x => x.Translations)
+                .First(x => x.Id == domainEntity.NameId);
+            domainEntity!.Name.SetTranslation(unit.Name);
+
+            var updatedEntity = RepoDbSet.Update(domainEntity!).Entity;
+            var dalEntity = Mapper.Map(updatedEntity);
+            return dalEntity!;
+
+        }
 
         public override async Task<DAL.App.DTO.Unit?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
             var query = CreateQuery(userId, noTracking);
+
+            query = query
+                .Include(c => c.Name)
+                .ThenInclude(t => t!.Translations);
 
             var res = await query.FirstOrDefaultAsync(m => m.Id == id);
 
@@ -30,6 +47,8 @@ namespace DAL.App.EF.Repositories
             var query = CreateQuery(userId, noTracking);
 
             query = query
+                .Include(x => x.Name)
+                .ThenInclude(x => x!.Translations)
                 .OrderBy(x => x.Name);
 
             var res = await query.Select(x => Mapper.Map(x)).ToListAsync();

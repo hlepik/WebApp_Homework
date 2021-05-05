@@ -24,7 +24,7 @@ namespace WebApp.Controllers
         public async Task<IActionResult> Index()
         {
 
-            return View(await _bll.Category.GetAllCategoriesAsync());
+            return View(await _bll.Category.GetAllAsync());
 
         }
 

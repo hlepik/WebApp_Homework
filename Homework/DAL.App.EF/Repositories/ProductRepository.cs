@@ -39,11 +39,22 @@ namespace DAL.App.EF.Repositories
         {
             var query = CreateQuery(userId, noTracking);
 
-            query = query.Include(x => x.City)
-                .Include(x => x.County)
+            query = query
+                .Include(x => x.Condition)
+                .ThenInclude(x => x!.Description)
+                .ThenInclude(x => x!.Translations)
                 .Include(x => x.Category)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
+                .Include(x => x.County)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
                 .Include(x => x.Unit)
-                .Include(p => p.ProductMaterials);
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
+                .Include(x => x.City)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations);
 
 
             if (userId != default)
@@ -62,7 +73,7 @@ namespace DAL.App.EF.Repositories
                 Unit = p.Unit!.Name,
                 Condition = p.Condition!.Description,
                 DateAdded = p.DateAdded,
-                Material = p.ProductMaterials!.Select(x => x.Material!.Name),
+                Material = p.ProductMaterials!.Select(x => x.Material!.Name!.ToString()),
                 Height = p.Height,
                 Width = p.Width,
                 Depth = p.Depth,
@@ -81,6 +92,23 @@ namespace DAL.App.EF.Repositories
             var resQuery = query
                 .Include(p => p.ProductMaterials)
                 .ThenInclude(p => p.Material)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
+                .Include(x => x.City)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x.Translations)
+                .Include(x => x.Condition)
+                .ThenInclude(x => x!.Description)
+                .ThenInclude(x => x!.Translations)
+                .Include(x => x.Category)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
+                .Include(x => x.County)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
+                .Include(x => x.Unit)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
                 .Select(p => new DAL.App.DTO.Product()
             {
                 Id = p.Id,
@@ -128,7 +156,10 @@ namespace DAL.App.EF.Repositories
             if (userId != default)
             {
                 query = query
-                    .Include(x => x.City).Where(c => c.AppUserId == userId);
+                    .Include(x => x.City)
+                    .ThenInclude(x => x!.Name)
+                    .ThenInclude(x => x.Translations)
+                    .Where(c => c.AppUserId == userId);
             }
 
             var res = await query.Select(x => Mapper.Map(x)).ToListAsync();
@@ -143,10 +174,18 @@ namespace DAL.App.EF.Repositories
 
 
             query = query
-                .Include(p => p.City)
                 .Include(c => c.County)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
                 .Include(p => p.Category)
-                .Include(p => p.Unit);
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
+                .Include(p => p.Unit)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
+                .Include(p => p.City)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x.Translations);
 
             var res = await query.FirstOrDefaultAsync(m => m.Id == id);
 

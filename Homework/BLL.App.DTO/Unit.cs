@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Domain.Base;
@@ -6,6 +7,7 @@ namespace BLL.App.DTO
 {
     public class Unit : DomainEntityId
     {
+        public Guid NameId { get; set; }
         [Required(ErrorMessageResourceType = typeof(Resources.Base.Common), ErrorMessageResourceName = "Required")]
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Units), Name = "Name")]
         [MaxLength(54, ErrorMessageResourceType = typeof(Resources.Base.Common), ErrorMessageResourceName = "ErrorMessageMaxLength"),

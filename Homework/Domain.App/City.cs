@@ -8,7 +8,10 @@ namespace Domain.App
     public class City : DomainEntityId
     {
 
-        [MaxLength(128)] public string Name { get; set; } = default!;
+        public Guid NameId { get; set; }
+
+        [MaxLength(128)] public LangString Name { get; set; } = default!;
+        // [MaxLength(128)] public string Name { get; set; } = default!;
 
         public ICollection<Product>? Products { get; set; }
 

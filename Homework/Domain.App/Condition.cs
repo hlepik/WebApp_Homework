@@ -9,7 +9,9 @@ namespace Domain.App
     {
 
 
-        [MaxLength(1000)] public string Description { get; set; } = default!;
+        public Guid DescriptionId { get; set; }
+        [MaxLength(1000)] public LangString? Description { get; set; }
+        // [MaxLength(1000)] public string Description { get; set; } = default!;
 
         public ICollection<Product>? Products { get; set; }
     }

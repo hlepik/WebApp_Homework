@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Domain.Base;
@@ -13,5 +14,6 @@ namespace BLL.App.DTO
         public string Name { get; set; } = default!;
 
         public ICollection<Product>? Products { get; set; }
+        public Guid NameId { get; set; }
     }
 }

@@ -7,26 +7,39 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
 using Domain.Base;
+#pragma warning disable 1591
 
 namespace WebApp.Areas.Admin.Controllers
 {
+
     [Area("Admin")]
     public class LangStringsController : Controller
     {
         private readonly AppDbContext _context;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="context"></param>
         public LangStringsController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: Admin/LangStrings
+        /// <summary>
+        /// Get all LangStrings
+        /// </summary>
+        /// <returns>Entities from db</returns>
         public async Task<IActionResult> Index()
         {
             return View(await _context.LangStrings.ToListAsync());
         }
 
-        // GET: Admin/LangStrings/Details/5
+        /// <summary>
+        /// Get one LangString. Based on parameter: Id
+        /// </summary>
+        /// <param name="id">Id of object to retrieve, Guid</param>
+        /// <returns>UserMessages entity from db</returns>
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -44,18 +57,25 @@ namespace WebApp.Areas.Admin.Controllers
             return View(langString);
         }
 
-        // GET: Admin/LangStrings/Create
+
+        /// <summary>
+        /// Create new view
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Admin/LangStrings/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+        /// <summary>
+        /// Create new
+        /// </summary>
+        /// <param name="langString"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id")] LangString langString)
+        public async Task<IActionResult> Create(LangString langString)
         {
             if (ModelState.IsValid)
             {
@@ -88,7 +108,7 @@ namespace WebApp.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id")] LangString langString)
+        public async Task<IActionResult> Edit(Guid id,  LangString langString)
         {
             if (id != langString.Id)
             {
@@ -97,22 +117,7 @@ namespace WebApp.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(langString);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!LangStringExists(langString.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+
                 return RedirectToAction(nameof(Index));
             }
             return View(langString);
@@ -147,9 +152,5 @@ namespace WebApp.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool LangStringExists(Guid id)
-        {
-            return _context.LangStrings.Any(e => e.Id == id);
-        }
     }
 }
