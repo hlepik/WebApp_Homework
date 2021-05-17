@@ -6,8 +6,8 @@ namespace DAL.App.DTO
     public class ProductMaterial : DomainEntityId
     {
 
-        public string? Product { get; set; }
-        public string? Material { get; set; }
+        public string? ProductName { get; set; }
+        public string? MaterialName { get; set; }
         public Guid ProductOwner { get; set;}
 
         public Guid MaterialId { get; set;}

@@ -25,7 +25,6 @@ namespace Contracts.DAL.App.Repositories
             bool noTracking = true);
 
         void RemoveUserMessagesAsync(Guid id, Guid userId);
-        Task<TEntity> GetByMessageFormId(Guid id);
         void RemoveUserMessagesByUser(Guid userId);
     }
 }

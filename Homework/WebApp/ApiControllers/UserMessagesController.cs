@@ -58,7 +58,6 @@ namespace WebApp.ApiControllers
                     AppUserId = s.AppUserId,
                     Email = s.Email,
                     Message = s.Message,
-                    MessageFormId = s.MessageFormId,
                     Subject = s.Subject,
                     SenderEmail = s.SenderEmail
                 }));

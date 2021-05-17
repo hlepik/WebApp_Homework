@@ -43,5 +43,7 @@ namespace BLL.App.Services
         {
             ServiceRepository.RemoveProductMaterialsAsync(id);
         }
+
+
     }
 }

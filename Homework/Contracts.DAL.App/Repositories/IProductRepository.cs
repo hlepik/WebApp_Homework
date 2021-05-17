@@ -25,5 +25,8 @@ namespace Contracts.DAL.App.Repositories
         void RemoveProductAsync(Guid id, Guid userId = default);
         void DeleteAll(Guid userId);
         Task<IEnumerable<TEntity?>> GetId(Guid userId);
+        Task<IEnumerable<TEntity>> GetLastInserted();
+        Task<IEnumerable<TEntity>> GetSearchResult(Guid? countyId, Guid? cityId, Guid? categoryId);
+
     }
 }

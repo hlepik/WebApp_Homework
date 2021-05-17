@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Contracts.DAL.App.Repositories;
+using DAL.App.DTO;
 using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -31,8 +32,9 @@ namespace DAL.App.EF.Repositories
                     Description = p.Booking!.Product!.Description,
                     AppUserId = p.Booking.AppUserId,
                     Email = p.Booking.Product.AppUser!.Email,
-                    HasTransport = p.Booking.Product.HasTransport,
-                    TimeBooked = p.Booking.TimeBooked
+                    TimeBooked = p.Booking.TimeBooked,
+                    Until = p.Booking.Until,
+                    ProductId = p.Booking.ProductId
 
 
                 }).Where(x => x.AppUserId == userId);
@@ -53,14 +55,9 @@ namespace DAL.App.EF.Repositories
             var resQuery = query
                 .Select(p => new DAL.App.DTO.UserBookedProducts()
                 {
+
                     Id = p.Id,
-                    Description = p.Booking!.Product!.Description,
-                    TimeBooked = p.Booking.TimeBooked,
-                    Until = p.Booking!.Until,
-                    City = p.Booking.Product.City!.Name,
-                    Color = p.Booking.Product.Color,
-                    County = p.Booking.Product.County!.Name,
-                    LocationDescription = p.Booking.Product.LocationDescription
+                    ProductId = p.Booking!.ProductId
 
 
                 }).FirstOrDefaultAsync(m => m.Id == id);
@@ -68,25 +65,7 @@ namespace DAL.App.EF.Repositories
             return await resQuery;
         }
 
-        public async Task<IEnumerable<DAL.App.DTO.UserBookedProducts>> GetAllBookedProductsAsync(Guid userId, bool noTracking = true)
-        {
-            var query = CreateQuery(userId, noTracking);
 
-            var resQuery = query.Select(p => new DAL.App.DTO.UserBookedProducts()
-                {
-                    Id = p.Id,
-                    Description = p.Booking!.Product!.Description,
-                    TimeBooked = p.Booking.TimeBooked,
-                    AppUserId = p.Booking.AppUserId,
-                    BookingId = p.BookingId
-
-                })
-                .Where(x => x.AppUserId == userId).OrderByDescending(x => x.TimeBooked);
-
-            return await resQuery.ToListAsync();
-
-
-        }
         public async Task<Guid> GetId(Guid id)
         {
             var query = RepoDbContext

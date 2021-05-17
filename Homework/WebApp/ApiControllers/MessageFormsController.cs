@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using PublicApi.DTO.v1;
 using PublicApi.DTO.v1.Mappers;
-using MessageForm = Domain.App.MessageForm;
+
 
 namespace WebApp.ApiControllers
 {
@@ -26,6 +26,8 @@ namespace WebApp.ApiControllers
     {
         private readonly IAppBLL _bll;
         private readonly MessageFormMapper _mapper = new MessageFormMapper();
+        private readonly UserMessagesMapper _userMessagesMapper = new UserMessagesMapper();
+
 
         /// <summary>
         /// Constructor
@@ -46,7 +48,7 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(typeof(PublicApi.DTO.v1.MessageForm), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.MessageForm>>> GetMessageForms()
         {
-            return Ok((await _bll.MessageForm.GetAllAsync()).Select(s => new PublicApi.DTO.v1.MessageForm()
+            return Ok((await _bll.MessageForm.GetAllAsync(User.GetUserId()!.Value)).Select(s => new PublicApi.DTO.v1.MessageForm()
             {
                 Id = s.Id,
                 Message = s.Message,
@@ -113,13 +115,39 @@ namespace WebApp.ApiControllers
         /// </summary>
         /// <param name="messageForm"></param>
         /// <returns></returns>
+        [HttpPost]
+        [AllowAnonymous]
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(MessageForm))]
-        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
+
         public async Task<ActionResult<PublicApi.DTO.v1.MessageForm>> PostMessageForm(PublicApi.DTO.v1.MessageForm messageForm)
         {
+            messageForm.DateSent = DateTime.Now;
+            messageForm.SenderId = User.GetUserId()!.Value;
+
+            var id = await _bll.UserMessages.GetId(messageForm.Email);
+
+            if (id == Guid.Empty)
+            {
+                return NotFound(new Message("Email form not found"));
+
+            }
             _bll.MessageForm.Add(_mapper.Map(messageForm));
+            await _bll.SaveChangesAsync();
+
+            var userMessage = new UserMessages
+            {
+                AppUserId =  id!.Value,
+                SenderEmail = User.GetUserEmail(),
+                Subject = messageForm.Subject,
+                Message = messageForm.Message,
+                DateSent = messageForm.DateSent
+
+            };
+
+            _bll.UserMessages.Add(_userMessagesMapper.Map(userMessage));
             await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetMessageForm",
@@ -148,9 +176,6 @@ namespace WebApp.ApiControllers
             {
                 return NotFound(new Message("Message form not found"));
             }
-
-
-            await _bll.UserMessages.GetByMessageFormId(id);
 
             _bll.MessageForm.RemoveMessagesAsync(id);
             await _bll.SaveChangesAsync();

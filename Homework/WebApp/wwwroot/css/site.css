@@ -69,3 +69,91 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+/* Style buttons */
+.btn {
+  background-color: DodgerBlue; /* Blue background */
+  border: none; /* Remove borders */
+  color: white; /* White text */
+  padding: 12px 16px; /* Some padding */
+  font-size: 16px; /* Set a font size */
+  cursor: pointer; /* Mouse pointer on hover */
+}
+
+/* Darker background on mouse-over */
+.btn:hover {
+  background-color: RoyalBlue;
+}
+#deleteButton{
+  color: red; !important;
+}
+
+
+#userLayout {
+  padding-right: 2rem;
+  padding-top: 1rem;
+  color: #117a8b;
+}
+
+#homeButton{
+  padding-right: 1rem;
+  color: #117a8b;
+}
+.boxLayout {
+  display: inline-block;
+  border-radius: 15px;
+  border:2px solid #117a8b;
+  vertical-align:top;
+  padding: 1rem;
+  font-size: small;
+  box-sizing: content-box;
+  box-shadow: 1px 1px 1px #999;
+  background-color: white;
+
+
+}
+
+.mainBox{
+  padding-bottom: 1.5rem;
+}
+#reserveButton {
+  padding-left: 1rem;
+
+}
+.mainView{
+  padding-left: 3rem;
+  padding-bottom: 1.5rem;
+}
+body {
+  background-image: linear-gradient(white, lightslategrey);
+
+}
+
+
+#box1 {
+  border: none;
+  width: 21%;
+
+}
+#box2 {
+  border: none;
+
+}
+#box3 {
+  border: none;
+
+}
+.searchList {
+  padding-right: 1.5rem;
+  padding-bottom: 1rem;
+}
+#SearchButton {
+  float: right;
+  padding-right: 1.5rem;
+}
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+

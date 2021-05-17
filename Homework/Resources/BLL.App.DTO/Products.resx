@@ -75,10 +75,13 @@
     <data name="MyProduct" xml:space="preserve">
         <value>My Product</value>
     </data>
-    <data name="ReasentlyAddedProducts" xml:space="preserve">
-        <value>Reasently added products</value>
-    </data>
     <data name="Location" xml:space="preserve">
         <value>Location</value>
+    </data>
+    <data name="RecentlyAddedProducts" xml:space="preserve">
+        <value>Recently Added Products</value>
+    </data>
+    <data name="Size" xml:space="preserve">
+        <value>Size</value>
     </data>
 </root>

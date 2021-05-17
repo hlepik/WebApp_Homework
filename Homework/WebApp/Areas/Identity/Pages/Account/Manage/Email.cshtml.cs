@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Resources.Areas.Identity.Pages.Account.Manage;
 
 namespace WebApp.Areas.Identity.Pages.Account.Manage
 {
@@ -42,10 +43,14 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
-            [Display(Name = "New email")]
+            [Required(ErrorMessageResourceType = typeof(Resources.Common), ErrorMessageResourceName = "ErrorMessage_Required")]
+
+            [EmailAddress(ErrorMessageResourceType = typeof(Resources.Common),
+                ErrorMessageResourceName = "ErrorMessage_Email")]
+
+            [Display(Name = nameof(NewEmail), ResourceType = typeof(Email))]
             public string NewEmail { get; set; } = default!;
+
         }
 
         private async Task LoadAsync(AppUser user)

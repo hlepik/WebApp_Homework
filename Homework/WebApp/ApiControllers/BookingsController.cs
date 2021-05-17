@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Contracts.BLL.App;
 using Extensions.Base;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PublicApi.DTO.v1;
@@ -20,6 +22,8 @@ namespace WebApp.ApiControllers
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
 
     public class BookingsController : ControllerBase
     {
@@ -27,6 +31,7 @@ namespace WebApp.ApiControllers
         private readonly IAppBLL _bll;
         private readonly BookingMapper _mapper = new BookingMapper();
         private readonly ProductMapper _mapperProduct = new ProductMapper();
+        private readonly UserBookedProductsMapper _mapperBookedProducts = new UserBookedProductsMapper();
 
 
         /// <summary>
@@ -112,22 +117,29 @@ namespace WebApp.ApiControllers
         /// </summary>
         /// <param name="booking"></param>
         /// <returns></returns>
+        [HttpPost]
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Booking))]
-        [HttpPost]
+
         public async Task<ActionResult<PublicApi.DTO.v1.Booking>> PostBooking(PublicApi.DTO.v1.Booking booking)
         {
 
             var product = await _bll.Product.ChangeBookingStatus(booking.ProductId);
             product.IsBooked = true;
 
-            booking.AppUserId = User.GetUserId()!.Value;
-            booking.TimeBooked = DateTime.Now;
-
             _bll.Product.Update(product);
             _bll.Booking.Add(_mapper.Map(booking));
             await _bll.SaveChangesAsync();
+            
+            var myBookings = new PublicApi.DTO.v1.UserBookedProducts
+            {
+                BookingId = booking.Id,
+                TimeBooked = DateTime.Now
+            };
+            _bll.UserBookedProducts.Add(_mapperBookedProducts.Map(myBookings));
+            await _bll.SaveChangesAsync();
+
 
             return CreatedAtAction(
                 "GetBooking",

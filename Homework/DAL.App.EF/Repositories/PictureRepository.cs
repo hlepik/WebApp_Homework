@@ -40,6 +40,10 @@ namespace DAL.App.EF.Repositories
 
 
             query = query.Include(x => x.Product);
+            if (userId != default)
+            {
+                query = query.Where(x => x.Product!.AppUserId == userId);
+            }
 
             var resQuery = query
                 .Select(p => new DAL.App.DTO.Picture()
@@ -50,6 +54,8 @@ namespace DAL.App.EF.Repositories
                 ProductName = p.Product!.Description
 
             }).OrderBy(x => x.ProductName);
+
+
 
             return await resQuery.ToListAsync();
 

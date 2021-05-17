@@ -44,7 +44,9 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            return View(userBookedProducts);
+            var product = await _bll.Product.FirstOrDefaultDTOAsync(userBookedProducts.ProductId);
+
+            return View(product);
         }
 
         // GET: UserBookedProducts/Create
@@ -127,15 +129,17 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-
             var userBookedProducts = await _bll.UserBookedProducts.FirstOrDefaultBookedProductsAsync(id.Value, User.GetUserId()!.Value);
+
 
             if (userBookedProducts == null)
             {
                 return NotFound();
             }
 
-            return View(userBookedProducts);
+            var product = await _bll.Product.FirstOrDefaultDTOAsync(userBookedProducts.ProductId);
+
+            return View(product);
 
         }
 

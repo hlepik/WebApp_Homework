@@ -41,10 +41,6 @@ namespace BLL.App.Services
             ServiceRepository.RemoveUserMessagesAsync(id, userId);
         }
 
-        public async Task<BLLAppDTO.UserMessages> GetByMessageFormId(Guid id)
-        {
-            return Mapper.Map(await ServiceRepository.GetByMessageFormId(id))!;
-        }
 
         public void RemoveUserMessagesByUser(Guid userId)
         {

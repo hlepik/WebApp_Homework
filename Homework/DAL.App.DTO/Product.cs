@@ -11,6 +11,7 @@ namespace DAL.App.DTO
     {
 
         public IEnumerable<string>? Material { get; set; }
+        public IEnumerable<string>? PictureUrls { get; set; }
 
         [MaxLength(500)] public string Description { get; set; } = default!;
         [MaxLength(64)] public string? Color { get; set; }

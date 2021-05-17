@@ -149,5 +149,15 @@ namespace Resources.Areas.Identity.Pages.Account {
                 return ResourceManager.GetString("PasswordsDontMatch", resourceCulture);
             }
         }
+        public static string FirstName {
+            get {
+                return ResourceManager.GetString("FirstName", resourceCulture);
+            }
+        }
+        public static string LastName {
+            get {
+                return ResourceManager.GetString("LastName", resourceCulture);
+            }
+        }
     }
 }

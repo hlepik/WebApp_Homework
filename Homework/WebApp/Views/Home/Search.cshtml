@@ -1,0 +1,118 @@
+@model IEnumerable<BLL.App.DTO.Product>
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+@foreach (var item in Model)
+{
+<div class="mainView">
+<div class="boxLayout">
+
+
+        <tr>
+        <th align="right" style="vertical-align:top;">
+            @foreach (var picture in item.PictureUrls!)
+            {
+
+                <img src="@Html.Raw(picture)" alt="image" width="150" height="100">
+                break;
+            }
+        </th>
+        @if (item.PictureUrls.Any())
+        {
+
+            <a asp-action="Details" align="right" style="vertical-align:top;" class="fas fa-camera pr-md" asp-route-id="@item.Id"></a>
+
+        }
+    <div class="boxLayout" id="box1">
+        <table>
+            <tr>
+                <td>@Html.DisplayNameFor(model => model.Description):&nbsp</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+            </tr>
+            <tr>
+                <td>@Html.DisplayNameFor(model => model.County):&nbsp</td>
+                <td>@Html.DisplayFor(modelItem => item.County)</td>
+            </tr>
+            <tr>
+                <td>@Html.DisplayNameFor(model => model.City):&nbsp</td>
+                <td>@Html.DisplayFor(modelItem => item.City)</td>
+            </tr>
+            <tr>
+                <td>@Html.DisplayNameFor(model => model.LocationDescription):&nbsp</td>
+                <td>@Html.DisplayFor(modelItem => item.LocationDescription)</td>
+            </tr>
+
+        </table>
+    </div>
+        <div class="boxLayout" id="box2">
+            <table>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Category):&nbsp</td>
+                    <td>@Html.DisplayFor(modelItem => item.Category)</td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Color):&nbsp</td>
+                    <td>@Html.DisplayFor(modelItem => item.Color)</td>
+                </tr>
+
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Width):&nbsp</td>
+                    <td>@Html.DisplayFor(modelItem => item.Width)
+                        @Html.DisplayFor(modelItem => item.Unit)</td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Height):&nbsp</td>
+                    <td>@Html.DisplayFor(modelItem => item.Height)
+                        @Html.DisplayFor(modelItem => item.Unit)</td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Depth):</td>
+                    <td>@Html.DisplayFor(modelItem => item.Depth)
+                        @Html.DisplayFor(modelItem => item.Unit)</td>
+                </tr>
+            </table>
+        </div>
+        <div class="boxLayout" id="box3">
+            <table>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.HasTransport):&nbsp</td>
+                    <td>@Html.DisplayFor(modelItem => item.HasTransport)</td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.IsBooked)</td>
+                    <td>@Html.DisplayFor(modelItem => item.IsBooked)</td>
+                </tr>
+
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Condition):&nbsp</td>
+                    <td>@Html.DisplayFor(modelItem => item.Condition)</td>
+                </tr>
+
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.ProductAge):&nbsp</td>
+                    <td>@Html.DisplayFor(modelItem => item.ProductAge)</td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Material):&nbsp</td>
+
+                    @foreach (var picture in item.Material!)
+                    {
+
+                        <td>@Html.DisplayFor(modelItem => item.Material)</td>
+                    }
+                </tr>
+            </table>
+
+        </div>
+
+      @if (User.Identity!.IsAuthenticated && !item.IsBooked)
+      {
+          <span id="reserveButton">
+              <a asp-action="Reserve" align="right" style="vertical-align:bottom;" class="btn btn-outline-info" asp-route-id="@item.Id">Reserve</a>
+          </span>
+      }
+</div>
+</div>
+}

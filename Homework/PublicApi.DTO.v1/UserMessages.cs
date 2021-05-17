@@ -11,8 +11,6 @@ namespace PublicApi.DTO.v1
         [MaxLength(128)] public string? Subject { get; set; }
         public DateTime DateSent { get; set; }
 
-        public Guid? MessageFormId { get; set; }
-
         public Guid AppUserId { get; set; }
 
         [MaxLength(64)] public string SenderEmail { get; set; } = default!;

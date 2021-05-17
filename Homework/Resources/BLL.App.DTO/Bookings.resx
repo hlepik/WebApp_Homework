@@ -22,7 +22,7 @@
         <value>Booking</value>
     </data>
     <data name="Until" xml:space="preserve">
-        <value>Until?</value>
+        <value>Until</value>
     </data>
     <data name="TimeBooked" xml:space="preserve">
         <value>Time booked</value>

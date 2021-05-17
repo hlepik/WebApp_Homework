@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Resources.Areas.Identity.Pages.Account;
 
 namespace WebApp.Areas.Identity.Pages.Account
 {
@@ -47,9 +48,14 @@ namespace WebApp.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessageResourceType = typeof(Resources.Common), ErrorMessageResourceName = "ErrorMessage_Required")]
+            [EmailAddress(ErrorMessageResourceType = typeof(Resources.Common),
+                ErrorMessageResourceName = "ErrorMessage_Email")]
+
+            [Display(Name = nameof(Email), ResourceType = typeof(ExternalLogin))]
             public string Email { get; set; } = default!;
+
+
         }
 
         public IActionResult OnGetAsync()

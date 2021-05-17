@@ -55,25 +55,51 @@ namespace WebApp.Areas.Identity.Pages.Account
         }
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
-            [Display(Name = "Email")]
+            [Required(ErrorMessageResourceType = typeof(Resources.Common),
+                ErrorMessageResourceName = "ErrorMessage_Required")]
+            [EmailAddress(ErrorMessageResourceType = typeof(Resources.Common),
+                ErrorMessageResourceName = "ErrorMessage_Email")]
+            [Display(ResourceType = typeof(Resources.Areas.Identity.Pages.Account.Register),
+                Name = nameof(Email))]
             public string Email { get; set; }= default!;
 
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+
+            [Required(ErrorMessageResourceType = typeof(Resources.Common),
+                ErrorMessageResourceName = "ErrorMessage_Required")]
+            [StringLength(100, ErrorMessageResourceType = typeof(Resources.Common),
+                ErrorMessageResourceName = "ErrorMessage_StringLengthMinMax", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
+            [Display(Name = nameof(Password),
+                ResourceType = typeof(Resources.Areas.Identity.Pages.Account.Register))]
             public string Password { get; set; }= default!;
 
+            [Required(ErrorMessageResourceType = typeof(Resources.Common),
+                ErrorMessageResourceName = "ErrorMessage_Required")]
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-            public string ConfirmPassword { get; set; }= default!;
+            [Display(Name = nameof(ConfirmPassword),
+                ResourceType = typeof(Resources.Areas.Identity.Pages.Account.Register))]
+            [Compare("Password",
+                ErrorMessageResourceType = typeof(Resources.Areas.Identity.Pages.Account.Register),
+                ErrorMessageResourceName = "PasswordsDontMatch")]
+            public string ConfirmPassword { get; set; } = default!;
 
-            [MaxLength(128)] public virtual string FirstName { get; set; } = default!;
+            [Required(ErrorMessageResourceType = typeof(Resources.Common),
+                ErrorMessageResourceName = "ErrorMessage_Required")]
+            [MaxLength(128, ErrorMessageResourceType = typeof(Resources.Common),
+                ErrorMessageResourceName = "ErrorMessage_MaxLength")]
+            [Display(ResourceType = typeof(Resources.Areas.Identity.Pages.Account.Register),
+                Name = nameof(FirstName))]
+            public virtual string FirstName { get; set; } = default!;
 
-            [MaxLength(128)] public virtual string LastName { get; set; } = default!;
+            [Required(ErrorMessageResourceType = typeof(Resources.Common),
+                ErrorMessageResourceName = "ErrorMessage_Required")]
+
+            [MaxLength(128, ErrorMessageResourceType = typeof(Resources.Common),
+                ErrorMessageResourceName = "ErrorMessage_MaxLength")]
+            [Display(ResourceType = typeof(Resources.Areas.Identity.Pages.Account.Register),
+                Name = nameof(LastName))]
+            public virtual string LastName { get; set; } = default!;
+
 
         }
 

@@ -1,0 +1,91 @@
+@model WebApp.ViewModels.Test.TestViewModel
+
+@{
+    ViewData["Title"] = "Test";
+}
+
+<h1>@Resources.BLL.App.DTO.Products.MyProduct</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Products.FirstOrDefault()!.Description)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Products.FirstOrDefault()!.Color)
+            </th>
+            <th>
+              @Html.DisplayNameFor(model => model.Products.FirstOrDefault()!.HasTransport)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Products.FirstOrDefault()!.IsBooked)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Products.FirstOrDefault()!.County)
+            </th>
+
+            <th>
+             @Html.DisplayNameFor(model => model.Products.FirstOrDefault()!.LocationDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Products.FirstOrDefault()!.Height)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Products.FirstOrDefault()!.Width)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Products.FirstOrDefault()!.Depth)
+            </th>
+
+            <th>
+               @Html.DisplayNameFor(model => model.Products.FirstOrDefault()!.Condition)
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Products) {
+        <tr>
+            <td>
+                @item.Description
+            </td>
+
+            <td>
+                @item.Color
+            </td>
+            <td>
+                @item.HasTransport
+            </td>
+            <td>
+                @item.IsBooked
+            </td>
+
+            <td>
+                @item.County!.Name
+            </td>
+
+            <td>
+                @item.LocationDescription
+            </td>
+
+            <td>
+                @item.Height
+            </td>
+            <td>
+                @item.Width
+            </td>
+            <td>
+                @item.Depth
+            </td>
+
+            <td>
+                @item.Condition!.Description
+            </td>
+
+        </tr>
+}
+    </tbody>
+</table>

@@ -34,12 +34,13 @@ namespace DAL.App.EF.Repositories
         {
             var query = CreateQuery(userId, noTracking);
 
-            query = query
+            var resQuery = query
                 .Include(x => x.Name)
                 .ThenInclude(x => x!.Translations)
                 .OrderBy(x => x.Name);
 
-            var res = await query.Select(x => Mapper.Map(x)).ToListAsync();
+            var resDomain = await resQuery.ToListAsync();
+            var res = resDomain.Select(x => Mapper.Map(x));
             return res!;
         }
 

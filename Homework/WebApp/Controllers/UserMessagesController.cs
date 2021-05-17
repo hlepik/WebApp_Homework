@@ -71,12 +71,13 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            var userMessages= await _bll.UserMessages.FirstOrDefaultUserMessagesAsync(id.Value, User.GetUserId()!.Value);
-            if (userMessages == null)
-            {
-                return NotFound();
-            }
-            return View(userMessages);
+            // var userMessages= await _bll.UserMessages.FirstOrDefaultUserMessagesAsync(id.Value, User.GetUserId()!.Value);
+            // if (userMessages == null)
+            // {
+            //     return NotFound();
+            // }
+            return View("~/Views/MessageForms/_CreateEdit.cshtml");
+
         }
 
         // POST: UserMessages/Edit/5

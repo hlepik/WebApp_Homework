@@ -33,4 +33,7 @@
     <data name="Remove" xml:space="preserve">
         <value>Remove</value>
     </data>
+    <data name="Search" xml:space="preserve">
+        <value>Search</value>
+    </data>
 </root>

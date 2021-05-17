@@ -48,10 +48,11 @@ namespace WebApp.Controllers
         }
 
         // GET: Bookings/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(Guid id)
         {
-
+            var product = await _bll.Product.FirstOrDefaultDTOAsync(id);
             var vm = new BookingCreateEditViewModels();
+            vm.Products = product!;
             vm.ProductSelectList = new SelectList(await _bll.Product.GetAllProductsIsNotBookedAsync(), nameof(Product.Id),
                 nameof(Product.Description));
             return View(vm);
@@ -65,12 +66,13 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookingCreateEditViewModels vm)
         {
+            var product = await _bll.Product.ChangeBookingStatus(vm.Products.Id);
+
+
             if (ModelState.IsValid)
             {
-
-                var product = await _bll.Product.ChangeBookingStatus(vm.Booking.ProductId);
                 product.IsBooked = true;
-
+                vm.Booking.ProductId = product.Id;
                 vm.Booking.AppUserId = User.GetUserId()!.Value;
                 vm.Booking.TimeBooked = DateTime.Now;
 
@@ -85,10 +87,12 @@ namespace WebApp.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllProductsIsNotBookedAsync(), nameof(Product.Id),
+
+            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllProductsIsNotBookedAsync(),
+                nameof(Product.Id),
                 nameof(Product.Description), vm.Booking.ProductId);
 
-            return View(vm);
+            return View();
         }
 
 

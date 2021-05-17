@@ -15,13 +15,10 @@ namespace Domain.App
 
         [MaxLength(1000)] public string Message { get; set; } = default!;
 
-        public DateTime DateSent { get; set; } = DateTime.Now;
+        [DataType(DataType.DateTime)]
+        public DateTime DateSent { get; set; }
 
         public Guid? SenderId { get; set; }
-
-        public ICollection<UserMessages>? UserMessages { get; set; }
-
-
 
     }
 }

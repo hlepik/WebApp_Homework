@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using DAL.App.DTO.Identity;
 using Domain.Base;
 
@@ -17,6 +18,7 @@ namespace DAL.App.DTO
         public string? Unit { get; set; }
 
         public DateTime TimeBooked { get; set; } = DateTime.Now;
+        [DataType(DataType.Date)]
         public DateTime? Until { get; set; }
         public Guid ProductId { get; set; }
         public string? Product { get; set; }

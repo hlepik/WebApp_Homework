@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using PublicApi.DTO.v1;
 using PublicApi.DTO.v1.Mappers;
+using Product = Domain.App.Product;
 
 
 namespace WebApp.ApiControllers
@@ -49,15 +50,17 @@ namespace WebApp.ApiControllers
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.UserBookedProducts>>> GetUserBookedProducts()
         {
 
-            return Ok((await _bll.UserBookedProducts.GetAllBookedProductsAsync(User.GetUserId()!.Value))
+            return Ok((await _bll.UserBookedProducts.GetAllAsync(User.GetUserId()!.Value))
                 .Select(s => new PublicApi.DTO.v1.UserBookedProducts()
                 {
                     Id = s.Id,
                     Description = s.Description,
-                    LocationDescription = s.LocationDescription,
                     AppUserId = s.AppUserId,
-                    Color = s.Color,
-                    Email = s.Email
+                    Email = s.Email,
+                    Until = s.Until,
+                    TimeBooked = s.TimeBooked,
+                    ProductId = s.ProductId,
+                    BookingId = s.BookingId
                 }));
         }
 

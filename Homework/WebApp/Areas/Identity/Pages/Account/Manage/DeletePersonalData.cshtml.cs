@@ -36,9 +36,11 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
-            [Required]
+            [Required(ErrorMessageResourceType = typeof(Resources.Common), ErrorMessageResourceName = "ErrorMessage_Required")]
+
             [DataType(DataType.Password)]
             public string Password { get; set; } = default!;
+
         }
 
         public bool RequirePassword { get; set; }

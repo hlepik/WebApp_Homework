@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Contracts.Domain.Base;
 using Domain.App.Identity;
@@ -10,7 +11,9 @@ namespace Domain.App
     public class Booking : DomainEntityId, IDomainAppUserId, IDomainAppUser<AppUser>
     {
 
-        public DateTime TimeBooked { get; set; } = DateTime.Now;
+        [DataType(DataType.DateTime)]
+        public DateTime TimeBooked { get; set; }
+        [DataType(DataType.Date)]
         public DateTime? Until { get; set; }
 
         public Guid ProductId { get; set; }

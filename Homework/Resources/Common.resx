@@ -72,4 +72,7 @@
     <data name="ErrorMessage_NotValidPhone" xml:space="preserve">
         <value>The {0} field is not a valid phone number.</value>
     </data>
+    <data name="ErrorMessage_Email" xml:space="preserve">
+        <value>The {0} field is not a valid e-mail address.</value>
+    </data>
 </root>

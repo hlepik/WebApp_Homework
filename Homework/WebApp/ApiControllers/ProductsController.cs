@@ -21,6 +21,7 @@ namespace WebApp.ApiControllers
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
+
     public class ProductsController : ControllerBase
     {
         private readonly IAppBLL _bll;
@@ -35,14 +36,53 @@ namespace WebApp.ApiControllers
             _bll = bll;
         }
 
+
+        /// <summary>
+        /// Return last 4 inserted
+        /// </summary>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet ("four/lastFour")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(PublicApi.DTO.v1.Product), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.Product>>> GetLastProducts()
+        {
+
+            return Ok((await _bll.Product.GetLastInserted())
+                .Select(s => new PublicApi.DTO.v1.Product()
+                {
+                    Description = s.Description,
+                    City = s.City,
+                    County = s.County,
+                    LocationDescription = s.LocationDescription,
+                    IsBooked = s.IsBooked,
+                    DateAdded = s.DateAdded,
+                    Color = s.Color,
+                    Condition = s.Condition,
+                    Category = s.Category,
+                    Material = s.Material!,
+                    Width = s.Width,
+                    Height = s.Height,
+                    Depth = s.Depth,
+                    HasTransport = s.HasTransport,
+                    Unit = s.Unit,
+                    Id = s.Id,
+                    PictureUrls = s.PictureUrls
+
+                }));
+        }
+
         /// <summary>
         /// Get all products
         /// </summary>
         /// <returns>Entities from db</returns>
         [HttpGet]
+        [AllowAnonymous]
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(typeof(PublicApi.DTO.v1.Product), StatusCodes.Status200OK)]
+
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.Product>>> GetProducts()
         {
 
@@ -53,27 +93,30 @@ namespace WebApp.ApiControllers
                     City = s.City,
                     County = s.County,
                     LocationDescription = s.LocationDescription,
-                    AppUserId = s.AppUserId,
                     IsBooked = s.IsBooked,
                     DateAdded = s.DateAdded,
                     Color = s.Color,
                     Condition = s.Condition,
+                    Category = s.Category,
                     Material = s.Material!,
                     Width = s.Width,
                     Height = s.Height,
                     Depth = s.Depth,
                     HasTransport = s.HasTransport,
                     Unit = s.Unit,
-                    Id = s.Id
+                    Id = s.Id,
+                    PictureUrls = s.PictureUrls
 
                 }));
         }
+
 
         /// <summary>
         /// Get one product. Based on parameter: Id
         /// </summary>
         /// <param name="id">Id of object to retrieve, Guid</param>
         /// <returns>Product entity from db</returns>
+        [AllowAnonymous]
         [HttpGet("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(PublicApi.DTO.v1.Product), StatusCodes.Status200OK)]
@@ -92,6 +135,7 @@ namespace WebApp.ApiControllers
         }
 
 
+
         /// <summary>
         /// Update product
         /// </summary>
@@ -105,7 +149,7 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
 
-        public async Task<IActionResult> PutProduct(Guid id, PublicApi.DTO.v1.Product product)
+        public async Task<IActionResult> PutProduct(Guid id, PublicApi.DTO.v1.ProductAdd product)
         {
             if (id !=product.Id)
             {
@@ -116,10 +160,54 @@ namespace WebApp.ApiControllers
             {
                 return BadRequest(new Message($"Current user does not have product with this id {id}"));
             }
+            var bllProduct = new BLL.App.DTO.Product()
+            {
+                Id = product.Id,
+                Description = product.Description,
+                Color = product.Color,
+                ProductAge = product.ProductAge,
+                CityId = product.City,
+                CountyId = product.County,
+                LocationDescription = product.LocationDescription,
+                IsBooked = product.IsBooked,
+                DateAdded = product.DateAdded,
+                ConditionId = product.Condition,
+                CategoryId = product.Category,
+                Width = product.Width,
+                Height = product.Height,
+                Depth = product.Depth,
+                HasTransport = product.HasTransport,
+                Unit = product.Unit,
+                AppUserId = product.AppUserId,
 
-            product.AppUserId = User.GetUserId()!.Value;
-            product.DateAdded = DateTime.Now.Date;
-            _bll.Product.Update(_mapper.Map(product));
+            };
+
+            var addedProduct = _bll.Product.Add(bllProduct);
+
+            await _bll.SaveChangesAsync();
+
+            var returnProduct = new PublicApi.DTO.v1.Product()
+            {
+                Id = product.Id,
+                Description = addedProduct.Description,
+                Color = addedProduct.Color,
+                ProductAge = addedProduct.ProductAge,
+                City = addedProduct.City,
+                County = addedProduct.County,
+                LocationDescription = addedProduct.LocationDescription,
+                IsBooked = addedProduct.IsBooked,
+                DateAdded = addedProduct.DateAdded,
+                Condition = addedProduct.Condition,
+                Category = addedProduct.Category,
+                Width = addedProduct.Width,
+                Height = addedProduct.Height,
+                Depth = addedProduct.Depth,
+                HasTransport = addedProduct.HasTransport,
+                Unit = addedProduct.Unit,
+                AppUserId = addedProduct.AppUserId,
+
+            };
+            _bll.Product.Update(_mapper.Map(returnProduct));
             await _bll.SaveChangesAsync();
 
             return NoContent();
@@ -135,18 +223,63 @@ namespace WebApp.ApiControllers
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Product))]
         [HttpPost]
-        public async Task<ActionResult<Product>> PostProduct(PublicApi.DTO.v1.Product product)
+        public async Task<ActionResult<Product>> PostProduct(PublicApi.DTO.v1.ProductAdd product)
         {
-            _bll.Product.Add(_mapper.Map(product));
+            product.AppUserId = User.GetUserId()!.Value;
+            product.DateAdded = DateTime.Now.Date;
+
+            var bllProduct = new BLL.App.DTO.Product()
+            {
+                Description = product.Description,
+                Color = product.Color,
+                ProductAge = product.ProductAge,
+                CityId = product.City,
+                CountyId = product.County,
+                LocationDescription = product.LocationDescription,
+                IsBooked = product.IsBooked,
+                DateAdded = product.DateAdded,
+                ConditionId = product.Condition,
+                CategoryId = product.Category,
+                Width = product.Width,
+                Height = product.Height,
+                Depth = product.Depth,
+                HasTransport = product.HasTransport,
+                Unit = product.Unit,
+                AppUserId = product.AppUserId,
+            };
+
+            var addedProduct = _bll.Product.Add(bllProduct);
+
             await _bll.SaveChangesAsync();
+
+            var returnProduct = new PublicApi.DTO.v1.Product()
+            {
+                Description = addedProduct.Description,
+                Color = addedProduct.Color,
+                ProductAge = addedProduct.ProductAge,
+                City = addedProduct.City,
+                County = addedProduct.County,
+                LocationDescription = addedProduct.LocationDescription,
+                IsBooked = addedProduct.IsBooked,
+                DateAdded = addedProduct.DateAdded,
+                Condition = addedProduct.Condition,
+                Category = addedProduct.Category,
+                Width = addedProduct.Width,
+                Height = addedProduct.Height,
+                Depth = addedProduct.Depth,
+                HasTransport = addedProduct.HasTransport,
+                Unit = addedProduct.Unit,
+                AppUserId = addedProduct.AppUserId,
+
+            };
 
             return CreatedAtAction("GetProduct",
                 new
                 {
-                    id = product.Id,
+                    id = returnProduct.Id,
                     version = HttpContext.GetRequestedApiVersion()?.ToString() ?? "0"
+                }, returnProduct);
 
-                }, product);
         }
 
 

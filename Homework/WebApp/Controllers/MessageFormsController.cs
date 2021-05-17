@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Contracts.BLL.App;
 using Microsoft.AspNetCore.Mvc;
@@ -63,21 +64,28 @@ namespace WebApp.Controllers
                 messageForm.DateSent = DateTime.Now;
                 messageForm.SenderId = User.GetUserId()!.Value;
 
-
-
                 var id = await _bll.UserMessages.GetId(messageForm.Email);
 
                 if (id == Guid.Empty)
                 {
+                    ModelState.AddModelError("NoEmail", "Email is not correct!");
+
                     return View();
                 }
+                _bll.MessageForm.Add(messageForm);
+                await _bll.SaveChangesAsync();
+
+
                 var userMessage = new UserMessages
                 {
-                    MessageFormId = messageForm.Id,
                     AppUserId =  id!.Value,
-                    SenderEmail = User.GetUserEmail()
+                    SenderEmail = User.GetUserEmail(),
+                    Subject = messageForm.Subject,
+                    Message = messageForm.Message,
+                    DateSent = messageForm.DateSent
 
                 };
+
                 _bll.UserMessages.Add(userMessage);
                 await _bll.SaveChangesAsync();
 
@@ -147,8 +155,6 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-
-            await _bll.UserMessages.GetByMessageFormId(id);
 
             _bll.MessageForm.RemoveMessagesAsync(id);
             await _bll.SaveChangesAsync();

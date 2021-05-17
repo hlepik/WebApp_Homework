@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Builder
 @using Microsoft.Extensions.Options
 @inject IOptions<RequestLocalizationOptions> LocalizationOptions
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 @{
 
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
@@ -10,8 +11,8 @@
 }
 
 <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        @Resources.Views.Shared._Layout.Languages
+    <a class="nav-link dropdown-toggle material-icons" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="material-icons">&#xe894;</i>
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
         @foreach (var item in cultureItems)

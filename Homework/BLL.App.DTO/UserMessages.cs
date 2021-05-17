@@ -20,7 +20,6 @@ namespace BLL.App.DTO
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.UserMessage), Name = "DateSent")]
         public DateTime DateSent { get; set; }
 
-        public Guid? MessageFormId { get; set; }
         public Guid AppUserId { get; set; }
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.UserMessage), Name = "SenderEmail")]
         public string SenderEmail { get; set; } = default!;

@@ -53,7 +53,9 @@ namespace WebApp.ApiControllers
             {
                 Id = s.Id,
                 MaterialId = s.MaterialId,
-                ProductId = s.ProductId
+                ProductId = s.ProductId,
+                ProductName = s.ProductName,
+                MaterialName = s.MaterialName
             }));
         }
 

@@ -31,7 +31,6 @@ namespace BLL.App.DTO
 
         public Guid? SenderId { get; set; }
 
-        public ICollection<UserMessages>? UserMessages { get; set; }
 
 
 

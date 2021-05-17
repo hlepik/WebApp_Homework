@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using PublicApi.DTO.v1;
 using PublicApi.DTO.v1.Mappers;
-using Condition = Domain.App.Condition;
 
 namespace WebApp.ApiControllers
 {
@@ -68,7 +67,7 @@ namespace WebApp.ApiControllers
 
             if (condition == null)
             {
-                return NotFound(new Message("City not found"));
+                return NotFound(new Message("Condition not found"));
             }
 
             return Ok(_mapper.Map(condition));

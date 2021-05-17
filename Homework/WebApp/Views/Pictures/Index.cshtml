@@ -1,5 +1,5 @@
 @model IEnumerable<BLL.App.DTO.Picture>
-
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 @{
     ViewData["Title"] = "Index";
 }
@@ -25,15 +25,18 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Url)
+
+                <img src="@Html.Raw( item.Url)" alt="image" width="200" height="150">
             </td>
             <td>
+
                 @Html.DisplayFor(modelItem => item.ProductName)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Edit</a> |
+
+                <a asp-action="Edit"  asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Delete</a>
+                <a asp-action="Delete" id="deleteButton" class="fa fa-trash" asp-route-id="@item.Id"></a>
             </td>
         </tr>
 }

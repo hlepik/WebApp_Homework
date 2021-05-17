@@ -43,6 +43,7 @@ namespace WebApp.ApiControllers
         [HttpGet]
         [Produces("application/json")]
         [Consumes("application/json")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(PublicApi.DTO.v1.Category), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.Category>>> GetCategories()
         {

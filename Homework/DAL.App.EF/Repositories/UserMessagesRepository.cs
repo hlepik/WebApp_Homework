@@ -25,6 +25,10 @@ namespace DAL.App.EF.Repositories
                 .Users.Where(x => x.Email == email)
                 .Select(x => x.Id );
 
+            if (!query.Any())
+            {
+                return Guid.Empty;
+            }
             var result = await query.FirstAsync();
 
 
@@ -37,16 +41,14 @@ namespace DAL.App.EF.Repositories
 
 
             var resQuery = query
-                .Include(p => p.MessageForm).Select(p => new DAL.App.DTO.UserMessages()
+                .Select(p => new DAL.App.DTO.UserMessages()
                 {
                     Id = p.Id,
                     SenderEmail = p.SenderEmail,
-                    Message = p.MessageForm!.Message,
-                    Subject = p.MessageForm.Subject,
-                    Email = p.MessageForm.Email,
+                    Subject = p.Subject,
+                    Message = p.Message,
                     AppUserId = p.AppUserId,
-                    DateSent = p.MessageForm.DateSent
-
+                    DateSent = p.DateSent
 
                 }).OrderBy(x => x.DateSent).Where(p => p.AppUserId == userId);
 
@@ -63,10 +65,11 @@ namespace DAL.App.EF.Repositories
                 {
                     Id = p.Id,
                     AppUserId = p.AppUserId,
-                    Subject = p.MessageForm!.Subject,
-                    Message = p.MessageForm.Message,
+                    Subject = p.Subject,
+                    Message = p.Message,
+                    DateSent = p.DateSent,
                     SenderEmail = p.SenderEmail,
-                    DateSent = p.MessageForm.DateSent
+
 
 
                 }).FirstOrDefaultAsync(m => m.Id == id);
@@ -100,17 +103,7 @@ namespace DAL.App.EF.Repositories
             }
         }
 
-        public async Task<DTO.UserMessages> GetByMessageFormId(Guid id)
-        {
-            var query = CreateQuery();
-            var res = await query.FirstOrDefaultAsync(m => m.MessageFormId == id);
 
-
-            res.MessageFormId = new Guid();
-            RepoDbContext.Update(res);
-
-            return Mapper.Map(res)!;
-        }
 
 
     }

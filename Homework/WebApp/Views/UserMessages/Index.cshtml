@@ -44,7 +44,7 @@
             <td>
                 <a asp-action="Edit"  asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Reply</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.View</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Delete</a>
+                <a asp-action="Delete" id="deleteButton" class="fa fa-trash" asp-route-id="@item.Id"></a>
             </td>
         </tr>
 }

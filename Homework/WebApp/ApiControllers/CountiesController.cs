@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using PublicApi.DTO.v1;
 using PublicApi.DTO.v1.Mappers;
-using County = Domain.App.County;
 
 namespace WebApp.ApiControllers
 {
@@ -43,6 +42,7 @@ namespace WebApp.ApiControllers
         [HttpGet]
         [Produces("application/json")]
         [Consumes("application/json")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(PublicApi.DTO.v1.County), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.County>>> GetCounties()
         {

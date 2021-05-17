@@ -7,6 +7,8 @@ namespace WebApp.ViewModels.Booking
     {
         public BLL.App.DTO.Booking Booking { get; set; } = default!;
 
+        public BLL.App.DTO.Product Products { get; set; } = default!;
+
         public SelectList? ProductSelectList { get; set; }
     }
 }

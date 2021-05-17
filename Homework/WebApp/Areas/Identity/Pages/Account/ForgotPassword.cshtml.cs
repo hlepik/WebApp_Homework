@@ -30,8 +30,11 @@ namespace WebApp.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessageResourceType = typeof(Resources.Common), ErrorMessageResourceName = "ErrorMessage_Required")]
+
+            [EmailAddress(ErrorMessageResourceType = typeof(Resources.Common),
+                ErrorMessageResourceName = "ErrorMessage_Email")]
+
             public string Email { get; set; } = default!;
         }
 

@@ -57,5 +57,16 @@ namespace BLL.App.Services
             return (await ServiceRepository.GetId(userId)).Select(x => Mapper.Map(x))!;
         }
 
+        public async Task<IEnumerable<BLLAppDTO.Product>> GetLastInserted()
+        {
+            return (await ServiceRepository.GetLastInserted()).Select(x => Mapper.Map(x))!;
+
+        }
+
+        public async Task<IEnumerable<BLLAppDTO.Product>> GetSearchResult(Guid? countyId, Guid? cityId, Guid? categoryId)
+        {
+            return (await ServiceRepository.GetSearchResult(countyId, cityId, categoryId)).Select(x => Mapper.Map(x))!;
+
+        }
     }
 }

@@ -1,5 +1,6 @@
 @model BLL.App.DTO.Picture
 
+
 @{
     ViewData["Title"] = "Details";
 }
@@ -14,5 +15,5 @@
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">@Resources.Views.Crud.CRUD.Edit</a> |
-    <a asp-action="Index">@Resources.Views.Crud.CRUD.Index</a>
+    <a asp-action="Index" class="fas fa-backward">@Resources.Views.Crud.CRUD.Index</a>
 </div>

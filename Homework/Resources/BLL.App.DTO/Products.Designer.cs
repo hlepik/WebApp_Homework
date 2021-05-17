@@ -159,15 +159,21 @@ namespace Resources.BLL.App.DTO {
             }
         }
         
-        public static string ReasentlyAddedProducts {
-            get {
-                return ResourceManager.GetString("ReasentlyAddedProducts", resourceCulture);
-            }
-        }
-        
         public static string Location {
             get {
                 return ResourceManager.GetString("Location", resourceCulture);
+            }
+        }
+        
+        public static string RecentlyAddedProducts {
+            get {
+                return ResourceManager.GetString("RecentlyAddedProducts", resourceCulture);
+            }
+        }
+        
+        public static string Size {
+            get {
+                return ResourceManager.GetString("Size", resourceCulture);
             }
         }
     }

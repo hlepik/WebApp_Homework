@@ -13,7 +13,7 @@
 </div>
 <div class="form-group">
     <label asp-for="Product.ProductAge" class="control-label"></label>
-    <input asp-for="Product.ProductAge" class="form-control" />
+    <input asp-for="Product.ProductAge" min="0" class="form-control" />
     <span asp-validation-for="Product.ProductAge" class="text-danger"></span>
 </div>
 <div class="form-group form-check">
@@ -28,51 +28,51 @@
 </div>
 <div class="form-group">
     <label asp-for="Product.Height" class="control-label"></label>
-    <input asp-for="Product.Height" class="form-control" />
+    <input asp-for="Product.Height" min="0" class="form-control" />
     <span asp-validation-for="Product.Height" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="Product.Width" class="control-label"></label>
-    <input asp-for="Product.Width" class="form-control" />
+    <input asp-for="Product.Width" min="0" class="form-control" />
     <span asp-validation-for="Product.Width" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="Product.Depth" class="control-label"></label>
-    <input asp-for="Product.Depth" class="form-control" />
+    <input asp-for="Product.Depth" min="0" class="form-control" />
     <span asp-validation-for="Product.Depth" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="Product.UnitId" class="control-label">@Resources.BLL.App.DTO.Products.Unit</label>
     <select asp-for="Product.UnitId" class="form-control" asp-items="Model.UnitSelectList">
-        <option>--- @Resources.DropDown.DropDown.Select ---</option>
+        <option value="">--- @Resources.DropDown.DropDown.Select ---</option>
     </select>
     <span asp-validation-for="Product.UnitId" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="Product.CountyId" class="control-label">@Resources.BLL.App.DTO.Products.County</label>
     <select asp-for="Product.CountyId" class="form-control" asp-items="Model.CountySelectList">
-        <option>--- @Resources.DropDown.DropDown.Select ---</option>
+        <option value="">--- @Resources.DropDown.DropDown.Select ---</option>
     </select>
     <span asp-validation-for="Product.CountyId" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="Product.CityId" class="control-label">@Resources.BLL.App.DTO.Products.City</label>
     <select asp-for="Product.CityId" class="form-control" asp-items="Model.CitySelectList">
-        <option>--- @Resources.DropDown.DropDown.Select ---</option>
+        <option value="">--- @Resources.DropDown.DropDown.Select ---</option>
     </select>
     <span asp-validation-for="Product.CityId" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="Product.CategoryId" class="control-label">@Resources.BLL.App.DTO.Products.Category</label>
     <select asp-for="Product.CategoryId" class="form-control" asp-items="Model.CategorySelectList">
-        <option>--- @Resources.DropDown.DropDown.Select ---</option>
+        <option value="">--- @Resources.DropDown.DropDown.Select ---</option>
     </select>
     <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
 </div>
 <div class="form-group">
     <label asp-for="Product.ConditionId" class="control-label">@Resources.BLL.App.DTO.Products.Condition</label>
     <select asp-for="Product.ConditionId" class="form-control" asp-items="Model.ConditionSelectList">
-        <option>--- @Resources.DropDown.DropDown.Select ---</option>
+        <option value="">--- @Resources.DropDown.DropDown.Select ---</option>
     </select>
     <span asp-validation-for="Product.ConditionId" class="text-danger"></span>
 </div>

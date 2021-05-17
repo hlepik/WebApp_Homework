@@ -2,28 +2,27 @@
 @using Domain.App.Identity
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
         var user = await UserManager.GetUserAsync(User);
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@Resources.Views.Shared._LoginPartial.Hello @User!.Identity!.Name! (@user.Firstname @user.Lastname)</a>
+            <a  id="userLayout" class='fas fa-user-alt' asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@user.Firstname @user.Lastname</a>
         </li>
 
         <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new {area = ""})">
-                <button type="submit" class="nav-link btn btn-link text-dark">@Resources.Views.Shared._LoginPartial.Logout</button>
-            </form>
+            <a class="nav-link text-gray" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new {area = ""})">@Resources.Views.Shared._LoginPartial.Logout</a>
         </li>
-     }
+    }
     else
      {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">@Resources.Views.Shared._LoginPartial.Register</a>
+            <a class="nav-link text-gray" asp-area="Identity" asp-page="/Account/Register">@Resources.Views.Shared._LoginPartial.Register</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">@Resources.Views.Shared._LoginPartial.Login</a>
+            <a class="nav-link text-gray" asp-area="Identity" asp-page="/Account/Login">@Resources.Views.Shared._LoginPartial.Login</a>
         </li>
      }
     <partial name="_LanguageSelection"/>

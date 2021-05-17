@@ -15,7 +15,6 @@ namespace Contracts.DAL.App.Repositories
 
     public interface IUserBookedProductsRepositoryCustom<TEntity>
     {
-        Task<IEnumerable<TEntity>> GetAllBookedProductsAsync(Guid userId, bool noTracking = true);
 
         Task<TEntity?> FirstOrDefaultBookedProductsAsync(Guid id, Guid userId = default,
             bool noTracking = true);

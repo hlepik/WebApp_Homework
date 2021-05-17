@@ -10,12 +10,7 @@ namespace BLL.App.DTO
     {
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Bookings), Name = "Until")]
         public DateTime? Until { get; set; }
-        [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "HasTransport")]
-        public bool HasTransport { get; set; }
-        [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "County")]
-        public string? County { get; set; }
-        [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "City")]
-        public string? City { get; set; }
+
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "LocationDescription")]
         public string? LocationDescription { get; set; }
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "Color")]
@@ -29,6 +24,7 @@ namespace BLL.App.DTO
         public string Email { get; set; }= default!;
         public Guid BookingId { get; set;}
         public Booking? Booking { get; set;}
+        public Guid ProductId { get; set; }
 
     }
 }

@@ -1,71 +1,88 @@
-﻿@model IEnumerable<BLL.App.DTO.Product>
+﻿@model WebApp.ViewModels.Home.HomePageViewModel
+
 @{
     ViewData["Title"] = "Home Page";
 }
-<div class="text-centre">
+<div class="mainView" id="homePage">
+<div class="mainBox" >
+<h2>@Resources.Views.Shared.Buttons.Search </h2>
+    <div class="boxLayout">
+        <form asp-action="Search">
+
+     <table>
+     <tr>
+         <td class="searchList">
+
+             <label asp-for="Product.CountyId" class="control-label">@Resources.BLL.App.DTO.Products.County</label>
+             <select asp-for="Product.CountyId" class="form-control" asp-items="Model.CountySelectList">
+                 <option>--- @Resources.DropDown.DropDown.Select ---</option>
+             </select>
+             <span asp-validation-for="Product.CountyId" class="text-danger"></span>
+        </td>
+   <td class="searchList">
+         <label asp-for="Product.CityId" class="control-label">@Resources.BLL.App.DTO.Products.City</label>
+         <select asp-for="Product.CityId" class="form-control" asp-items="Model.CitySelectList">
+             <option>--- @Resources.DropDown.DropDown.Select ---</option>
+         </select>
+         <span asp-validation-for="Product.CityId" class="text-danger"></span>
+    </td>
+    <td class="searchList" >
+        <label asp-for="Product.CategoryId" class="control-label">@Resources.BLL.App.DTO.Products.Category</label>
+        <select asp-for="Product.CategoryId" class="form-control" asp-items="Model.CategorySelectList">
+            <option>--- @Resources.DropDown.DropDown.Select ---</option>
+        </select>
+        <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+       </td>
+     </tr>
+     </table>
+      <div class="form-group" >
+             <input type="submit" id="SearchButton"  value=@Resources.Views.Shared.Buttons.Search type="button" class="btn btn-outline-primary"/>
+         </div>
+
+    </form>
 
 
-    <h2>@Resources.BLL.App.DTO.Products.ReasentlyAddedProducts</h2>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                 @Resources.BLL.App.DTO.Products.Location
-            </th>
-            <th>
-               @Resources.BLL.App.DTO.Pictures.Picture
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsBooked)
-            </th>
+</div>
+</div>
+
+<h2> @Resources.BLL.App.DTO.Products.RecentlyAddedProducts</h2>
+   @foreach (var item in Model.LastInsertedProducts) {
+
+<div class="boxLayout" id="box1">
+    <tr>
+        <th>
+
+           @foreach (var picture in item.PictureUrls!)
+           {
+
+               <img src="@Html.Raw(picture)" alt="image" width="150" height="100" class="center">
+                break;
+           }
+        </th>
+    </tr>
+    <table>
+    <tr>
+        <td>@Html.DisplayNameFor(model => model.Product.Description):&nbsp</td>
+        <td>@Html.DisplayFor(modelItem => item.Description)</td>
+    </tr>
+    <tr>
+        <td>@Html.DisplayNameFor(model => model.Product.County):&nbsp</td>
+        <td>@Html.DisplayFor(modelItem => item.County)</td>
+    </tr>
+    <tr>
+        <td>@Html.DisplayNameFor(model => model.Product.Category):&nbsp</td>
+        <td>@Html.DisplayFor(modelItem => item.Category)</td>
+    </tr>
+    <tr>
+        <td>@Html.DisplayNameFor(model => model.Product.IsBooked)</td>
+        <td>@Html.DisplayFor(modelItem => item.IsBooked)</td>
+    </tr>
 
 
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
+    </table>
 
-            @{
-                var count = 0;
-            }
-            @if (count < 10)
-            {
-                count++;
+</div>
 
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @if (item.City != null)
-                    {
-                        item.County += ", " + item.City;
-                    }
-                    @if (item.LocationDescription != null)
-                    {
-                        item.County += ", " + item.LocationDescription;
-                    }
-
-                    @Html.DisplayFor(modelItem => item.County)
-                </td>
-
-                <td>
-                    @Html.DisplayFor(modelItem => item.Pictures)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IsBooked)
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Details</a>
-                </td>
-            }
-        </tr>
-}
-    </tbody>
-</table>
+   }
 </div>

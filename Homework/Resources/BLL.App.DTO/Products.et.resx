@@ -68,10 +68,13 @@
     <data name="MyProduct" xml:space="preserve">
         <value>Minu tooted</value>
     </data>
-    <data name="ReasentlyAddedProducts" xml:space="preserve">
+    <data name="RecentlyAddedProducts" xml:space="preserve">
         <value>Viimati lisatud asjad</value>
     </data>
     <data name="Location" xml:space="preserve">
         <value>Asukoht</value>
+    </data>
+    <data name="Size" xml:space="preserve">
+        <value>Suurus</value>
     </data>
 </root>

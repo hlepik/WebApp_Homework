@@ -11,7 +11,20 @@
         <form asp-action="Create">
             <div asp-validation-summary="All" class="text-danger"></div>
 
-              <partial name="_CreateEdit" model="Model"/>
+            <div class="form-group">
+                <label asp-for="Booking.Until" class="control-label"></label>
+                <input asp-for="Booking.Until" class="form-control" />
+                <span asp-validation-for="Booking.Until" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Products.Id" class="control-label"></label>
+                <input asp-for="Products.Description" class="form-control" />
+                <input type="hidden" asp-for="Products.Id" class="form-control" />
+                <span asp-validation-for="Products.Id" class="text-danger"></span>
+            </div>
+
+
             <div class="form-group">
                 <input type="submit" value=@Resources.BLL.App.DTO.Bookings.Reserve class="btn btn-primary" />
             </div>

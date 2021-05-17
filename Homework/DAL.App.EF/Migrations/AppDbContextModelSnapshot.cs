@@ -424,18 +424,26 @@ namespace DAL.App.EF.Migrations
                     b.Property<Guid>("AppUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("MessageFormId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<DateTime>("DateSent")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("SenderEmail")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
-
-                    b.HasIndex("MessageFormId");
 
                     b.ToTable("UserMessages");
                 });
@@ -759,14 +767,7 @@ namespace DAL.App.EF.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.App.MessageForm", "MessageForm")
-                        .WithMany("UserMessages")
-                        .HasForeignKey("MessageFormId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.Navigation("AppUser");
-
-                    b.Navigation("MessageForm");
                 });
 
             modelBuilder.Entity("Domain.Base.Translation", b =>
@@ -859,11 +860,6 @@ namespace DAL.App.EF.Migrations
             modelBuilder.Entity("Domain.App.Material", b =>
                 {
                     b.Navigation("ProductMaterials");
-                });
-
-            modelBuilder.Entity("Domain.App.MessageForm", b =>
-                {
-                    b.Navigation("UserMessages");
                 });
 
             modelBuilder.Entity("Domain.App.Product", b =>

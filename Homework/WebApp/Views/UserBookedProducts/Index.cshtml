@@ -14,6 +14,10 @@
                 @Html.DisplayNameFor(model => model.TimeBooked)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Until)
+            </th>
+
+            <th>
                  @Resources.BLL.App.DTO.UserBookedProduct.ProductOwner
 
             </th>
@@ -31,14 +35,15 @@
                 @Html.DisplayFor(modelItem => item.TimeBooked)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Until)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
 
-
-
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Delete</a>
+                <a asp-action="Delete" id="deleteButton" class="fa fa-trash" asp-route-id="@item.Id"></a>
             </td>
         </tr>
 }

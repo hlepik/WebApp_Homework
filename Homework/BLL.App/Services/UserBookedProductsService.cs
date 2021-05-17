@@ -19,12 +19,6 @@ namespace BLL.App.Services
         {
         }
 
-
-        public async Task<IEnumerable<BLLAppDTO.UserBookedProducts>> GetAllBookedProductsAsync(Guid userId = default, bool noTracking = true)
-        {
-            return (await ServiceRepository.GetAllBookedProductsAsync(userId, noTracking)).Select(x => Mapper.Map(x))!;
-        }
-
         public async Task<BLLAppDTO.UserBookedProducts?> FirstOrDefaultBookedProductsAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
              return Mapper.Map(await ServiceRepository.FirstOrDefaultBookedProductsAsync(id, userId, noTracking));

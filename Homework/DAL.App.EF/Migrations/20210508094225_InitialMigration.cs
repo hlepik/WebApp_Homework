@@ -182,6 +182,28 @@ namespace DAL.App.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserMessages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Subject = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    SenderEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateSent = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserMessages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserMessages_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -306,32 +328,6 @@ namespace DAL.App.EF.Migrations
                         name: "FK_Units_LangStrings_NameId",
                         column: x => x.NameId,
                         principalTable: "LangStrings",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserMessages",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MessageFormId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    AppUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SenderEmail = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserMessages", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserMessages_AspNetUsers_AppUserId",
-                        column: x => x.AppUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserMessages_MessageForms_MessageFormId",
-                        column: x => x.MessageFormId,
-                        principalTable: "MessageForms",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -626,11 +622,6 @@ namespace DAL.App.EF.Migrations
                 name: "IX_UserMessages_AppUserId",
                 table: "UserMessages",
                 column: "AppUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserMessages_MessageFormId",
-                table: "UserMessages",
-                column: "MessageFormId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -649,6 +640,9 @@ namespace DAL.App.EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "MessageForms");
 
             migrationBuilder.DropTable(
                 name: "Pictures");
@@ -673,9 +667,6 @@ namespace DAL.App.EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "Bookings");
-
-            migrationBuilder.DropTable(
-                name: "MessageForms");
 
             migrationBuilder.DropTable(
                 name: "Products");

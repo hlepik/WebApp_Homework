@@ -3,45 +3,16 @@
 @{
     ViewData["Title"] = "Details";
 }
+<dt class = "col-sm-2">
+    @Html.DisplayNameFor(model => model.Pictures)
+</dt>
 
-<div>
-    <hr />
-   <dl class="row">
+ @foreach (var picture in Model.PictureUrls!)
+   {
 
-       <dt class = "col-sm-2">
-           @Html.DisplayNameFor(model => model.Description)
-       </dt>
-       <dd class = "col-sm-10">
-           @Html.DisplayFor(model => model.Description)
-       </dd>
-       <dt class = "col-sm-2">
-          @Html.DisplayNameFor(model => model.County)
-       </dt>
-       <dd class = "col-sm-10">
-           @Html.DisplayFor(model => model.County)
-       </dd>
-        <dt class = "col-sm-2">
-          @Html.DisplayNameFor(model => model.City)
-      </dt>
-      <dd class = "col-sm-10">
-          @Html.DisplayFor(model => model.City)
-      </dd>
-       <dt class="col-sm-2">
-             @Html.DisplayNameFor(model => model.LocationDescription)
-       </dt>
-      <dd class = "col-sm-10">
-          @Html.DisplayFor(model => model.LocationDescription)
-      </dd>
-       <dt class = "col-sm-2">
-           @Html.DisplayNameFor(model => model.Color)
-       </dt>
+       <img src="@Html.Raw(picture)" alt="image" width="250" height="200" class="center">
+   }
+   <div>
+       <a asp-action="Index">@Resources.Views.Crud.CRUD.Index</a>
+   </div>
 
-       <dd class = "col-sm-10">
-           @Html.DisplayFor(model => model.Color)
-       </dd>
-
-   </dl>
-</div>
-<div>
-    <a asp-action="Index">@Resources.Views.Crud.CRUD.Index</a>
-</div>

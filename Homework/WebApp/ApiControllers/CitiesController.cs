@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using PublicApi.DTO.v1;
 using PublicApi.DTO.v1.Mappers;
-using City = Domain.App.City;
-
 
 namespace WebApp.ApiControllers
 {
@@ -21,7 +19,6 @@ namespace WebApp.ApiControllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-
 
     public class CitiesController : ControllerBase
     {
@@ -45,6 +42,7 @@ namespace WebApp.ApiControllers
         [HttpGet]
         [Produces("application/json")]
         [Consumes("application/json")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(PublicApi.DTO.v1.City), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.City>>> GetCities()
         {

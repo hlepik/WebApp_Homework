@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,12 +35,50 @@ namespace DAL.App.EF.Repositories
             return res!;
 
         }
+        public async Task<IEnumerable<DAL.App.DTO.Product>> GetLastInserted()
+        {
+            var query = CreateQuery();
+
+            query = query
+                .Include(x => x.Pictures)
+                .Include(x => x.County)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
+                .Include(x => x.Category)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
+                .Include(x => x.ProductMaterials)
+                .ThenInclude(x => x.Material)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
+                .OrderBy(x => x.DateAdded)
+                .Take(4);
+
+            var resQuery = query
+                .Select(p => new DAL.App.DTO.Product()
+                {
+                    Id = p.Id,
+                    PictureUrls = p.Pictures!.Select(x => x.Url),
+                    Description = p.Description,
+                    County = p.County!.Name,
+                    DateAdded = p.DateAdded,
+                    Material = p.ProductMaterials!.Select(x => x.Material!.Name!.ToString()),
+                    IsBooked = p.IsBooked,
+                    Category = p.Category!.Name
+
+                });
+
+            return await resQuery.ToListAsync();
+
+        }
+
 
         public async Task<IEnumerable<DAL.App.DTO.Product>> GetAllProductsAsync(Guid userId = default, bool noTracking = true)
         {
             var query = CreateQuery(userId, noTracking);
 
             query = query
+
                 .Include(x => x.Condition)
                 .ThenInclude(x => x!.Description)
                 .ThenInclude(x => x!.Translations)
@@ -54,6 +93,10 @@ namespace DAL.App.EF.Repositories
                 .ThenInclude(x => x!.Translations)
                 .Include(x => x.City)
                 .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
+                .Include(x => x.ProductMaterials)
+                .ThenInclude(x => x.Material)
+                .ThenInclude(x => x!.Name)
                 .ThenInclude(x => x!.Translations);
 
 
@@ -67,6 +110,7 @@ namespace DAL.App.EF.Repositories
                 Id = p.Id,
                 Description = p.Description,
                 Color = p.Color,
+                PictureUrls = p.Pictures!.Select(x => x.Url).Take(1),
                 City = p.City!.Name,
                 County = p.County!.Name,
                 Category = p.Category!.Name,
@@ -84,6 +128,7 @@ namespace DAL.App.EF.Repositories
 
             return await resQuery.ToListAsync();
         }
+
 
         public async Task<DAL.App.DTO.Product?> FirstOrDefaultDTOAsync(Guid id)
         {
@@ -123,6 +168,7 @@ namespace DAL.App.EF.Repositories
                 ConditionId = p.ConditionId,
                 Unit = p.Unit!.Name,
                 UnitId = p.UnitId,
+                PictureUrls = p.Pictures!.Select(x => x.Url),
                 Color = p.Color,
                 Width = p.Width,
                 Height = p.Height,
@@ -130,7 +176,8 @@ namespace DAL.App.EF.Repositories
                 AppUserId = p.AppUserId,
                 DateAdded = p.DateAdded,
                 IsBooked = p.IsBooked,
-                HasTransport = p.HasTransport
+                HasTransport = p.HasTransport,
+                ProductAge = p.ProductAge
 
 
             }).FirstOrDefaultAsync(m => m.Id == id);
@@ -168,29 +215,6 @@ namespace DAL.App.EF.Repositories
         }
 
 
-        public override async Task<DAL.App.DTO.Product?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
-        {
-            var query = CreateQuery(userId, noTracking);
-
-
-            query = query
-                .Include(c => c.County)
-                .ThenInclude(x => x!.Name)
-                .ThenInclude(x => x!.Translations)
-                .Include(p => p.Category)
-                .ThenInclude(x => x!.Name)
-                .ThenInclude(x => x!.Translations)
-                .Include(p => p.Unit)
-                .ThenInclude(x => x!.Name)
-                .ThenInclude(x => x!.Translations)
-                .Include(p => p.City)
-                .ThenInclude(x => x!.Name)
-                .ThenInclude(x => x.Translations);
-
-            var res = await query.FirstOrDefaultAsync(m => m.Id == id);
-
-            return Mapper.Map(res);
-        }
 
         public void RemoveProductAsync(Guid id, Guid userId = default)
         {
@@ -230,9 +254,73 @@ namespace DAL.App.EF.Repositories
 
                 RepoDbSet.Remove(l);
             }
+        }
 
+        public async Task<IEnumerable<DAL.App.DTO.Product>> GetSearchResult(Guid? countyId, Guid? cityId, Guid? categoryId)
+        {
+            var query = CreateQuery();
+
+            query = query
+                .Include(x => x.City)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x.Translations)
+                .Include(x => x.Category)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
+                .Include(x => x.County)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
+                .Include(x => x.Unit)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
+                .Include(x => x.Condition)
+                .ThenInclude(x => x!.Description)
+                .ThenInclude(x => x!.Translations)
+                .Include(x => x.ProductMaterials)
+                .ThenInclude(p => p.Material)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
+                .OrderBy(x => x.DateAdded);
+
+            if (countyId != null && countyId != Guid.Empty)
+            {
+                query = query.Where(x => x.CountyId == countyId);
+            }
+            if (cityId != null && cityId != Guid.Empty)
+            {
+                query = query.Where(x => x.CityId == cityId);
+            }
+            if (categoryId != null && categoryId != Guid.Empty)
+            {
+                query = query.Where(x => x.CategoryId == categoryId);
+            }
+
+            var resQuery = query
+                .Select(p => new DAL.App.DTO.Product()
+                {
+                    Id = p.Id,
+                    Description = p.Description,
+                    Color = p.Color,
+                    PictureUrls = p.Pictures!.Select(x => x.Url),
+                    City = p.City!.Name,
+                    County = p.County!.Name,
+                    Category = p.Category!.Name,
+                    Unit = p.Unit!.Name,
+                    Condition = p.Condition!.Description,
+                    DateAdded = p.DateAdded,
+                    Material = p.ProductMaterials!.Select(x => x.Material!.Name!.ToString()),
+                    Height = p.Height,
+                    Width = p.Width,
+                    Depth = p.Depth,
+                    IsBooked = p.IsBooked,
+                    AppUserId = p.AppUserId
+
+                }).OrderBy(p => p.DateAdded);
+
+            return await resQuery.ToListAsync();
 
         }
+
 
 
 

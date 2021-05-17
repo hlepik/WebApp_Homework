@@ -74,5 +74,11 @@ namespace Resources.Views.Shared {
                 return ResourceManager.GetString("Remove", resourceCulture);
             }
         }
+        
+        public static string Search {
+            get {
+                return ResourceManager.GetString("Search", resourceCulture);
+            }
+        }
     }
 }

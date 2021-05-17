@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Domain.Base;
 
+
 namespace BLL.App.DTO
 {
     public class City : DomainEntityId
@@ -11,7 +12,9 @@ namespace BLL.App.DTO
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Cities), Name = "Name")]
         [MaxLength(128, ErrorMessageResourceType = typeof(Resources.Base.Common), ErrorMessageResourceName = "ErrorMessageMaxLength"),
          MinLength(2, ErrorMessageResourceType = typeof(Resources.Base.Common), ErrorMessageResourceName = "ErrorMessageMinLength")]
-        public string Name { get; set; } = default!;
+        // public string Name { get; set; } = default!;
+       public LangString Name { get; set; } = default!;
+
 
         public ICollection<Product>? Products { get; set; }
         public Guid NameId { get; set; }

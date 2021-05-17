@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using PublicApi.DTO.v1;
 using PublicApi.DTO.v1.Mappers;
-using Unit = Domain.App.Unit;
+
 
 namespace WebApp.ApiControllers
 {

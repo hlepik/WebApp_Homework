@@ -5,6 +5,8 @@ using Domain.App.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Resources;
+using Resources.Areas.Identity.Pages.Account.Manage;
 
 namespace WebApp.Areas.Identity.Pages.Account.Manage
 {
@@ -31,15 +33,19 @@ namespace WebApp.Areas.Identity.Pages.Account.Manage
 
         public class InputModel
         {
-            [Display(Name = "First name")]
-            [StringLength(128, MinimumLength = 1)]
+            [Phone(ErrorMessageResourceName = "ErrorMessage_NotValidPhone", ErrorMessageResourceType = typeof(Common))]
+            [Display(Name = nameof(PhoneNumber), ResourceType = typeof(Index))]
+            public string? PhoneNumber { get; set; }
+
+
+            [StringLength(128, ErrorMessageResourceName = "ErrorMessage_StringLengthMinMax", ErrorMessageResourceType = typeof(Common), MinimumLength = 1)]
+            [Display(Name = nameof(FirstName), ResourceType = typeof(Index))]
             public string FirstName { get; set; } = default!;
-            [Display(Name = "Last name")]
-            [StringLength(128, MinimumLength = 1)]
+
+            [StringLength(128, ErrorMessageResourceName = "ErrorMessage_StringLengthMinMax", ErrorMessageResourceType = typeof(Common), MinimumLength = 1)]
+            [Display(Name = nameof(LastName), ResourceType = typeof(Index))]
             public string LastName { get; set; } = default!;
-            [Phone]
-            [Display(Name = "Phone number")]
-            public string PhoneNumber { get; set; } = default!;
+
 
         }
 

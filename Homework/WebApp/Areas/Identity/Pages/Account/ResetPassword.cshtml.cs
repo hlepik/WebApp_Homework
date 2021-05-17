@@ -26,21 +26,27 @@ namespace WebApp.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+            [Required(ErrorMessageResourceType = typeof(Resources.Common), ErrorMessageResourceName = "ErrorMessage_Required")]
+            [EmailAddress(ErrorMessageResourceType = typeof(Resources.Common),
+                ErrorMessageResourceName = "ErrorMessage_Email")]
             public string Email { get; set; } = default!;
 
-            [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [Required(ErrorMessageResourceType = typeof(Resources.Common), ErrorMessageResourceName = "ErrorMessage_Required")]
+            [StringLength(100, ErrorMessageResourceType = typeof(Resources.Common),
+                ErrorMessageResourceName = "ErrorMessage_StringLengthMinMax", MinimumLength = 6)]
             [DataType(DataType.Password)]
             public string Password { get; set; } = default!;
 
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = nameof(ConfirmPassword),
+                ResourceType = typeof(Resources.Areas.Identity.Pages.Account.Register))]
+            [Compare("Password",
+                ErrorMessageResourceType = typeof(Resources.Areas.Identity.Pages.Account.Register),
+                ErrorMessageResourceName = "PasswordsDontMatch")]
             public string ConfirmPassword { get; set; } = default!;
 
             public string Code { get; set; } = default!;
+
         }
 
         public IActionResult OnGet(string? code = null)

@@ -26,12 +26,14 @@ namespace DAL.App.EF.Repositories
             var query = CreateQuery(default, noTracking);
 
             var resQuery = query.Include(p => p.Material)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations)
                 .Include(p => p.Products)
                 .Select(p => new DAL.App.DTO.ProductMaterial()
             {
                 Id = p.Id,
-                Product = p.Products!.Description,
-                Material = p.Material!.Name,
+                ProductName = p.Products!.Description,
+                MaterialName = p.Material!.Name,
                 ProductOwner = p.Products.AppUserId,
                 ProductId = p.ProductId,
                 MaterialId = p.MaterialId
@@ -45,19 +47,22 @@ namespace DAL.App.EF.Repositories
         {
             var query = CreateQuery(userId, noTracking);
 
-            query = query.Include(x => x.Products).Include(x => x.Material);
+            query = query.Include(x => x.Products)
+                .Include(x => x.Material)
+                .ThenInclude(x => x!.Name)
+                .ThenInclude(x => x!.Translations);
 
             var resQuery = query.Select(p => new DAL.App.DTO.ProductMaterial()
                 {
                     Id = p.Id,
-                    Product = p.Products!.Description,
-                    Material = p.Material!.Name,
+                    ProductName = p.Products!.Description,
+                    MaterialName = p.Material!.Name,
                     ProductOwner = p.Products.AppUserId,
                     ProductId = p.ProductId,
                     MaterialId = p.MaterialId
 
                 }).Where(p => p.ProductOwner == userId)
-                .OrderBy(x => x.Product);
+                .OrderBy(x => x.ProductName);
 
             return await resQuery.ToListAsync();
         }
@@ -86,10 +91,6 @@ namespace DAL.App.EF.Repositories
             }
 
         }
-
-
-
-
 
     }
 }

@@ -15,7 +15,7 @@
 
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value=@Resources.Views.Shared.Buttons.Delete class="btn btn-danger" /> |
+        <input type="submit"  id="deleteButton" class="fa fa-trash" value=@Resources.Views.Shared.Buttons.Delete  /> |
         <a asp-action="Index">@Resources.Views.Crud.CRUD.Index</a>
     </form>
 </div>

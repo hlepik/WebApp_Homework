@@ -82,10 +82,10 @@ namespace WebApp
             {
                 var supportedCultures = new[]
                 {
-                    new CultureInfo(name: "en-GB"),
-                    new CultureInfo(name: "et-EE")
+                    new CultureInfo(name: "en"),
+                    new CultureInfo(name: "et")
                 };
-                options.DefaultRequestCulture = new RequestCulture(culture: "en-GB", uiCulture: "en-GB");
+                options.DefaultRequestCulture = new RequestCulture(culture: "en", uiCulture: "en");
                 options.SupportedCultures = supportedCultures;
                 options.SupportedUICultures = supportedCultures;
                 options.SetDefaultCulture("en-GB");
@@ -104,6 +104,11 @@ namespace WebApp
                 .AddDefaultUI()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddControllersWithViews(options =>
+            {
+                options.ModelBinderProviders.Insert(0, new CustomFloatingPointBinderProvider());
+            });
 
             services.AddControllersWithViews();
 
@@ -193,11 +198,20 @@ namespace WebApp
             });
         }
 
-        private static void SetupAppData(IApplicationBuilder app, IConfiguration configuration)
+       private static void SetupAppData(IApplicationBuilder app, IConfiguration configuration)
         {
+
             using var serviceScope =
                 app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
             using var ctx = serviceScope.ServiceProvider.GetService<AppDbContext>();
+
+            // in case of testing - dont do setup
+            if (ctx!.Database.ProviderName == "Microsoft.EntityFrameworkCore.InMemory")
+                return;
+
+
+            using var userManager = serviceScope.ServiceProvider.GetService<UserManager<AppUser>>();
+            using var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<AppRole>>();
             if (ctx != null)
             {
                 if (configuration.GetValue<bool>("AppData:DropDatabase"))
@@ -216,8 +230,6 @@ namespace WebApp
 
                 if (configuration.GetValue<bool>("AppData:SeedIdentity"))
                 {
-                    using var userManager = serviceScope.ServiceProvider.GetService<UserManager<AppUser>>();
-                    using var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<AppRole>>();
 
                     if (userManager != null && roleManager != null)
                     {

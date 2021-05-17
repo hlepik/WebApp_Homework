@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Resources.Areas.Identity.Pages.Account;
+
 
 namespace WebApp.Areas.Identity.Pages.Account
 {
@@ -41,15 +43,21 @@ namespace WebApp.Areas.Identity.Pages.Account
 
         public class InputModel
         {
-            [Required]
-            [EmailAddress]
+
+            [EmailAddress(ErrorMessageResourceType = typeof(Resources.Common),
+                ErrorMessageResourceName = "ErrorMessage_Email")]
+            [Display(Name = nameof(Email), ResourceType = typeof(Login))]
+            [Required(ErrorMessageResourceType = typeof(Resources.Common), ErrorMessageResourceName = "ErrorMessage_Required")]
             public string Email { get; set; } = default!;
 
-            [Required]
+            [Required(ErrorMessageResourceType = typeof(Resources.Common), ErrorMessageResourceName = "ErrorMessage_Required")]
+
             [DataType(DataType.Password)]
+            [Display(Name = nameof(Password), ResourceType = typeof(Login))]
+
             public string Password { get; set; } = default!;
 
-            [Display(Name = "Remember me?")]
+            [Display(Name = nameof(RememberMe), ResourceType = typeof(Login))]
             public bool RememberMe { get; set; } = default!;
         }
 
@@ -67,7 +75,10 @@ namespace WebApp.Areas.Identity.Pages.Account
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            ReturnUrl = returnUrl!;
+            ReturnUrl = returnUrl;
+
+
+
         }
 
         public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
@@ -80,16 +91,19 @@ namespace WebApp.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe,
+                    lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
+
                 if (result.RequiresTwoFactor)
                 {
-                    return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
+                    return RedirectToPage("./LoginWith2fa", new {ReturnUrl = returnUrl, RememberMe = Input.RememberMe});
                 }
+
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User account locked out.");
@@ -97,7 +111,7 @@ namespace WebApp.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, Login.InvalidLoginAttempt);
                     return Page();
                 }
             }

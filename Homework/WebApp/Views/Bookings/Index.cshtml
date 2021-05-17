@@ -5,70 +5,115 @@
     ViewData["Title"] = "Index";
 }
 
-@if (User.Identity!.IsAuthenticated)
+@foreach (var item in Model)
 {
-    <p>
-        <a asp-action="Create">@Resources.BLL.App.DTO.Bookings.Reserve</a>
-    </p>
-}
+<div class="mainView">
+<div class="boxLayout">
 
-<table class="table">
-    <thead>
+
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LocationDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Pictures)
-            </th>
-            <th>
-                  @Html.DisplayNameFor(model => model.IsBooked)
-            </th>
-            <th>
-               @Html.DisplayNameFor(model => model.DateAdded)
-            </th>
-
-
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-            @if (item.City != null)
+        <th align="right" style="vertical-align:top;">
+            @foreach (var picture in item.PictureUrls!)
             {
-                item.County += ", " + item.City;
+
+                <img src="@Html.Raw(picture)" alt="image" width="150" height="100">
+                break;
             }
-            @if (item.LocationDescription != null)
-            {
-                item.County += ", " + item.LocationDescription;
-            }
+        </th>
+        @if (item.PictureUrls.Any())
+        {
 
-                @Html.DisplayFor(modelItem => item.County)
-            </td>
+            <a asp-action="Details" align="right" style="vertical-align:top;" class="fas fa-camera pr-md" asp-route-id="@item.Id"></a>
 
-            <td>
-                @Html.DisplayFor(modelItem => item.Pictures)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsBooked)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateAdded)
-            </td>
+        }
+    <div class="boxLayout" id="box1">
+        <table>
+            <tr>
+                <td>@Html.DisplayNameFor(model => model.Description):&nbsp</td>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+            </tr>
+            <tr>
+                <td>@Html.DisplayNameFor(model => model.County):&nbsp</td>
+                <td>@Html.DisplayFor(modelItem => item.County)</td>
+            </tr>
+            <tr>
+                <td>@Html.DisplayNameFor(model => model.City):&nbsp</td>
+                <td>@Html.DisplayFor(modelItem => item.City)</td>
+            </tr>
+            <tr>
+                <td>@Html.DisplayNameFor(model => model.LocationDescription):&nbsp</td>
+                <td>@Html.DisplayFor(modelItem => item.LocationDescription)</td>
+            </tr>
 
+        </table>
+    </div>
+        <div class="boxLayout" id="box2">
+            <table>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Category):&nbsp</td>
+                    <td>@Html.DisplayFor(modelItem => item.Category)</td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Color):&nbsp</td>
+                    <td>@Html.DisplayFor(modelItem => item.Color)</td>
+                </tr>
 
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Details</a>
-            </td>
-        </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Width):&nbsp</td>
+                    <td>@Html.DisplayFor(modelItem => item.Width)
+                        @Html.DisplayFor(modelItem => item.Unit)</td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Height):&nbsp</td>
+                    <td>@Html.DisplayFor(modelItem => item.Height)
+                        @Html.DisplayFor(modelItem => item.Unit)</td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Depth):</td>
+                    <td>@Html.DisplayFor(modelItem => item.Depth)
+                        @Html.DisplayFor(modelItem => item.Unit)</td>
+                </tr>
+            </table>
+        </div>
+        <div class="boxLayout" id="box3">
+            <table>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.HasTransport):&nbsp</td>
+                    <td>@Html.DisplayFor(modelItem => item.HasTransport)</td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.IsBooked)</td>
+                    <td>@Html.DisplayFor(modelItem => item.IsBooked)</td>
+                </tr>
+
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Condition):&nbsp</td>
+                    <td>@Html.DisplayFor(modelItem => item.Condition)</td>
+                </tr>
+
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.ProductAge):&nbsp</td>
+                    <td>@Html.DisplayFor(modelItem => item.ProductAge)</td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Material):&nbsp</td>
+
+                    @foreach (var picture in item.Material!)
+                    {
+
+                        <td>@Html.DisplayFor(modelItem => item.Material)</td>
+                    }
+                </tr>
+            </table>
+
+        </div>
+
+      @if (User.Identity!.IsAuthenticated && !item.IsBooked)
+      {
+          <span id="reserveButton">
+              <a asp-action="Create" align="right" style="vertical-align:bottom;" class="btn btn-outline-info" asp-route-id="@item.Id">Reserve</a>
+          </span>
+      }
+</div>
+</div>
 }
-    </tbody>
-</table>

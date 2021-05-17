@@ -1,4 +1,4 @@
-@model BLL.App.DTO.UserBookedProducts
+@model BLL.App.DTO.Product
 
 @{
     ViewData["Title"] = "Delete";
@@ -16,7 +16,7 @@
 
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value=@Resources.Views.Shared.Buttons.Remove class="btn btn-danger" /> |
+        <input type="submit" value=@Resources.Views.Shared.Buttons.Delete class="btn btn-danger" /> |
         <a asp-action="Index">@Resources.Views.Crud.CRUD.Index</a>
     </form>
 </div>
