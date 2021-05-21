@@ -59,15 +59,15 @@
                 @Html.DisplayFor(modelItem => item.IsBooked)
             </td>
             <td>
-                @if (item.City != null)
+                @if (item.CityName != null)
                 {
-                    item.County += ", " + item.City;
+                    item.CountyName += ", " + item.CityName;
                 }
                 @if (item.LocationDescription != null)
                 {
-                    item.County += ", " + item.LocationDescription;
+                    item.CountyName += ", " + item.LocationDescription;
                 }
-                @Html.DisplayFor(modelItem => item.County)
+                @Html.DisplayFor(modelItem => item.CountyName)
 
             </td>
             <td>
@@ -78,7 +78,7 @@
 
                 @if (item.Height != null)
                 {
-                    size += @Resources.BLL.App.DTO.Products.Height+ ": " + item.Height + " " + item.Unit;
+                    size += @Resources.BLL.App.DTO.Products.Height+ ": " + item.Height + " " + item.UnitName;
                 }
                 @if (item.Width != null)
                 {
@@ -86,7 +86,7 @@
                     {
                         size += ", "+ "\n";
                     }
-                    size += @Resources.BLL.App.DTO.Products.Width+ ": " + item.Width + " " + item.Unit;
+                    size += @Resources.BLL.App.DTO.Products.Width+ ": " + item.Width + " " + item.UnitName;
                 }
                  @if (item.Depth != null)
                 {
@@ -94,14 +94,14 @@
                     {
                         size += ", "+ "\n";
                     }
-                    size += @Resources.BLL.App.DTO.Products.Depth + ": " +item.Depth + " " + item.Unit;
+                    size += @Resources.BLL.App.DTO.Products.Depth + ": " +item.Depth + " " + item.UnitName;
                 }
 
 
                 @Html.DisplayFor(modelItem => size)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Condition)
+                @Html.DisplayFor(modelItem => item.ConditionName)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Material)
@@ -112,7 +112,13 @@
 
                 <a asp-action="Edit" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Edit</a>
                <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Details</a>
-                <a asp-action="Delete" id="deleteButton" class="fa fa-trash" asp-route-id="@item.Id"></a>
+                <form asp-action="DeleteConfirmed" asp-route-id="@item.Id"
+                      onclick="return confirm('@Resources.Views.Crud.CRUD.DeleteConfirm')">
+
+                    <button id="deleteButton" type="submit">
+                        <a  class="fa fa-trash" ></a>
+                    </button>
+                </form>
 
             </td>
         </tr>

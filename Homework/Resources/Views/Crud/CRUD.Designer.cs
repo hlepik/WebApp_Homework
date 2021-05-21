@@ -98,5 +98,11 @@ namespace Resources.Views.Crud {
                 return ResourceManager.GetString("ChangeUserRoles", resourceCulture);
             }
         }
+        
+        public static string DeleteConfirm {
+            get {
+                return ResourceManager.GetString("DeleteConfirm", resourceCulture);
+            }
+        }
     }
 }

@@ -46,12 +46,8 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(typeof(PublicApi.DTO.v1.City), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.City>>> GetCities()
         {
-            return Ok((await _bll.City.GetAllAsync()).Select(s => new PublicApi.DTO.v1.City()
-            {
-                Id = s.Id,
-                Name = s.Name,
-                NameId = s.NameId
-            }));
+            return Ok((await _bll.City.GetAllAsync()).Select(a => _mapper.Map(a)));
+
         }
 
         /// <summary>

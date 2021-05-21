@@ -9,7 +9,101 @@
 <div>
     <h4>@Resources.BLL.App.DTO.Products.Product</h4>
     <hr />
-    <partial name="_Details" model="Model"/>
+    <div class="mainView">
+    <div class="boxLayout">
+        <tr>
+            <th align="right" style="vertical-align:top;">
+                @foreach (var picture in Model.PictureUrls!)
+                {
+
+                    <img src="@Html.Raw(picture)" alt="image" width="150" height="100">
+                    break;
+                }
+            </th>
+
+        <div class="boxLayout" id="box1">
+            <table>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.Description):&nbsp</td>
+                    <td>@Html.DisplayFor(model => model.Description)</td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.County):&nbsp</td>
+                    <td>@Html.DisplayFor(model => model.CountyName)</td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.City):&nbsp</td>
+                    <td>@Html.DisplayFor(model => model.CityName)</td>
+                </tr>
+                <tr>
+                    <td>@Html.DisplayNameFor(model => model.LocationDescription):&nbsp</td>
+                    <td>@Html.DisplayFor(model => model.LocationDescription)</td>
+                </tr>
+
+            </table>
+        </div>
+            <div class="boxLayout" id="box2">
+                <table>
+                    <tr>
+                        <td>@Html.DisplayNameFor(model => model.Category):&nbsp</td>
+                        <td>@Html.DisplayFor(model => model.CategoryName)</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.DisplayNameFor(model => model.Color):&nbsp</td>
+                        <td>@Html.DisplayFor(model => model.Color)</td>
+                    </tr>
+
+                    <tr>
+                        <td>@Html.DisplayNameFor(model => model.Width):&nbsp</td>
+                        <td>@Html.DisplayFor(model => model.Width)
+                            @Html.DisplayFor(model => model.UnitName)</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.DisplayNameFor(model => model.Height):&nbsp</td>
+                        <td>@Html.DisplayFor(model => model.Height)
+                            @Html.DisplayFor(model => model.UnitName)</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.DisplayNameFor(model => model.Depth):</td>
+                        <td>@Html.DisplayFor(model => model.Depth)
+                            @Html.DisplayFor(model => model.UnitName)</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="boxLayout" id="box3">
+                <table>
+                    <tr>
+                        <td>@Html.DisplayNameFor(model => model.HasTransport):&nbsp</td>
+                        <td>@Html.DisplayFor(model => model.HasTransport)</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.DisplayNameFor(model => model.IsBooked)</td>
+                        <td>@Html.DisplayFor(model => model.IsBooked)</td>
+                    </tr>
+
+                    <tr>
+                        <td>@Html.DisplayNameFor(model => model.Condition):&nbsp</td>
+                        <td>@Html.DisplayFor(model => model.ConditionName)</td>
+                    </tr>
+
+                    <tr>
+                        <td>@Html.DisplayNameFor(model => model.ProductAge):&nbsp</td>
+                        <td>@Html.DisplayFor(model => model.ProductAge)</td>
+                    </tr>
+                    <tr>
+                        <td>@Html.DisplayNameFor(model => model.Material):&nbsp</td>
+
+                        @foreach (var picture in Model.Material!)
+                        {
+
+                            <td>@Html.DisplayFor(model => model.Material)</td>
+                        }
+                    </tr>
+                </table>
+
+            </div>
+    </div>
+    </div>
 
 </div>
 <div>

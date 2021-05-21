@@ -48,15 +48,8 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(typeof(PublicApi.DTO.v1.MessageForm), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.MessageForm>>> GetMessageForms()
         {
-            return Ok((await _bll.MessageForm.GetAllAsync(User.GetUserId()!.Value)).Select(s => new PublicApi.DTO.v1.MessageForm()
-            {
-                Id = s.Id,
-                Message = s.Message,
-                Email = s.Email,
-                Subject = s.Subject,
-                DateSent = s.DateSent,
-                SenderId = s.SenderId
-            }));
+            return Ok((await _bll.MessageForm.GetAllAsync(User.GetUserId()!.Value)).Select(a => _mapper.Map(a)));
+
         }
 
         /// <summary>
@@ -131,7 +124,7 @@ namespace WebApp.ApiControllers
 
             if (id == Guid.Empty)
             {
-                return NotFound(new Message("Email form not found"));
+                return NotFound(new Message(@Resources.Views.Shared.messages.NoEmail));
 
             }
             _bll.MessageForm.Add(_mapper.Map(messageForm));

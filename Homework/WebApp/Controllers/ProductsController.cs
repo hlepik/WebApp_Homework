@@ -151,21 +151,9 @@ namespace WebApp.Controllers
             return View(vm);
         }
 
-        // GET: Products/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _bll.Product.FirstOrDefaultAsync(id.Value);
-
-            return View(product);
-        }
 
         // POST: Products/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {

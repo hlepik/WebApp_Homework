@@ -46,11 +46,8 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(typeof(PublicApi.DTO.v1.County), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.County>>> GetCounties()
         {
-            return Ok((await _bll.County.GetAllAsync()).Select(s => new PublicApi.DTO.v1.County()
-            {
-                Id = s.Id,
-                Name = s.Name
-            }));
+            return Ok((await _bll.County.GetAllAsync()).Select(a => _mapper.Map(a)));
+
         }
 
         /// <summary>

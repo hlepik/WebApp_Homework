@@ -41,11 +41,17 @@
                 @Html.DisplayFor(modelItem => item.DateSent)
             </td>
 
-            <td>
+            <td style="float: right">
                 <a asp-action="Edit"  asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Reply</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.View</a> |
-                <a asp-action="Delete" id="deleteButton" class="fa fa-trash" asp-route-id="@item.Id"></a>
-            </td>
+                <form style="float: right" asp-action="DeleteConfirmed" asp-route-id="@item.Id"
+                      onclick="return confirm('@Resources.Views.Crud.CRUD.DeleteConfirm')">
+
+                    <button id="deleteButton" type="submit">
+                        <a  class="fa fa-trash" ></a>
+                    </button>
+                </form>
+                </td>
         </tr>
 }
     </tbody>

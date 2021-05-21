@@ -71,12 +71,9 @@ namespace WebApp.Controllers
                 return NotFound();
             }
 
-            // var userMessages= await _bll.UserMessages.FirstOrDefaultUserMessagesAsync(id.Value, User.GetUserId()!.Value);
-            // if (userMessages == null)
-            // {
-            //     return NotFound();
-            // }
-            return View("~/Views/MessageForms/_CreateEdit.cshtml");
+            var userMessages= await _bll.UserMessages.FirstOrDefaultUserMessagesAsync(id.Value, User.GetUserId()!.Value);
+
+            return View("~/Views/MessageForms/Create.cshtml");
 
         }
 
@@ -97,26 +94,8 @@ namespace WebApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: UserMessages/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var userMessages = await _bll.UserMessages.FirstOrDefaultUserMessagesAsync(id.Value, User.GetUserId()!.Value);
-
-            if (userMessages == null)
-            {
-                return NotFound();
-            }
-
-            return View(userMessages);
-        }
-
         // POST: UserMessages/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {

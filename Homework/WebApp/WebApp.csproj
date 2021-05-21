@@ -151,6 +151,7 @@
     <_ContentIncludedByDefault Remove="Views\Users\Index.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Users\_CreateEdit.cshtml" />
     <_ContentIncludedByDefault Remove="Views\Users\_Details.cshtml" />
+    <_ContentIncludedByDefault Remove="wwwroot\js\site.js" />
   </ItemGroup>
 
   <ItemGroup>

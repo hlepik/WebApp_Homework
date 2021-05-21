@@ -22,6 +22,5 @@ namespace Domain.App
         public Guid AppUserId { get; set; }
         public AppUser? AppUser { get; set; }
 
-        public ICollection<UserBookedProducts>? UserBookedProducts { get; set; }
     }
 }

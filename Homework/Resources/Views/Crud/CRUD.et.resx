@@ -38,4 +38,7 @@
     <data name="ChangeUserRoles" xml:space="preserve">
         <value>Muuda kasutaja rolli</value>
     </data>
+    <data name="DeleteConfirm" xml:space="preserve">
+        <value>Olete kindel, et soovite seda kustutada?</value>
+    </data>
 </root>

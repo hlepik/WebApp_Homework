@@ -26,17 +26,24 @@
         <tr>
             <td>
 
-                <img src="@Html.Raw( item.Url)" alt="image" width="200" height="150">
+                <img src="@Html.Raw( item.Url)" alt="image" style="width: 58%; height: 50%">
             </td>
             <td>
 
                 @Html.DisplayFor(modelItem => item.ProductName)
             </td>
-            <td>
+            <td style="float: right">
 
                 <a asp-action="Edit"  asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Details</a> |
-                <a asp-action="Delete" id="deleteButton" class="fa fa-trash" asp-route-id="@item.Id"></a>
+                <form   style="float: right" asp-action="DeleteConfirmed" asp-route-id="@item.Id"
+                      onclick="return confirm('@Resources.Views.Crud.CRUD.DeleteConfirm')">
+
+                    <button id="deleteButton" type="submit">
+                        <a  class="fa fa-trash" ></a>
+                    </button>
+                </form>
+
             </td>
         </tr>
 }

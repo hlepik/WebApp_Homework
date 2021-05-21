@@ -11,8 +11,11 @@ namespace Domain.App
     public class UserBookedProducts : DomainEntityId
     {
 
-        public Guid BookingId { get; set;}
-        public Booking? Booking { get; set; }
+        public Guid ProductId { get; set;}
+        public Product? Product { get; set; }
+
+        public AppUser? AppUser { get; set; }
+        public Guid AppUserId { get; set;}
 
 
     }

@@ -75,9 +75,7 @@ namespace WebApp.Areas.Identity.Pages.Account
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
-            ReturnUrl = returnUrl;
-
-
+            ReturnUrl = returnUrl!;
 
         }
 

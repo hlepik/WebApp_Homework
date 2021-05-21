@@ -117,25 +117,9 @@ namespace WebApp.Controllers
             return View(vm);
         }
 
-        // GET: Pictures/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var picture = await _bll.Picture.FirstOrDefaultDTOAsync(id.Value, User.GetUserId()!.Value);
-            if (picture == null)
-            {
-                return NotFound();
-            }
-
-            return View(picture);
-        }
 
         // POST: Pictures/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {

@@ -45,4 +45,7 @@
     <data name="ChangeUserRoles" xml:space="preserve">
         <value>Change User Role</value>
     </data>
+    <data name="DeleteConfirm" xml:space="preserve">
+        <value>Are sure you wish to delete this item?</value>
+    </data>
 </root>

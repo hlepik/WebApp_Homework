@@ -3,7 +3,7 @@
 <root>
     <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
         <xsd:element name="root" msdata:IsDataSet="true">
-            
+
         </xsd:element>
     </xsd:schema>
     <resheader name="resmimetype">
@@ -74,5 +74,23 @@
     </data>
     <data name="ErrorMessage_Email" xml:space="preserve">
         <value>The {0} field is not a valid e-mail address.</value>
+    </data>
+    <data name="UserPasswordProblem" xml:space="preserve">
+        <value>User/Password problem!</value>
+    </data>
+    <data name="AlreadyRegistered" xml:space="preserve">
+        <value>User already registered!</value>
+    </data>
+    <data name="MinLength" xml:space="preserve">
+        <value>The value is invalid.</value>
+    </data>
+    <data name="IncorrectEmail" xml:space="preserve">
+        <value>Email already exist or email is not valid!</value>
+    </data>
+    <data name="EmailNotFound" xml:space="preserve">
+        <value>Email not found!</value>
+    </data>
+    <data name="Required" xml:space="preserve">
+        <value>Field can't be embty!</value>
     </data>
 </root>

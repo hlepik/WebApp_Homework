@@ -2,10 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using AngleSharp.Html.Dom;
+using AutoMapper;
+using BLL.App;
+using Contracts.BLL.App;
+using DAL.App.EF;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using PublicApi.DTO.v1;
+using PublicApi.DTO.v1.Identity;
 using TestProject.Helpers;
 using WebApp;
 using Xunit;
@@ -18,10 +28,17 @@ namespace TestProject.IntegrationTests
         private readonly CustomWebApplicationFactory<WebApp.Startup> _factory;
         private readonly HttpClient _client;
         private readonly ITestOutputHelper _testOutputHelper;
+        private static JwtResponse? _jwt;
+        private JwtResponse? _register;
+        private DbContextOptionsBuilder<AppDbContext> optionBuilder;
 
 
         public TestControllerIntegrationTests(CustomWebApplicationFactory<Startup> factory, ITestOutputHelper testOutputHelper)
         {
+            optionBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            // provide new random database name here
+            // or parallel test methods will conflict each other
+            optionBuilder.UseInMemoryDatabase(Guid.NewGuid().ToString());
             _factory = factory;
             _testOutputHelper = testOutputHelper;
             _client = factory
@@ -66,116 +83,313 @@ namespace TestProject.IntegrationTests
         }
 
         [Fact]
-        public async Task TestAuthAction_AuthFlow()
+        public async Task Get_Register()
         {
-            // ARRANGE
-            var uri = "/test/TestAuth";
 
-            // ACT
-            var getTestResponse = await _client.GetAsync(uri);
+            var uri = "/api/v1/Account/Register";
 
-            // ASSERT
-            Assert.Equal(302, (int) getTestResponse.StatusCode);
-            var redirectUri = getTestResponse.Headers.FirstOrDefault(x => x.Key == "Location").Value.FirstOrDefault();
-            redirectUri.Should().NotBeNull();
-
-            await Get_Login_Page(redirectUri);
-            // we need to follow the redirect
-            // get the login page
-            // get the registration page
-            // fill up the reg form
-            // submit form
-            // try to access auth resource again - we should have new user and be logged in
-        }
-
-        public async Task Get_Login_Page(string uri)
-        {
-            var getLoginPageResponse = await _client.GetAsync(uri);
-            getLoginPageResponse.EnsureSuccessStatusCode();
-
-            // get the document
-            var getLoginDocument = await HtmlHelpers.GetDocumentAsync(getLoginPageResponse);
-
-            var registerAnchorElement = (IHtmlAnchorElement) getLoginDocument.QuerySelector("#register");
-            var registerUrl = registerAnchorElement.Href;
-            _testOutputHelper.WriteLine("Register url: " + registerUrl);
-
-            await Get_Register_Page(registerUrl);
-
-            var getRegisterPageResponse = await _client.GetAsync(uri);
-            getLoginPageResponse.EnsureSuccessStatusCode();
-
-            getLoginDocument = await HtmlHelpers.GetDocumentAsync(getRegisterPageResponse);
-
-            var logInForm = (IHtmlFormElement) getLoginDocument.QuerySelector("#account");
-            var loginValues = new Dictionary<string, string>()
+            var register = new Register
             {
-                ["Input_Email"] = "test@user.ee",
-                ["Input_Password"] = "Foo.bar1",
-
-            };
-            var logPostResponse = await _client.SendAsync(logInForm, loginValues);
-
-            logPostResponse.StatusCode.Should().Equals(302);
-            var logIn = (IHtmlFormElement)getLoginDocument.QuerySelector("#logIn");
-
-
-            var response = await _client.GetAsync("/");
-            response.StatusCode.Should().Equals(200);
-            var getHomeDocument = await HtmlHelpers.GetDocumentAsync(response);
-            var homeAnchorElement = (IHtmlAnchorElement) getHomeDocument.QuerySelector("#myProduct");
-            var homeUrl = homeAnchorElement.Href;
-            _testOutputHelper.WriteLine("Register url: " + homeUrl);
-            await Get_Product_Page(homeUrl);
-        }
-
-        public async Task Get_Register_Page(string uri)
-        {
-            var getRegisterPageResponse = await _client.GetAsync(uri);
-            getRegisterPageResponse.EnsureSuccessStatusCode();
-
-            // get the document
-            var getRegisterDocument = await HtmlHelpers.GetDocumentAsync(getRegisterPageResponse);
-
-            var regForm = (IHtmlFormElement) getRegisterDocument.QuerySelector("#register-form");
-            var regFormValues = new Dictionary<string, string>()
-            {
-                ["Input_Email"] = "test@user.ee",
-                ["Input_Password"] = "Foo.bar1",
-                ["Input_ConfirmPassword"] = "Foo.bar1",
-                ["Input_FirstName"] = "Test",
-                ["Input_LastName"] = "User",
+                Email = "test@user.ee",
+                Password = "Foo.bar1",
+                Firstname = "Test",
+                Lastname = "user"
             };
 
-            var regPostResponse = await _client.SendAsync(regForm, regFormValues);
+            string stringData = JsonConvert.SerializeObject(register);
+            stringData.Should().NotBeNullOrEmpty();
+            var contentData = new StringContent(stringData,
+                System.Text.Encoding.UTF8, "application/json");
 
-            regPostResponse.StatusCode.Should().Equals(200);
+            var response = await _client.PostAsync
+                (uri, contentData);
 
-            var redirectUri = regPostResponse.Headers.FirstOrDefault(x => x.Key == "Location").Value.FirstOrDefault();
-            redirectUri.Should().NotBeNull();
 
-            await Get_TestAuthAction_Authenticated(redirectUri);
+            response.EnsureSuccessStatusCode();
+            var body = await response.Content.ReadAsStringAsync();
+            var data = JsonHelper.DeserializeWithWebDefaults<JwtResponse>(body);
+
+            Assert.Equal("Test", data!.Firstname);
+            Assert.Equal("user", data.Lastname);
+
+            _register = data;
+            await TestLogin();
+
+
+        }
+   
+        private async Task TestLogin()
+        {
+            var uri = "/api/v1/Account/Login";
+            var jwt = "";
+
+            var contentType = new MediaTypeWithQualityHeaderValue
+                ("application/json");
+            _client.DefaultRequestHeaders.Accept.Add(contentType);
+
+
+            var login = new Login
+            {
+                Email = "test@user.ee",
+                Password = "Foo.bar1",
+
+            };
+            string stringData = JsonConvert.SerializeObject(login);
+            var contentData = new StringContent(stringData,
+                System.Text.Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = _client.PostAsync
+                (uri,contentData).Result;
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var resp = JsonConvert.DeserializeObject<JwtResponse>(content);
+                jwt = resp.Token;
+
+            }
+            Assert.NotEmpty(jwt);
+
+
+            //Add product
+            uri = "/api/v1/Products";
+            _client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer",
+                    jwt);
+
+            await PostCity();
+            await PostCategory();
+            await PostCondition();
+            await PostCounty();
+            await PostUnits();
+            await PostProduct();
+
+
+            var getResponse = await _client.GetAsync(uri);
+            getResponse.EnsureSuccessStatusCode();
+            var getContent = await getResponse.Content.ReadAsStringAsync();
+            var getRes = JsonConvert.DeserializeObject<Product[]>(getContent);
+
+            var product = getRes[0];
+            var productId = product.Id;
+
+            Assert.True("Katkine kapp" == product.Description);
+
+            uri = "/api/v1/Products/" + productId;
+
+            await EditProduct(uri);
+            await DeleteProduct(uri);
+        }
+
+        private async Task DeleteProduct(string uri)
+        {
+            var getProduct = await _client.GetAsync(uri);
+            getProduct.EnsureSuccessStatusCode();
+            var productBody = await getProduct.Content.ReadAsStringAsync();
+            var productData = JsonHelper.DeserializeWithWebDefaults<Product>(productBody);
+
+            var serializedBody = JsonConvert.SerializeObject(productData);
+            serializedBody.Should().NotBeNullOrEmpty();
+
+            var response = await _client.DeleteAsync(uri);
+            response.EnsureSuccessStatusCode();
+
+            uri = "/api/v1/Products";
+            var getAllResponse = await _client.GetAsync(uri);
+            response.EnsureSuccessStatusCode();
+            var getAllContent = await getAllResponse.Content.ReadAsStringAsync();
+            var getAllResp = JsonConvert.DeserializeObject<List<Product>>(getAllContent)!;
+
+            Assert.True(0 == getAllResp.Count);
 
         }
 
-        public async Task Get_Product_Page(string uri)
+        private async Task EditProduct(string uri)
         {
-            var getProductPageResponse = await _client.GetAsync(uri);
-            getProductPageResponse.EnsureSuccessStatusCode();
+            var getProduct = await _client.GetAsync(uri);
+            getProduct.EnsureSuccessStatusCode();
+            var productBody = await getProduct.Content.ReadAsStringAsync();
+            var productData = JsonHelper.DeserializeWithWebDefaults<Product>(productBody);
 
-            var getProductDocument = await HtmlHelpers.GetDocumentAsync(getProductPageResponse);
+            productData!.Description = "Uus nimi";
+            var serializedBody = JsonConvert.SerializeObject(productData);
+            serializedBody.Should().NotBeNullOrEmpty();
+            var httpContent = new StringContent(serializedBody!, Encoding.UTF8, "application/json");
 
-            var productAnchorElement = (IHtmlAnchorElement) getProductDocument.QuerySelector("productForm");
+            var response = await _client.PutAsync(uri, httpContent);
+            response.EnsureSuccessStatusCode();
 
+            getProduct = await _client.GetAsync(uri);
+            response.EnsureSuccessStatusCode();
+            var body = await getProduct.Content.ReadAsStringAsync();
+            var data = JsonHelper.DeserializeWithWebDefaults<PublicApi.DTO.v1.Product>(body);
+            Assert.Equal("Uus nimi", data!.Description);
+        }
+
+        private async Task PostProduct()
+        {
+
+            var uri = "/api/v1/Products";
+
+            var getUser = await _client.GetAsync("/api/v1/AppUser");
+            getUser.EnsureSuccessStatusCode();
+            var userBody = await getUser.Content.ReadAsStringAsync();
+            var userData = JsonHelper.DeserializeWithWebDefaults<List<AppUser>>(userBody);
+
+            var getCity = await _client.GetAsync("/api/v1/Cities");
+            getCity.EnsureSuccessStatusCode();
+            var cityBody = await getCity.Content.ReadAsStringAsync();
+            var cityData = JsonHelper.DeserializeWithWebDefaults<List<PublicApi.DTO.v1.City>>(cityBody);
+
+            var getCounty = await _client.GetAsync("/api/v1/Counties");
+            getCounty.EnsureSuccessStatusCode();
+            var countyBody = await getCounty.Content.ReadAsStringAsync();
+            var countyData = JsonHelper.DeserializeWithWebDefaults<List<PublicApi.DTO.v1.County>>(countyBody);
+
+            var getCondition = await _client.GetAsync("/api/v1/Conditions");
+            getCondition.EnsureSuccessStatusCode();
+            var conditionBody = await getCondition.Content.ReadAsStringAsync();
+            var conditionData = JsonHelper.DeserializeWithWebDefaults<List<PublicApi.DTO.v1.Condition>>(conditionBody);
+
+            var getCategory = await _client.GetAsync("/api/v1/Categories");
+            getCategory.EnsureSuccessStatusCode();
+            var categoryBody = await getCategory.Content.ReadAsStringAsync();
+            var categoryData = JsonHelper.DeserializeWithWebDefaults<List<PublicApi.DTO.v1.Category>>(categoryBody);
+
+            var getUnit = await _client.GetAsync("/api/v1/Units");
+            getUnit.EnsureSuccessStatusCode();
+            var unitBody = await getUnit.Content.ReadAsStringAsync();
+            var unitData = JsonHelper.DeserializeWithWebDefaults<List<PublicApi.DTO.v1.Unit>>(unitBody);
+
+            var product =  new Product
+            {
+                Description = "Katkine kapp",
+                Color = "kollane",
+                ProductAge = 10,
+                IsBooked = false,
+                HasTransport = false,
+                Height = 40,
+                Width = 40,
+                AppUserId = userData![1].Id,
+                DateAdded = DateTime.Now,
+                Depth = 40,
+                LocationDescription = "Vanalinn",
+                CityId = cityData![0].Id,
+                CountyId = countyData![0].Id,
+                CategoryId = categoryData![0].Id,
+                UnitId = unitData![0].Id,
+                ConditionId = conditionData![0].Id,
+
+            };
+            var serializedBody = JsonConvert.SerializeObject(product);
+            serializedBody.Should().NotBeNullOrEmpty();
+            var httpContent = new StringContent(serializedBody!, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync(uri, httpContent);
+            response.EnsureSuccessStatusCode();
+
+            var body = await response.Content.ReadAsStringAsync();
+            var data = JsonHelper.DeserializeWithWebDefaults<PublicApi.DTO.v1.Product>(body);
+            Assert.Equal("Katkine kapp", data!.Description);
 
         }
 
-        public async Task Get_TestAuthAction_Authenticated(string uri)
-        {
-            var getTestResponse = await _client.GetAsync(uri);
-            getTestResponse.EnsureSuccessStatusCode();
 
-            _testOutputHelper.WriteLine($"Uri '{uri}' was accessed with response status code '{getTestResponse.StatusCode}'.");
+
+        private async Task PostCity()
+        {
+            var uri = "/api/v1/Cities";
+
+             var city =  new City
+            {
+                Name = "Tallinn",
+
+            };
+             var serializedBody = JsonConvert.SerializeObject(city);
+             serializedBody.Should().NotBeNullOrEmpty();
+             var httpContent = new StringContent(serializedBody!, Encoding.UTF8, "application/json");
+             var response = await _client.PostAsync(uri, httpContent);
+             response.EnsureSuccessStatusCode();
+
+             var body = await response.Content.ReadAsStringAsync();
+             var data = JsonHelper.DeserializeWithWebDefaults<PublicApi.DTO.v1.City>(body);
+             Assert.Equal("Tallinn", data!.Name);
+        }
+        private async Task PostCounty()
+        {
+            var uri = "/api/v1/Counties";
+
+            var county =  new County
+            {
+                Name = "Harjumaa",
+
+            };
+            var serializedBody = JsonConvert.SerializeObject(county);
+            serializedBody.Should().NotBeNullOrEmpty();
+            var httpContent = new StringContent(serializedBody!, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync(uri, httpContent);
+            response.EnsureSuccessStatusCode();
+
+            var body = await response.Content.ReadAsStringAsync();
+            var data = JsonHelper.DeserializeWithWebDefaults<PublicApi.DTO.v1.County>(body);
+            Assert.Equal("Harjumaa", data!.Name);
+        }
+        private async Task PostCondition()
+        {
+            var uri = "/api/v1/Conditions";
+
+            var condition =  new Condition
+            {
+                Description = "Vana",
+
+            };
+            var serializedBody = JsonConvert.SerializeObject(condition);
+            serializedBody.Should().NotBeNullOrEmpty();
+            var httpContent = new StringContent(serializedBody!, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync(uri, httpContent);
+            response.EnsureSuccessStatusCode();
+
+            var body = await response.Content.ReadAsStringAsync();
+            var data = JsonHelper.DeserializeWithWebDefaults<PublicApi.DTO.v1.Condition>(body);
+            Assert.Equal("Vana", data!.Description);
+        }
+
+        private async Task PostCategory()
+        {
+            var uri = "/api/v1/Categories";
+
+            var category =  new Category
+            {
+                Name = "Toolid",
+
+            };
+            var serializedBody = JsonConvert.SerializeObject(category);
+            serializedBody.Should().NotBeNullOrEmpty();
+            var httpContent = new StringContent(serializedBody!, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync(uri, httpContent);
+            response.EnsureSuccessStatusCode();
+
+            var body = await response.Content.ReadAsStringAsync();
+            var data = JsonHelper.DeserializeWithWebDefaults<PublicApi.DTO.v1.Category>(body);
+            Assert.Equal("Toolid", data!.Name);
+        }
+        private async Task PostUnits()
+        {
+            var uri = "/api/v1/Units";
+
+            var unit =  new Unit
+            {
+                Name = "cm",
+
+            };
+            var serializedBody = JsonConvert.SerializeObject(unit);
+            serializedBody.Should().NotBeNullOrEmpty();
+            var httpContent = new StringContent(serializedBody!, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync(uri, httpContent);
+            response.EnsureSuccessStatusCode();
+
+            var body = await response.Content.ReadAsStringAsync();
+            var data = JsonHelper.DeserializeWithWebDefaults<PublicApi.DTO.v1.Unit>(body);
+            Assert.Equal("cm", data!.Name);
         }
     }
 

@@ -105,7 +105,7 @@ namespace WebApp.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Culture,Value,LangStringId")] Translation translation)
+        public async Task<IActionResult> Edit(string id,  Translation translation)
         {
             if (id != translation.Culture)
             {

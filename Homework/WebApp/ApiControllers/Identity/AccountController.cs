@@ -56,7 +56,7 @@ namespace WebApp.ApiControllers.Identity
             if (appUser == null)
             {
                 _logger.LogWarning("WebApi login failed. User {User} not found", dto.Email);
-                return NotFound(new PublicApi.DTO.v1.Message("User/Password problem!"));
+                return NotFound(new PublicApi.DTO.v1.Message(Resources.Common.UserPasswordProblem));
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(appUser, dto.Password, false);
@@ -101,7 +101,7 @@ namespace WebApp.ApiControllers.Identity
             if (appUser != null)
             {
                 _logger.LogWarning(" User {User} already registered", dto.Email);
-                return NotFound(new PublicApi.DTO.v1.Message("User already registered"));
+                return NotFound(new PublicApi.DTO.v1.Message(Resources.Common.AlreadyRegistered));
             }
 
             appUser = new Domain.App.Identity.AppUser()

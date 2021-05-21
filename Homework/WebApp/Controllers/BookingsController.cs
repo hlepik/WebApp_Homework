@@ -53,8 +53,6 @@ namespace WebApp.Controllers
             var product = await _bll.Product.FirstOrDefaultDTOAsync(id);
             var vm = new BookingCreateEditViewModels();
             vm.Products = product!;
-            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllProductsIsNotBookedAsync(), nameof(Product.Id),
-                nameof(Product.Description));
             return View(vm);
 
         }
@@ -68,31 +66,27 @@ namespace WebApp.Controllers
         {
             var product = await _bll.Product.ChangeBookingStatus(vm.Products.Id);
 
+            product.IsBooked = true;
 
-            if (ModelState.IsValid)
+            _bll.Product.Update(product);
+
+            var booking = new Booking
             {
-                product.IsBooked = true;
-                vm.Booking.ProductId = product.Id;
-                vm.Booking.AppUserId = User.GetUserId()!.Value;
-                vm.Booking.TimeBooked = DateTime.Now;
+                TimeBooked = DateTime.Now,
+                Until = vm.Booking.Until,
+                AppUserId = User.GetUserId()!.Value,
+                ProductId = product.Id
+            };
+            var myBookings = new UserBookedProducts
+            {
+                ProductId = product.Id,
+                AppUserId = User.GetUserId()!.Value
+            };
+            _bll.UserBookedProducts.Add(myBookings);
+            _bll.Booking.Add(booking);
+            await _bll.SaveChangesAsync();
 
-                _bll.Product.Update(product);
-
-                var myBookings = new UserBookedProducts
-                {
-                    Booking = vm.Booking
-                };
-                _bll.UserBookedProducts.Add(myBookings);
-                await _bll.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
-            }
-
-            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllProductsIsNotBookedAsync(),
-                nameof(Product.Id),
-                nameof(Product.Description), vm.Booking.ProductId);
-
-            return View();
+            return RedirectToAction(nameof(Index));
         }
 
 
@@ -108,8 +102,7 @@ namespace WebApp.Controllers
 
             var vm = new BookingCreateEditViewModels();
             vm.Booking = booking;
-            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllProductsIsNotBookedAsync(), nameof(Product.Id),
-                nameof(Product.Description), vm.Booking.ProductId);
+
             return View(vm);
         }
 
@@ -132,8 +125,7 @@ namespace WebApp.Controllers
                 await _bll.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            vm.ProductSelectList = new SelectList(await _bll.Product.GetAllAsync(), nameof(Product.Id),
-                nameof(Product.Description), vm.Booking.ProductId);
+
             return View(vm);
         }
 

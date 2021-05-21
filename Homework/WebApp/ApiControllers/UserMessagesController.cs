@@ -51,16 +51,8 @@ namespace WebApp.ApiControllers
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.UserMessages>>> GetUserMessages()
         {
 
-            return Ok((await _bll.UserMessages.GetAllMessagesAsync(User.GetUserId()!.Value))
-                .Select(s => new PublicApi.DTO.v1.UserMessages()
-                {
-                    Id = s.Id,
-                    AppUserId = s.AppUserId,
-                    Email = s.Email,
-                    Message = s.Message,
-                    Subject = s.Subject,
-                    SenderEmail = s.SenderEmail
-                }));
+            return Ok((await _bll.UserMessages.GetAllMessagesAsync(User.GetUserId()!.Value)).Select(a => _mapper.Map(a)));
+
         }
 
         /// <summary>

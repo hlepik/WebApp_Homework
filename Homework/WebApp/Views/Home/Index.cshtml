@@ -49,40 +49,41 @@
 <h2> @Resources.BLL.App.DTO.Products.RecentlyAddedProducts</h2>
    @foreach (var item in Model.LastInsertedProducts) {
 
-<div class="boxLayout" id="box1">
-    <tr>
-        <th>
+       <div class="boxLayout" style="height: 100%" id="box1">
 
-           @foreach (var picture in item.PictureUrls!)
-           {
+           <tr>
+               <th>
 
-               <img src="@Html.Raw(picture)" alt="image" width="150" height="100" class="center">
-                break;
-           }
-        </th>
-    </tr>
-    <table>
-    <tr>
-        <td>@Html.DisplayNameFor(model => model.Product.Description):&nbsp</td>
-        <td>@Html.DisplayFor(modelItem => item.Description)</td>
-    </tr>
-    <tr>
-        <td>@Html.DisplayNameFor(model => model.Product.County):&nbsp</td>
-        <td>@Html.DisplayFor(modelItem => item.County)</td>
-    </tr>
-    <tr>
-        <td>@Html.DisplayNameFor(model => model.Product.Category):&nbsp</td>
-        <td>@Html.DisplayFor(modelItem => item.Category)</td>
-    </tr>
-    <tr>
-        <td>@Html.DisplayNameFor(model => model.Product.IsBooked)</td>
-        <td>@Html.DisplayFor(modelItem => item.IsBooked)</td>
-    </tr>
+                   @foreach (var picture in item.PictureUrls!)
+                   {
+
+                       <img src="@Html.Raw(picture)" alt="image" style="width: 60%; height: 50%" class="center">
+                       break;
+                   }
+               </th>
+           </tr>
+           <table >
+               <tr>
+                   <td>@Html.DisplayNameFor(model => model.Product.Description):&nbsp</td>
+                   <td>@Html.DisplayFor(modelItem => item.Description)</td>
+               </tr>
+               <tr>
+                   <td>@Html.DisplayNameFor(model => model.Product.County):&nbsp</td>
+                   <td>@Html.DisplayFor(modelItem => item.CountyName)</td>
+               </tr>
+               <tr>
+                   <td>@Html.DisplayNameFor(model => model.Product.Category):&nbsp</td>
+                   <td>@Html.DisplayFor(modelItem => item.CategoryName)</td>
+               </tr>
+               <tr>
+                   <td>@Html.DisplayNameFor(model => model.Product.IsBooked)</td>
+                   <td>@Html.DisplayFor(modelItem => item.IsBooked)</td>
+               </tr>
 
 
-    </table>
+           </table>
 
-</div>
+       </div>
 
    }
 </div>

@@ -26,7 +26,7 @@ namespace BLL.App.DTO
          MinLength(2, ErrorMessageResourceType = typeof(Resources.Base.Common), ErrorMessageResourceName = "ErrorMessageMinLength")]
         public string Message { get; set; } = default!;
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.MessageForms), Name = "DateSent")]
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
         public DateTime DateSent { get; set; } = DateTime.Now;
 
         public Guid? SenderId { get; set; }

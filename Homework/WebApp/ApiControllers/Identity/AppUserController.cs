@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DAL.App.EF;
-using Domain.App.Identity;
+using Contracts.BLL.App;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PublicApi.DTO.v1.Identity;
 
 namespace WebApp.ApiControllers.Identity
 {
@@ -20,15 +21,19 @@ namespace WebApp.ApiControllers.Identity
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AppUserController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppBLL _bll;
+
+        private readonly UserManager<AppUser> _userManager;
 
         /// <summary>
         ///
         /// </summary>
-        /// <param name="context"></param>
-        public AppUserController(AppDbContext context)
+        /// <param name="userManager"></param>
+        public AppUserController(UserManager<AppUser> userManager, IAppBLL bll)
         {
-            _context = context;
+
+            _userManager = userManager;
+            _bll = bll;
         }
 
 
@@ -39,14 +44,20 @@ namespace WebApp.ApiControllers.Identity
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            return await _userManager.Users.ToListAsync();
         }
 
-        // GET: api/AppUser/5
+
+        /// <summary>
+        /// Retuns app user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<AppUser>> GetAppUser(Guid id)
         {
-            var appUser = await _context.Users.FindAsync(id);
+            var appUser = await _userManager.Users
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (appUser == null)
             {
@@ -56,10 +67,12 @@ namespace WebApp.ApiControllers.Identity
             return appUser;
         }
 
-
-
-        // PUT: api/AppUser/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Edit user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="appUser"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAppUser(Guid id, AppUser appUser)
         {
@@ -68,57 +81,49 @@ namespace WebApp.ApiControllers.Identity
                 return BadRequest();
             }
 
-            _context.Entry(appUser).State = EntityState.Modified;
+            await _userManager.UpdateAsync(appUser);
+            await _bll.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AppUserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
             return NoContent();
         }
 
-        // POST: api/AppUser
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+        /// <summary>
+        /// Add new user
+        /// </summary>
+        /// <param name="appUser"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<AppUser>> PostAppUser(AppUser appUser)
         {
-            _context.Users.Add(appUser);
-            await _context.SaveChangesAsync();
+            await _userManager.CreateAsync(appUser);
+            await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetAppUser", new { id = appUser.Id }, appUser);
         }
 
-        // DELETE: api/AppUser/5
+
+        /// <summary>
+        /// delete app user
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAppUser(Guid id)
         {
-            var appUser = await _context.Users.FindAsync(id);
+            var appUser = await _userManager.FindByIdAsync(id.ToString());
             if (appUser == null)
             {
                 return NotFound();
             }
 
-            _context.Users.Remove(appUser);
-            await _context.SaveChangesAsync();
+            await _userManager.DeleteAsync(appUser);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool AppUserExists(Guid id)
-        {
-            return _context.Users.Any(e => e.Id == id);
-        }
+
     }
 }

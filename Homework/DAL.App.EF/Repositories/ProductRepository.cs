@@ -60,11 +60,11 @@ namespace DAL.App.EF.Repositories
                     Id = p.Id,
                     PictureUrls = p.Pictures!.Select(x => x.Url),
                     Description = p.Description,
-                    County = p.County!.Name,
+                    CountyName = p.County!.Name,
                     DateAdded = p.DateAdded,
                     Material = p.ProductMaterials!.Select(x => x.Material!.Name!.ToString()),
                     IsBooked = p.IsBooked,
-                    Category = p.Category!.Name
+                    CategoryName = p.Category!.Name
 
                 });
 
@@ -111,18 +111,23 @@ namespace DAL.App.EF.Repositories
                 Description = p.Description,
                 Color = p.Color,
                 PictureUrls = p.Pictures!.Select(x => x.Url).Take(1),
-                City = p.City!.Name,
-                County = p.County!.Name,
-                Category = p.Category!.Name,
-                Unit = p.Unit!.Name,
-                Condition = p.Condition!.Description,
+                CityName = p.City!.Name,
+                CountyName = p.County!.Name,
+                CategoryName = p.Category!.Name,
+                UnitName = p.Unit!.Name,
+                ConditionName = p.Condition!.Description,
                 DateAdded = p.DateAdded,
                 Material = p.ProductMaterials!.Select(x => x.Material!.Name!.ToString()),
                 Height = p.Height,
                 Width = p.Width,
                 Depth = p.Depth,
                 IsBooked = p.IsBooked,
-                AppUserId = p.AppUserId
+                AppUserId = p.AppUserId,
+                CountyId = p.CountyId,
+                CityId = p.CityId,
+                ConditionId = p.ConditionId,
+                UnitId = p.UnitId,
+                CategoryId = p.CategoryId
 
             }).OrderBy(p => p.DateAdded);
 
@@ -158,17 +163,18 @@ namespace DAL.App.EF.Repositories
             {
                 Id = p.Id,
                 Description = p.Description,
-                County = p.County!.Name,
+                CountyName = p.County!.Name,
                 CountyId = p.CountyId,
-                City = p.City!.Name,
+                CityName = p.City!.Name,
                 CityId = p.CityId,
-                Category = p.Category!.Name,
+                CategoryName = p.Category!.Name,
                 CategoryId = p.CategoryId,
-                Condition = p.Condition!.Description,
+                ConditionName = p.Condition!.Description,
                 ConditionId = p.ConditionId,
-                Unit = p.Unit!.Name,
+                UnitName = p.Unit!.Name,
                 UnitId = p.UnitId,
                 PictureUrls = p.Pictures!.Select(x => x.Url),
+                Material = p.ProductMaterials!.Select(x => x.Material!.Name!.ToString()),
                 Color = p.Color,
                 Width = p.Width,
                 Height = p.Height,
@@ -206,6 +212,18 @@ namespace DAL.App.EF.Repositories
                     .Include(x => x.City)
                     .ThenInclude(x => x!.Name)
                     .ThenInclude(x => x.Translations)
+                    .Include(x => x.Category)
+                    .ThenInclude(x => x!.Name)
+                    .ThenInclude(x => x!.Translations)
+                    .Include(x => x.Unit)
+                    .ThenInclude(x => x!.Name)
+                    .ThenInclude(x => x!.Translations)
+                    .Include(x => x.County)
+                    .ThenInclude(x => x!.Name)
+                    .ThenInclude(x => x!.Translations)
+                    .Include(x => x.Condition)
+                    .ThenInclude(x => x!.Description)
+                    .ThenInclude(x => x!.Translations)
                     .Where(c => c.AppUserId == userId);
             }
 
@@ -302,11 +320,11 @@ namespace DAL.App.EF.Repositories
                     Description = p.Description,
                     Color = p.Color,
                     PictureUrls = p.Pictures!.Select(x => x.Url),
-                    City = p.City!.Name,
-                    County = p.County!.Name,
-                    Category = p.Category!.Name,
-                    Unit = p.Unit!.Name,
-                    Condition = p.Condition!.Description,
+                    CityName = p.City!.Name,
+                    CountyName = p.County!.Name,
+                    CategoryName = p.Category!.Name,
+                    UnitName = p.Unit!.Name,
+                    ConditionName = p.Condition!.Description,
                     DateAdded = p.DateAdded,
                     Material = p.ProductMaterials!.Select(x => x.Material!.Name!.ToString()),
                     Height = p.Height,
@@ -320,9 +338,6 @@ namespace DAL.App.EF.Repositories
             return await resQuery.ToListAsync();
 
         }
-
-
-
 
 
     }

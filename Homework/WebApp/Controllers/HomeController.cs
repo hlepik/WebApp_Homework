@@ -128,7 +128,8 @@ namespace WebApp.Controllers
 
                 var myBookings = new BLL.App.DTO.UserBookedProducts
                 {
-                    Booking = vm.Booking
+                    ProductId = product.Id,
+                    AppUserId = User.GetUserId()!.Value
                 };
                 _bll.UserBookedProducts.Add(myBookings);
                 await _bll.SaveChangesAsync();

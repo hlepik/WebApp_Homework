@@ -47,11 +47,8 @@ namespace WebApp.ApiControllers
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.Unit>>> GetUnits()
         {
-            return Ok((await _bll.Unit.GetAllAsync()).Select(s => new PublicApi.DTO.v1.Unit()
-            {
-                Id = s.Id,
-                Name = s.Name
-            }));
+            return Ok((await _bll.Unit.GetAllAsync()).Select(a => _mapper.Map(a)));
+
         }
 
         /// <summary>

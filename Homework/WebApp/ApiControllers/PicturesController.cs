@@ -46,14 +46,8 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(typeof(PublicApi.DTO.v1.Picture), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.Picture>>> GetPictures()
         {
-            return Ok((await _bll.Picture
-                .GetAllPicturesAsync(User.GetUserId()!.Value)).Select(s => new PublicApi.DTO.v1.Picture()
-            {
-                Id = s.Id,
-                Url = s.Url,
-                ProductId = s.ProductId,
-                ProductName = s.ProductName
-            }));
+            return Ok((await _bll.Picture.GetAllPicturesAsync(User.GetUserId()!.Value)).Select(a => _mapper.Map(a)));
+
 
         }
 
@@ -89,7 +83,6 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
-
 
         public async Task<IActionResult> PutPicture(Guid id, PublicApi.DTO.v1.Picture picture)
         {

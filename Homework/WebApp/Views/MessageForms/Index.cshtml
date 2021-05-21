@@ -44,10 +44,19 @@
                 @Html.DisplayFor(modelItem => item.DateSent)
             </td>
 
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Details</a> |
-                <a asp-action="Delete"class="fa fa-trash" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Delete</a>
-            </td>
+            <td style="float: right;">
+                <a asp-action="Details" asp-route-id="@item.Id">@Resources.Views.Crud.CRUD.Details</a>
+
+                <form style="float: right;" asp-action="DeleteConfirmed" asp-route-id="@item.Id"
+                      onclick="return confirm('@Resources.Views.Crud.CRUD.DeleteConfirm')">
+
+                    <button id="deleteButton" type="submit">
+                        <a  class="fa fa-trash" ></a>
+                    </button>
+                </form>
+
+                </td>
+
         </tr>
 }
     </tbody>

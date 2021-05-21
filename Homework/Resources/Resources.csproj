@@ -97,6 +97,10 @@
         <Generator>PublicResXFileCodeGenerator</Generator>
         <LastGenOutput>AppRoles.Designer.cs</LastGenOutput>
       </EmbeddedResource>
+      <EmbeddedResource Update="Views\Shared\messages.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>messages.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
@@ -209,6 +213,11 @@
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>AppRoles.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Views\Shared\messages.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>messages.resx</DependentUpon>
       </Compile>
     </ItemGroup>
 

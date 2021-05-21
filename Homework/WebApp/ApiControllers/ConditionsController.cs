@@ -40,16 +40,14 @@ namespace WebApp.ApiControllers
         /// </summary>
         /// <returns>Entities from db</returns>
         [HttpGet]
+        [AllowAnonymous]
         [Produces("application/json")]
         [Consumes("application/json")]
         [ProducesResponseType(typeof(PublicApi.DTO.v1.Condition), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.Condition>>> GetConditions()
         {
-            return Ok((await _bll.Condition.GetAllAsync()).Select(s => new PublicApi.DTO.v1.Condition()
-            {
-                Id = s.Id,
-                Description = s.Description
-            }));
+            return Ok((await _bll.Condition.GetAllAsync()).Select(a => _mapper.Map(a)));
+
         }
 
         /// <summary>

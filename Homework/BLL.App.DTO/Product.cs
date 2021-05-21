@@ -43,22 +43,23 @@ namespace BLL.App.DTO
 
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "Condition")]
         public Guid ConditionId { get; set;}
-        public Condition? Conditions { get; set; }
+        // public Condition? Conditions { get; set; }
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "County")]
         [Required(ErrorMessageResourceType = typeof(Resources.Base.Common), ErrorMessageResourceName = "Required")]
 
         public Guid CountyId { get; set;}
-        public County? Counties { get; set; }
+        // public County? Counties { get; set; }
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "Unit")]
-
         public Guid? UnitId { get; set;}
-        public Unit? Units { get; set; }
+        // public Unit? Units { get; set; }
+
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "Category")]
         [Required(ErrorMessageResourceType = typeof(Resources.Base.Common), ErrorMessageResourceName = "Required")]
         public Guid CategoryId { get; set;}
-        public Category? Categories { get; set; }
+        // public Category? Categories { get; set; }
 
-        public ICollection<Booking>? Booking { get; set; }
+        // public ICollection<Booking>? Booking { get; set; }
+        [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "Picture")]
         public IEnumerable<string>? PictureUrls { get; set; }
 
         public Guid? CityId { get; set;}
@@ -68,26 +69,39 @@ namespace BLL.App.DTO
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "LocationDescription")]
         public string? LocationDescription { get; set; }
 
-        [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "Picture")]
-        public ICollection<Picture>? Pictures { get; set; }
-
-        public ICollection<ProductMaterial>? ProductMaterials { get; set; }
 
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "DateAdded")]
         [DataType(DataType.Date)]public DateTime DateAdded { get; set; }
 
         public Guid AppUserId { get; set; }
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "City")]
-        public string? City { get; set; }
+        public string? CityName { get; set; }
 
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "County")]
-        public string? County { get; set; }
+        public string? CountyName { get; set; }
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "Unit")]
-        public string? Unit { get; set; }
+        public string? UnitName { get; set; }
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "Category")]
-        public string? Category { get; set; }
+        public string? CategoryName { get; set; }
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "Condition")]
-        public string? Condition { get; set; }
+        public string? ConditionName { get; set; }
+        [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "Condition")]
+
+        public Condition? Condition { get; set; }
+        [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "City")]
+
+        public City? City { get; set; }
+        [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "Category")]
+
+        public Category? Category { get; set; }
+        [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "County")]
+
+        public County? County { get; set; }
+        [Display(ResourceType = typeof(Resources.BLL.App.DTO.Products), Name = "Unit")]
+
+
+        public Unit? Unit { get; set; }
+
 
     }
 

@@ -54,18 +54,9 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(typeof(PublicApi.DTO.v1.Product), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.Product>>> GetBookings()
         {
-            return Ok((await _bll.Product.GetAllProductsAsync()).Select(s => new PublicApi.DTO.v1.Product()
-            {
-                Id = s.Id,
-                Description = s.Description,
-                IsBooked = s.IsBooked,
-                AppUserId = s.AppUserId,
-                City = s.City,
-                County = s.County,
-                LocationDescription = s.LocationDescription,
-                DateAdded = s.DateAdded
 
-            }));
+            return Ok((await _bll.Product.GetAllProductsAsync()).Select(a => _mapperProduct.Map(a)));
+
         }
         /// <summary>
         /// Get one Product. Based on parameter: Id
@@ -104,7 +95,17 @@ namespace WebApp.ApiControllers
             {
                 return NotFound(new Message("Id and booking.id do not match"));
             }
+            var product = await _bll.Product.ChangeBookingStatus(booking.ProductId);
 
+
+            product.IsBooked = true;
+            _bll.Product.Update(product);
+
+            var myBookings = new UserBookedProducts
+            {
+                BookingId = booking.Id
+            };
+            _bll.UserBookedProducts.Add(_mapperBookedProducts.Map(myBookings));
 
             _bll.Booking.Update(_mapper.Map(booking));
             await _bll.SaveChangesAsync();
@@ -127,15 +128,16 @@ namespace WebApp.ApiControllers
 
             var product = await _bll.Product.ChangeBookingStatus(booking.ProductId);
             product.IsBooked = true;
-
+            booking.TimeBooked = DateTime.Now.Date;
             _bll.Product.Update(product);
             _bll.Booking.Add(_mapper.Map(booking));
             await _bll.SaveChangesAsync();
-            
+
             var myBookings = new PublicApi.DTO.v1.UserBookedProducts
             {
-                BookingId = booking.Id,
-                TimeBooked = DateTime.Now
+                AppUserId = booking.AppUserId,
+                ProductId = booking.ProductId
+
             };
             _bll.UserBookedProducts.Add(_mapperBookedProducts.Map(myBookings));
             await _bll.SaveChangesAsync();

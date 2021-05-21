@@ -1,12 +1,20 @@
 using System;
 using System.Linq;
 using DAL.App.EF;
-using Domain.App;
+using Domain.App.Identity;
 using Domain.Base;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using PublicApi.DTO.v1;
+using Category = Domain.App.Category;
+using City = Domain.App.City;
+using Condition = Domain.App.Condition;
+using County = Domain.App.County;
+using Product = Domain.App.Product;
+using Unit = Domain.App.Unit;
+
 
 namespace TestProject
 {
@@ -45,7 +53,44 @@ namespace TestProject
                 // seed data
                 db.Products.Add(new Product()
                 {
-                    Description = "Type 0"
+                    Description = "Tool",
+                    Color = "roheline",
+                    ProductAge = 10,
+                    IsBooked = false,
+                    HasTransport = false,
+                    Height = 50,
+                    Width = 50,
+                    Depth = 50,
+                    Unit = new Unit
+                    {
+                        Name = "cm"
+                    },
+                    City = new City
+                    {
+                        Name = "Tartu"
+                    },
+                    County = new County
+                    {
+                        Name = "Tartumaa"
+                    },
+                    Category = new Category
+                    {
+                        Name = "Toolid"
+                    },
+                    Condition = new Condition
+                    {
+                        Description = "Uus"
+                    },
+                    LocationDescription = "Vanalinn",
+                    AppUser = new AppUser()
+                    {
+                        Firstname = "Helen",
+                        Lastname = "Proov",
+
+                    },
+                    DateAdded = DateTime.Now,
+
+
                 });
                 db.SaveChanges();
             });

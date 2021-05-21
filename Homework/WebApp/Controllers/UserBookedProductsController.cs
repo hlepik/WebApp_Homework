@@ -67,6 +67,7 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
+
                 _bll.UserBookedProducts.Add(vm.UserBookedProducts);
 
                 await _bll.SaveChangesAsync();
@@ -122,39 +123,19 @@ namespace WebApp.Controllers
             return View(vm);
         }
 
-        // GET: UserBookedProducts/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            var userBookedProducts = await _bll.UserBookedProducts.FirstOrDefaultBookedProductsAsync(id.Value, User.GetUserId()!.Value);
 
-
-            if (userBookedProducts == null)
-            {
-                return NotFound();
-            }
-
-            var product = await _bll.Product.FirstOrDefaultDTOAsync(userBookedProducts.ProductId);
-
-            return View(product);
-
-        }
 
         // POST: UserBookedProducts/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var booking = await _bll.UserBookedProducts.GetId(id);
-            var product = await _bll.Booking.GetId(booking);
-            var bookingStatus = await _bll.Product.ChangeBookingStatus(product);
+            var productId = await _bll.UserBookedProducts.GetId(id);
+            var bookingStatus = await _bll.Product.ChangeBookingStatus(productId);
             bookingStatus.IsBooked = false;
             _bll.Product.Update(bookingStatus);
-            _bll.UserBookedProducts.RemoveUserBookedProductsAsync(product);
-            _bll.Booking.RemoveBookingAsync(booking);
+            _bll.UserBookedProducts.RemoveUserBookedProductsAsync(productId);
+            _bll.Booking.RemoveBookingAsync(productId);
             await _bll.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

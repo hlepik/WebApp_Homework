@@ -405,12 +405,17 @@ namespace DAL.App.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BookingId")
+                    b.Property<Guid>("AppUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookingId");
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("UserBookedProducts");
                 });
@@ -750,13 +755,21 @@ namespace DAL.App.EF.Migrations
 
             modelBuilder.Entity("Domain.App.UserBookedProducts", b =>
                 {
-                    b.HasOne("Domain.App.Booking", "Booking")
-                        .WithMany("UserBookedProducts")
-                        .HasForeignKey("BookingId")
+                    b.HasOne("Domain.App.Identity.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Booking");
+                    b.HasOne("Domain.App.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Domain.App.UserMessages", b =>
@@ -830,11 +843,6 @@ namespace DAL.App.EF.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Domain.App.Booking", b =>
-                {
-                    b.Navigation("UserBookedProducts");
                 });
 
             modelBuilder.Entity("Domain.App.Category", b =>

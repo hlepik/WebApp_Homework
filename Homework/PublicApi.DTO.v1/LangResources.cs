@@ -1,5 +1,6 @@
 
 using PublicApi.DTO.v1.Identity;
+using Resources;
 using Resources.BLL.App.DTO;
 using Resources.DropDown;
 using Resources.Views.Crud;
@@ -15,7 +16,34 @@ namespace PublicApi.DTO.v1
         public Crud Crud { get; set; } = new Crud();
         public AppRoles AppRole { get; set; } = new AppRoles();
         public AppUsers AppUser { get; set; } = new AppUsers();
+        public Account Account { get; set; } = new Account();
+        public Common Common { get; set; } = new Common();
     }
+    public class Account
+    {
+        public string Email { get; set; } = Resources.Areas.Identity.Pages.Account.Login.Email;
+        public string Password { get; set; } = Resources.Areas.Identity.Pages.Account.Login.Password;
+        public string LogIn { get; set; } = Resources.Areas.Identity.Pages.Account.Login.LogIn;
+        public string ConfirmPassword { get; set; } = Resources.Areas.Identity.Pages.Account.Register.ConfirmPassword;
+        public string FirstName { get; set; } = Resources.Areas.Identity.Pages.Account.Register.FirstName;
+        public string LastName { get; set; } = Resources.Areas.Identity.Pages.Account.Register.LastName;
+        public string Register { get; set; } = Resources.Areas.Identity.Pages.Account.Register.ButtonRegister;
+        public string PasswordDontMatch { get; set; } = Resources.Areas.Identity.Pages.Account.Register.PasswordsDontMatch;
+
+
+    }
+    public class Common
+    {
+        public string MinLength { get; set; } = Resources.Common.MinLength;
+        public string MaxLength { get; set; } = Resources.Common.ErrorMessage_MaxLength;
+        public string Required { get; set; } = Resources.Common.Required;
+        public string LoginProblem { get; set; } = Resources.Common.UserPasswordProblem;
+        public string AlreadyRegistered { get; set; } = Resources.Common.IncorrectEmail;
+        public string EmailNotFound { get; set; } = Resources.Common.EmailNotFound;
+
+
+    }
+
 
     public class BLLAppDTO {
         public Bookings Bookings { get; set; } = new Bookings();
@@ -42,8 +70,6 @@ namespace PublicApi.DTO.v1
         public string ConcurrencyStamp { get; set; } = Resources.Views.AppRole.AppRoles.ConcurrencyStamp;
         public string NormalizedName { get; set; } = Resources.Views.AppRole.AppRoles.NormalizedName;
         public string RemoveFrom { get; set; } = Resources.Views.AppRole.AppRoles.RemoveFrom;
-
-
 
     }
     public class AppUsers
@@ -79,6 +105,7 @@ namespace PublicApi.DTO.v1
         public string Reply { get; set; } = Resources.Views.Crud.CRUD.Reply;
         public string View { get; set; } = Resources.Views.Crud.CRUD.View;
         public string ChangeUserRoles { get; set; } = Resources.Views.Crud.CRUD.ChangeUserRoles;
+        public string DeleteConfirm { get; set; } = Resources.Views.Crud.CRUD.DeleteConfirm;
 
 
     }

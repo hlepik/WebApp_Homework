@@ -8,6 +8,9 @@ using PublicApi.DTO.v1;
 
 namespace WebApp.ApiControllers
 {
+    /// <summary>
+    /// LangController
+    /// </summary>
     [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]/[action]")]
     [ApiController]
@@ -17,12 +20,21 @@ namespace WebApp.ApiControllers
         private readonly ILogger<LangController> _logger;
         private readonly IOptions<RequestLocalizationOptions> _localizationOptions;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="localizationOptions"></param>
         public LangController(ILogger<LangController> logger, IOptions<RequestLocalizationOptions> localizationOptions)
         {
             _logger = logger;
             _localizationOptions = localizationOptions;
         }
 
+        /// <summary>
+        /// Returns all languages
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public  ActionResult<IEnumerable<SupportedLanguage>> GetSupportedLanguages()
         {
@@ -34,6 +46,10 @@ namespace WebApp.ApiControllers
             return Ok(res);
         }
 
+        /// <summary>
+        /// Return lang resources
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public  ActionResult<LangResources> GetLangResources()
         {

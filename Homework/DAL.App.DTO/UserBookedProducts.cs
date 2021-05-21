@@ -10,12 +10,12 @@ namespace DAL.App.DTO
 
         public DateTime? Until { get; set; }
         public DateTime TimeBooked { get; set; }
-        public Guid AppUserId { get; set; }
+
         public string Description { get; set; }= default!;
         public string Email { get; set; }= default!;
-        public Guid BookingId { get; set;}
-        public Booking? Booking { get; set;}
-        public Guid ProductId { get; set; }
+        public Guid ProductId { get; set;}
+        public Product? Product { get; set; }
+        public Guid AppUserId { get; set;}
 
 
     }

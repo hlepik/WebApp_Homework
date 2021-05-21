@@ -2,17 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DAL.App.EF;
-using Domain.App.Identity;
+using Contracts.BLL.App;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PublicApi.DTO.v1;
+using PublicApi.DTO.v1.Identity;
 
-namespace WebApp.Areas.Admin.ApiControllers
+namespace WebApp.ApiControllers.Identity
 {
     /// <summary>
     /// Api controller for AppRole
@@ -23,19 +23,21 @@ namespace WebApp.Areas.Admin.ApiControllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class AppRoleController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppBLL _bll;
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<AppRole> _roleManager;
 
         /// <summary>
         ///
         /// </summary>
-        /// <param name="context"></param>
-        public AppRoleController(AppDbContext context, UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
+        /// <param name="bll"></param>
+        /// <param name="userManager"></param>
+        /// <param name="roleManager"></param>
+        public AppRoleController( UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, IAppBLL bll)
         {
-            _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _bll = bll;
         }
 
 
@@ -46,14 +48,20 @@ namespace WebApp.Areas.Admin.ApiControllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppRole>>> GetRoles()
         {
-            return await _context.Roles.ToListAsync();
+            return await _roleManager.Roles.ToListAsync();
         }
 
-        // GET: api/AppRole/5
+
+        /// <summary>
+        /// return app role
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<AppRole>> GetAppRole(Guid id)
         {
-            var appRole = await _context.Roles.FindAsync(id);
+            var appRole = await _roleManager.Roles
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (appRole == null)
             {
@@ -63,8 +71,12 @@ namespace WebApp.Areas.Admin.ApiControllers
             return appRole;
         }
 
-        // PUT: api/AppRole/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Change app role
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="appRole"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAppRole(Guid id, AppRole appRole)
         {
@@ -73,11 +85,11 @@ namespace WebApp.Areas.Admin.ApiControllers
                 return BadRequest();
             }
 
-            _context.Entry(appRole).State = EntityState.Modified;
+            await _roleManager.UpdateAsync(appRole);
 
             try
             {
-                await _context.SaveChangesAsync();
+                await _bll.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -94,29 +106,38 @@ namespace WebApp.Areas.Admin.ApiControllers
             return NoContent();
         }
 
-        // POST: api/AppRole
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+        /// <summary>
+        /// adds new role
+        /// </summary>
+        /// <param name="appRole"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<AppRole>> PostAppRole(AppRole appRole)
         {
-            _context.Roles.Add(appRole);
-            await _context.SaveChangesAsync();
+            await _roleManager.CreateAsync(appRole);
+            await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetAppRole", new { id = appRole.Id }, appRole);
         }
 
-        // DELETE: api/AppRole/5
+
+        /// <summary>
+        /// delete app role
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAppRole(Guid id)
         {
-            var appRole = await _context.Roles.FindAsync(id);
+            var appRole = await _roleManager.FindByIdAsync(id.ToString());
             if (appRole == null)
             {
                 return NotFound();
             }
 
-            _context.Roles.Remove(appRole);
-            await _context.SaveChangesAsync();
+            await _roleManager.DeleteAsync(appRole);
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
@@ -131,7 +152,7 @@ namespace WebApp.Areas.Admin.ApiControllers
         [ProducesResponseType(typeof(PublicApi.DTO.v1.Product), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<AppUser>>>  GetUserWithRole(Guid id)
         {
-            var appUser = await _context.Users.ToListAsync();
+            var appUser = await _userManager.Users.ToListAsync();
             var role = await _roleManager.FindByIdAsync(id.ToString());
             var members = new List<AppUser>();
             if (appUser == null)
@@ -158,7 +179,7 @@ namespace WebApp.Areas.Admin.ApiControllers
         [ProducesResponseType(typeof(PublicApi.DTO.v1.Product), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<AppUser>>>  GetUserWithNoRole(Guid id)
         {
-            var appUser = await _context.Users.ToListAsync();
+            var appUser = await _userManager.Users.ToListAsync();
             var role = await _roleManager.FindByIdAsync(id.ToString());
             var nonMembers = new List<AppUser>();
             if (appUser == null)
@@ -195,7 +216,7 @@ namespace WebApp.Areas.Admin.ApiControllers
             }
 
             await _userManager.RemoveFromRoleAsync(appUser, appRole.Name);
-            await _context.SaveChangesAsync();
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
@@ -218,7 +239,7 @@ namespace WebApp.Areas.Admin.ApiControllers
             }
 
             await _userManager.AddToRoleAsync(appUser, appRole.Name);
-            await _context.SaveChangesAsync();
+            await _bll.SaveChangesAsync();
 
             return NoContent();
         }
@@ -226,7 +247,7 @@ namespace WebApp.Areas.Admin.ApiControllers
 
         private bool AppRoleExists(Guid id)
         {
-            return _context.Roles.Any(e => e.Id == id);
+            return _roleManager.Roles.Any(e => e.Id == id);
         }
     }
 }

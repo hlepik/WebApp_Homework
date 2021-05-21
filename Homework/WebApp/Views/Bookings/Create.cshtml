@@ -4,7 +4,7 @@
     ViewData["Title"] = "Create";
 }
 
-<h4>@Resources.BLL.App.DTO.Bookings.Booking</h4>
+<h4 xmlns="http://www.w3.org/1999/html">@Resources.BLL.App.DTO.Bookings.Booking</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -17,13 +17,16 @@
                 <span asp-validation-for="Booking.Until" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Products.Id" class="control-label"></label>
-                <input asp-for="Products.Description" class="form-control" />
-                <input type="hidden" asp-for="Products.Id" class="form-control" />
-                <span asp-validation-for="Products.Id" class="text-danger"></span>
-            </div>
+            <dt class="col-md-10">
 
+                @Html.DisplayNameFor(model => model.Products.Description)
+            </dt>
+                <dd class = "col-md-10">
+                    @Html.DisplayFor(model => model.Products.Description)
+                    <input asp-for="Products.Id" type="hidden" class="form-control" />
+                     <input asp-for="Products.Description" type="hidden" class="form-control" />
+                </dd>
+            <br>
 
             <div class="form-group">
                 <input type="submit" value=@Resources.BLL.App.DTO.Bookings.Reserve class="btn btn-primary" />
@@ -36,6 +39,6 @@
     <a asp-action="Index">@Resources.Views.Crud.CRUD.Index</a>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+@* @section Scripts { *@
+@*     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} *@
+@* } *@

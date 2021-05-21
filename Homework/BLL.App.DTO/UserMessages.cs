@@ -18,6 +18,7 @@ namespace BLL.App.DTO
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.UserMessage), Name = "Subject")]
         public string? Subject { get; set; }
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.UserMessage), Name = "DateSent")]
+        [DataType(DataType.DateTime)]
         public DateTime DateSent { get; set; }
 
         public Guid AppUserId { get; set; }

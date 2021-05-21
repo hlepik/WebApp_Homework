@@ -13,5 +13,6 @@ namespace PublicApi.DTO.v1
         [MaxLength(500)] public string Description { get; set; }= default!;
         [MaxLength(64)] public string Email { get; set; }= default!;
         public Guid BookingId { get; set;}
+
     }
 }

@@ -47,16 +47,8 @@ namespace WebApp.ApiControllers
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.ProductMaterial>>> GetProductMaterials()
         {
 
+            return Ok((await _bll.ProductMaterial.GetAllProductMaterialsAsync(User.GetUserId()!.Value)).Select(a => _mapper.Map(a)));
 
-            return Ok((await _bll.ProductMaterial.GetAllProductMaterialsAsync(User.GetUserId()!.Value))
-                .Select(s => new PublicApi.DTO.v1.ProductMaterial()
-            {
-                Id = s.Id,
-                MaterialId = s.MaterialId,
-                ProductId = s.ProductId,
-                ProductName = s.ProductName,
-                MaterialName = s.MaterialName
-            }));
         }
 
         /// <summary>

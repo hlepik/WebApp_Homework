@@ -24,17 +24,17 @@ namespace DAL.App.EF.Repositories
 
 
             var resQuery = query
-                .Include(p => p.Booking)
-                .ThenInclude(p => p!.Product)
+                .Include(p => p.Product)
+                .ThenInclude(p => p!.Booking)
                 .Select(p => new DAL.App.DTO.UserBookedProducts()
                 {
                     Id = p.Id,
-                    Description = p.Booking!.Product!.Description,
-                    AppUserId = p.Booking.AppUserId,
-                    Email = p.Booking.Product.AppUser!.Email,
-                    TimeBooked = p.Booking.TimeBooked,
-                    Until = p.Booking.Until,
-                    ProductId = p.Booking.ProductId
+                    Description = p.Product!.Description,
+                    AppUserId = p.AppUserId,
+                    Email = p.Product.AppUser!.Email,
+                    TimeBooked = p.Product.Booking!.Select(p => p.TimeBooked).FirstOrDefault(),
+                    Until = p.Product.Booking.Select(p => p.Until).FirstOrDefault(),
+                    ProductId = p.ProductId
 
 
                 }).Where(x => x.AppUserId == userId);
@@ -48,8 +48,7 @@ namespace DAL.App.EF.Repositories
 
 
             query = query
-                .Include(p => p.Booking)
-                .ThenInclude(p => p!.Product);
+                .Include(p => p.Product);
 
 
             var resQuery = query
@@ -57,7 +56,7 @@ namespace DAL.App.EF.Repositories
                 {
 
                     Id = p.Id,
-                    ProductId = p.Booking!.ProductId
+                    ProductId = p.ProductId
 
 
                 }).FirstOrDefaultAsync(m => m.Id == id);
@@ -70,8 +69,9 @@ namespace DAL.App.EF.Repositories
         {
             var query = RepoDbContext
                 .UserBookedProducts
+                .Include(x => x.Product)
                 .Where(x => x.Id == id)
-                .Select(x => x.BookingId);
+                .Select(x => x.ProductId);
 
             return await query.FirstAsync();
         }
@@ -83,11 +83,8 @@ namespace DAL.App.EF.Repositories
             if (id != null)
             {
                 query = query
-                    .Where(x => x.Booking!.ProductId == id);
+                    .Where(x => x.ProductId == id);
             }
-
-
-
 
             foreach (var l in query)
             {

@@ -28,6 +28,7 @@ namespace WebApp.ApiControllers
 
         private readonly IAppBLL _bll;
         private readonly UserBookedProductsMapper _mapper = new UserBookedProductsMapper();
+        private readonly BookingMapper _bookingMapper = new BookingMapper();
 
         /// <summary>
         /// Constructor
@@ -50,18 +51,8 @@ namespace WebApp.ApiControllers
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.UserBookedProducts>>> GetUserBookedProducts()
         {
 
-            return Ok((await _bll.UserBookedProducts.GetAllAsync(User.GetUserId()!.Value))
-                .Select(s => new PublicApi.DTO.v1.UserBookedProducts()
-                {
-                    Id = s.Id,
-                    Description = s.Description,
-                    AppUserId = s.AppUserId,
-                    Email = s.Email,
-                    Until = s.Until,
-                    TimeBooked = s.TimeBooked,
-                    ProductId = s.ProductId,
-                    BookingId = s.BookingId
-                }));
+            return Ok((await _bll.UserBookedProducts.GetAllAsync(User.GetUserId()!.Value)).Select(a => _mapper.Map(a)));
+
         }
 
         /// <summary>
@@ -123,6 +114,21 @@ namespace WebApp.ApiControllers
         public async Task<ActionResult<PublicApi.DTO.v1.UserBookedProducts>> PostUserBookedProducts(PublicApi.DTO.v1.UserBookedProducts userBookedProducts)
         {
             _bll.UserBookedProducts.Add(_mapper.Map(userBookedProducts));
+
+
+            var product = await _bll.Product.ChangeBookingStatus(userBookedProducts.ProductId);
+
+            product.IsBooked = true;
+            _bll.Product.Update(product);
+
+            var booking = new Booking
+            {
+                TimeBooked = DateTime.Now.Date,
+                Until = userBookedProducts.Until,
+                AppUserId = User.GetUserId()!.Value,
+                ProductId = userBookedProducts.ProductId
+            };
+            _bll.Booking.Add(_bookingMapper.Map(booking));
             await _bll.SaveChangesAsync();
 
             return CreatedAtAction("GetUserBookedProducts",
@@ -147,16 +153,22 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
         public async Task<IActionResult> DeleteUserBookedProducts(Guid id)
         {
-            var userBookedProducts = await _bll.UserBookedProducts.FirstOrDefaultBookedProductsAsync(id, User.GetUserId()!.Value);
-            if (userBookedProducts == null)
+
+            var productId = await _bll.UserBookedProducts.GetId(id);
+
+            if (productId == null)
             {
-                return NotFound(new Message("User user booked product not found"));
+                return NotFound(new Message("User booked product not found"));
             }
 
-            _bll.UserBookedProducts.Remove(userBookedProducts);
+            var bookingStatus = await _bll.Product.ChangeBookingStatus(productId);
+            bookingStatus.IsBooked = false;
+            _bll.Product.Update(bookingStatus);
+            _bll.UserBookedProducts.RemoveUserBookedProductsAsync(id);
+            _bll.Booking.RemoveBookingAsync(productId);
             await _bll.SaveChangesAsync();
 
-            return Ok(userBookedProducts);
+            return Ok(productId);
         }
 
     }

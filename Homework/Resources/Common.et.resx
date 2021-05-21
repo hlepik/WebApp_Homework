@@ -68,4 +68,22 @@
     <data name="ErrorMessage_Email" xml:space="preserve">
         <value>Väli {0} ei ole legaalne e-posti aadress.</value>
     </data>
+    <data name="UserPasswordProblem" xml:space="preserve">
+        <value>Kasutajanime või parooli viga!</value>
+    </data>
+    <data name="AlreadyRegistered" xml:space="preserve">
+        <value>Kasutaja on juba olemas!</value>
+    </data>
+    <data name="IncorrectEmail" xml:space="preserve">
+        <value>Kasutaja juba olemas või email pole korrektne!</value>
+    </data>
+    <data name="MinLength" xml:space="preserve">
+        <value>Väli ei ole korrektne.</value>
+    </data>
+    <data name="EmailNotFound" xml:space="preserve">
+        <value>Emaili ei leitud!</value>
+    </data>
+    <data name="Required" xml:space="preserve">
+        <value>Väli ei saa olla tühi!</value>
+    </data>
 </root>

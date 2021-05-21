@@ -45,28 +45,8 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(typeof(PublicApi.DTO.v1.Product), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.Product>>> GetProducts()
         {
+            return Ok((await _bll.Product.GetLastInserted()).Select(a => _mapper.Map(a)));
 
-            return Ok((await _bll.Product.GetLastInserted())
-                .Select(s => new PublicApi.DTO.v1.Product()
-                {
-                    Description = s.Description,
-                    City = s.City,
-                    County = s.County,
-                    LocationDescription = s.LocationDescription,
-                    AppUserId = s.AppUserId,
-                    IsBooked = s.IsBooked,
-                    DateAdded = s.DateAdded,
-                    Color = s.Color,
-                    Condition = s.Condition,
-                    Material = s.Material!,
-                    Width = s.Width,
-                    Height = s.Height,
-                    Depth = s.Depth,
-                    HasTransport = s.HasTransport,
-                    Unit = s.Unit,
-                    Id = s.Id
-
-                }));
         }
 
 

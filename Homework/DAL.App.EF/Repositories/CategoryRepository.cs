@@ -39,6 +39,8 @@ namespace DAL.App.EF.Repositories
                 .ThenInclude(x => x!.Translations)
                 .OrderBy(x => x.Name);
 
+
+
             var res = await query.Select(x => Mapper.Map(x)).ToListAsync();
             return res!;
         }

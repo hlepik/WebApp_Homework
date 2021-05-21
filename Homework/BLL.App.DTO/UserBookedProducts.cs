@@ -22,8 +22,9 @@ namespace BLL.App.DTO
         public string Description { get; set; }= default!;
         [Display(ResourceType = typeof(Resources.BLL.App.DTO.MessageForms), Name = "Email")]
         public string Email { get; set; }= default!;
-        public Guid BookingId { get; set;}
-        public Booking? Booking { get; set;}
+
+        public Product? Product { get; set; }
+
         public Guid ProductId { get; set; }
 
     }

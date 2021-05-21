@@ -15,5 +15,6 @@ namespace BLL.App.DTO
 
         public ICollection<Product>? Products { get; set; }
         public Guid DescriptionId { get; set; }
+
     }
 }

@@ -49,12 +49,8 @@ namespace WebApp.ApiControllers
         [ProducesResponseType(typeof(PublicApi.DTO.v1.Material), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<PublicApi.DTO.v1.Material>>> GetMaterials()
         {
-            return Ok((await _bll.Material.GetAllAsync()).Select(s => new PublicApi.DTO.v1.Material()
-            {
-                Id = s.Id,
-                Name = s.Name,
-                Comment = s.Comment
-            }));
+            return Ok((await _bll.Material.GetAllAsync()).Select(a => _mapper.Map(a)));
+
         }
 
         /// <summary>

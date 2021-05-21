@@ -155,5 +155,36 @@ namespace Resources {
                 return ResourceManager.GetString("ErrorMessage_NotValidPhone", resourceCulture);
             }
         }
+        public static string UserPasswordProblem {
+            get {
+                return ResourceManager.GetString("UserPasswordProblem", resourceCulture);
+            }
+        }
+        public static string AlreadyRegistered {
+            get {
+                return ResourceManager.GetString("AlreadyRegistered", resourceCulture);
+            }
+        }
+        public static string MinLength {
+            get {
+                return ResourceManager.GetString("MinLength", resourceCulture);
+            }
+        }
+        public static string IncorrectEmail {
+            get {
+                return ResourceManager.GetString("IncorrectEmail", resourceCulture);
+            }
+        }
+        public static string EmailNotFound {
+            get {
+                return ResourceManager.GetString("EmailNotFound", resourceCulture);
+            }
+        }
+        public static string Required {
+            get {
+                return ResourceManager.GetString("Required", resourceCulture);
+            }
+        }
+
     }
 }

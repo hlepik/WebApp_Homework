@@ -45,12 +45,17 @@ namespace DAL.App.DTO
         public Guid AppUserId { get; set; }
 
         [MaxLength(128)]
-        public string? City { get; set; }
+        public string? CityName { get; set; }
         [MaxLength(128)]
-        public string? County { get; set; }
-        public string? Unit { get; set; }
-        public string? Category { get; set; }
-        public string? Condition { get; set; }
+        public string? CountyName { get; set; }
+        public string? UnitName { get; set; }
+        public string? CategoryName { get; set; }
+        public string? ConditionName { get; set; }
 
+        public Condition? Condition { get; set; }
+        public City? City { get; set; }
+        public Category? Category { get; set; }
+        public County? County { get; set; }
+        public Unit? Unit { get; set; }
     }
 }

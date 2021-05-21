@@ -132,26 +132,9 @@ namespace WebApp.Controllers
             return View(messageForm);
         }
 
-        // GET: MessageForms/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var messageForm = await _bll.MessageForm.FirstOrDefaultMessagesAsync(id.Value);
-
-            if (messageForm == null)
-            {
-                return NotFound();
-            }
-
-            return View(messageForm);
-        }
 
         // POST: MessageForms/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
