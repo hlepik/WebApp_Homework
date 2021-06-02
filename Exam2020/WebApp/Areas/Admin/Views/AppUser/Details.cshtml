@@ -1,0 +1,17 @@
+@model Domain.App.Identity.AppUser
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>AppUsers</h4>
+    <hr />
+           <partial name="_Details" model="Model"/>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

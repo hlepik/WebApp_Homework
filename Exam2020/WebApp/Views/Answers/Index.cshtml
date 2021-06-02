@@ -1,0 +1,53 @@
+@model IEnumerable<DAL.App.DTO.Answer>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 id="titleQuiz">Answers</h1>
+
+ @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create">Create New</a>
+        }
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.QuestionAnswer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsAnswerCorrect)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Question)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.QuestionAnswer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsAnswerCorrect)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Question!.QuestionText)
+            </td>
+         <td style="float: right;">
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                <form asp-action="DeleteConfirmed" asp-route-id="@item.Id"
+                      onclick="return confirm('Are you sure you want to delete this answer?')">
+
+                    <button id="deleteButton" type="submit">
+                        <a  class="fa fa-trash" ></a>
+                    </button>
+                </form>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

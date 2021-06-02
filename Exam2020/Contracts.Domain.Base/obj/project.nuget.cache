@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "dgSpecHash": "TA2fjz2z4Jemgf8TQ8qynRt9UuWxLjhrVbEWvSQRJl/Q3sIne59mclwvZzoBIbQ+hUBL9oWk8P3cb4T8B3510A==",
+  "success": true,
+  "projectFilePath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.Domain.Base/Contracts.Domain.Base.csproj",
+  "expectedPackageFiles": [
+    "/Users/hellu/.nuget/packages/microsoft.aspnetcore.cryptography.internal/5.0.1/microsoft.aspnetcore.cryptography.internal.5.0.1.nupkg.sha512",
+    "/Users/hellu/.nuget/packages/microsoft.aspnetcore.cryptography.keyderivation/5.0.1/microsoft.aspnetcore.cryptography.keyderivation.5.0.1.nupkg.sha512",
+    "/Users/hellu/.nuget/packages/microsoft.extensions.caching.abstractions/5.0.0/microsoft.extensions.caching.abstractions.5.0.0.nupkg.sha512",
+    "/Users/hellu/.nuget/packages/microsoft.extensions.dependencyinjection/5.0.0/microsoft.extensions.dependencyinjection.5.0.0.nupkg.sha512",
+    "/Users/hellu/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/5.0.0/microsoft.extensions.dependencyinjection.abstractions.5.0.0.nupkg.sha512",
+    "/Users/hellu/.nuget/packages/microsoft.extensions.identity.core/5.0.1/microsoft.extensions.identity.core.5.0.1.nupkg.sha512",
+    "/Users/hellu/.nuget/packages/microsoft.extensions.identity.stores/5.0.1/microsoft.extensions.identity.stores.5.0.1.nupkg.sha512",
+    "/Users/hellu/.nuget/packages/microsoft.extensions.logging/5.0.0/microsoft.extensions.logging.5.0.0.nupkg.sha512",
+    "/Users/hellu/.nuget/packages/microsoft.extensions.logging.abstractions/5.0.0/microsoft.extensions.logging.abstractions.5.0.0.nupkg.sha512",
+    "/Users/hellu/.nuget/packages/microsoft.extensions.options/5.0.0/microsoft.extensions.options.5.0.0.nupkg.sha512",
+    "/Users/hellu/.nuget/packages/microsoft.extensions.primitives/5.0.0/microsoft.extensions.primitives.5.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

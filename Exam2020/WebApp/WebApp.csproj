@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <UserSecretsId>aspnet-WebApp-0DD61292-0BAC-4B5A-9835-B714F3768622</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.1" />
+        <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.11.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DAL.App.DTO\DAL.App.DTO.csproj" />
+      <ProjectReference Include="..\DAL.App.EF\DAL.App.EF.csproj" />
+      <ProjectReference Include="..\Extensions.Base\Extensions.Base.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\LangStrings\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\LangStrings\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\LangStrings\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\LangStrings\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\LangStrings\Index.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\Translations\Create.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\Translations\Delete.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\Translations\Details.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\Translations\Edit.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Admin\Views\Translations\Index.cshtml" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,64 @@
+
+@model WebApp.ViewModels.Quizzes.ResultCreateEditViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+
+<hr />
+<div class="row" id="questions">
+    <div class="col-md-8">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <h3 id="titleQuiz">@Html.DisplayFor(modelItem =>modelItem.Quiz)</h3>
+
+
+            @foreach (var each in Model.Questions!)
+            {
+                <input asp-for="QuizId" type="hidden">
+                <h6>@Html.DisplayFor(modelItem => each.QuestionText)</h6>
+                <input type="hidden" id='@(each.Id)'>
+
+                @if (!each.MultipleChoice)
+                {
+                    <div class="form-group">
+                        @foreach (var answer in each.Answers!)
+                        {
+
+                            <input type="radio" id='@(answer.Id)' name='userAnswers'
+                                   value='@(answer.Id)'>
+
+                            <label for='@(answer.Id)'>@Html.DisplayFor(modelItem => answer.QuestionAnswer)</label><br>
+
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group">
+                        @foreach (var answer in each.Answers!)
+                        {
+
+                            <input type="checkbox" id='@(answer.Id)'  name='userAnswers' value='@(answer.Id)'>
+
+                            <label for='@(answer.Id)'>@Html.DisplayFor(modelItem => answer.QuestionAnswer)</label><br>
+                        }
+                    </div>
+                }
+
+            }
+
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+        </form>
+
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,23 @@
+@model WebApp.ViewModels.Quizzes.QuizCreateEditViewModel
+
+<div class="form-group">
+    <label asp-for="Question.QuestionText" class="control-label">Question</label>
+    <input asp-for="Question.QuestionText" class="form-control" />
+    <span asp-validation-for="Question.QuestionText" class="text-danger"></span>
+</div>
+<div class="form-group form-check">
+    <label class="form-check-label">
+        <input class="form-check-input" asp-for="Question.MultipleChoice" /> @Html.DisplayNameFor(model => model.Question.MultipleChoice)
+    </label>
+</div>
+<div class="form-group">
+    <label asp-for="Question.QuizId" class="control-label">Quiz</label>
+    <select asp-for="Question.QuizId" class="form-control" asp-items="Model.QuizSelectList">
+        <option value="">--- Please select ---</option>
+    </select>
+    <span asp-validation-for="Question.QuizId" class="text-danger"></span>
+</div>
+
+
+
+

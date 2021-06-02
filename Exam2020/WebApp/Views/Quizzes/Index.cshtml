@@ -1,0 +1,59 @@
+@model IEnumerable<DAL.App.DTO.Quiz>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 id="titleQuiz">Quizzes</h1>
+
+ @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Create">Create New</a>
+        }
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.QuizName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </th>
+            <th>
+                 @Html.DisplayNameFor(model => model.Questions)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.QuizName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Questions!.Count)
+            </td>
+
+            <td style="float: right;">
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Add question</a>
+                <a>
+                <form asp-action="DeleteConfirmed" asp-route-id="@item.Id"
+                      onclick="return confirm('Are you sure you want to delete this quiz?')">
+
+                    <button id="deleteButton" type="submit">
+                        <a  class="fa fa-trash" ></a>
+                    </button>
+                </form>
+                </a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

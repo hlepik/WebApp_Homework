@@ -1,0 +1,70 @@
+@model WebApp.ViewModels.Quizzes.QuizCreateEditViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Question</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Question.QuestionText" class="control-label">Question</label>
+                <input asp-for="Question.QuestionText" class="form-control" />
+                <span asp-validation-for="Question.QuestionText" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Question.MultipleChoice" /> @Html.DisplayNameFor(model => model.Question.MultipleChoice)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Question.IsPoll" /> @Html.DisplayNameFor(model => model.Question.IsPoll)
+                </label>
+            </div>
+
+            @if (Model.SelectedQuiz != null)
+            {
+                <dt class = "col-md-4">
+                    @Html.DisplayNameFor(model => model.QuizName)
+                </dt>
+                <dd class = "col-md-4">
+                    @Html.DisplayFor(model => model.QuizName)
+                </dd>
+
+                <input type="hidden" asp-for="SelectedQuiz"/>
+
+
+            }
+            else
+            {
+                <div class="form-group">
+                    <label asp-for="Question.QuizId" class="control-label">Quiz</label>
+                    <select asp-for="Question.QuizId" class="form-control" asp-items="Model.QuizSelectList">
+                        <option value="">--- Please select ---</option>
+                    </select>
+                    <span asp-validation-for="Question.QuizId" class="text-danger"></span>
+                </div>
+            }
+
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

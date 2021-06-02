@@ -1,0 +1,16 @@
+@model Domain.App.Result
+
+<div class="form-group">
+    <label asp-for="CorrectAnswersCount" class="control-label"></label>
+    <input asp-for="CorrectAnswersCount" class="form-control" />
+    <span asp-validation-for="CorrectAnswersCount" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="TotalAnswers" class="control-label"></label>
+    <input asp-for="TotalAnswers" class="form-control" />
+    <span asp-validation-for="TotalAnswers" class="text-danger"></span>
+</div>
+
+
+
+

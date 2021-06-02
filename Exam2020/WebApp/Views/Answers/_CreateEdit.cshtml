@@ -1,0 +1,38 @@
+@model WebApp.ViewModels.Answers.AnswerCreateEditViewModel
+
+<div class="form-group">
+    <label asp-for="Answer.QuestionAnswer" class="control-label"></label>
+    <input asp-for="Answer.QuestionAnswer" class="form-control" />
+    <span asp-validation-for="Answer.QuestionAnswer" class="text-danger"></span>
+</div>
+
+    <div class="form-group form-check">
+        <label class="form-check-label">
+            <input class="form-check-input" asp-for="Answer.IsAnswerCorrect"/> @Html.DisplayNameFor(model => model.Answer.IsAnswerCorrect)
+        </label>
+    </div>
+
+    @if (Model.SelectedQuestion != null)
+        {
+            <dt class = "col-md-4">
+                @Html.DisplayNameFor(model => model.QuestionName)
+            </dt>
+            <dd class = "col-md-4">
+                @Html.DisplayFor(model => model.QuestionName)
+            </dd>
+
+            <input type="hidden" asp-for="SelectedQuestion"/>
+        }
+ else
+    {
+    <div class="form-group">
+        <label asp-for="Answer.QuestionId" class="control-label">Question</label>
+        <select asp-for="Answer.QuestionId" class="form-control" asp-items="Model.QuestionSelectList">
+            <option value="">--- Please select ---</option>
+        </select>
+        <span asp-validation-for="Answer.QuestionId" class="text-danger"></span>
+    </div>
+    }
+
+
+

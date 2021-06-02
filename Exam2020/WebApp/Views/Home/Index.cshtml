@@ -1,0 +1,70 @@
+﻿@model IEnumerable<DAL.App.DTO.Quiz>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4" id="titleQuiz">Quizzes</h1>
+
+
+    @using (Html.BeginForm())
+{
+    <p>
+        @Html.TextBox("SearchName")
+        <input type="submit" value="Search" class="btn btn-outline-info" />
+    </p>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.QuizName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedAt)
+            </th>
+            <th>
+                Questions
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Percentage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PeopleCount)
+            </th>
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.QuizName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedAt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Questions!.Count)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Percentage)%
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PeopleCount)
+            </td>
+
+
+
+            <td>
+                <a asp-action="Create" asp-route-id="@item.Id" class="btn btn-outline-info">Start a quize</a>
+
+
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</div>

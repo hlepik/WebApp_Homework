@@ -24,6 +24,7 @@ COPY Domain.App/*.csproj ./Domain.App/
 COPY PublicApi.DTO.v1/*.csproj ./PublicApi.DTO.v1/
 COPY Resources/*.csproj ./Resources/
 
+COPY TestProject/*.csproj ./TestProject/
 COPY WebApp/*.csproj ./WebApp/
 
 RUN dotnet restore
@@ -48,6 +49,7 @@ COPY Domain.App/. ./Domain.App/
 COPY PublicApi.DTO.v1/. ./PublicApi.DTO.v1/
 COPY Resources/. ./Resources/
 COPY WebApp/. ./WebApp/
+COPY TestProject/. ./TestProject/
 
 WORKDIR /SOURCE/WebApp
 

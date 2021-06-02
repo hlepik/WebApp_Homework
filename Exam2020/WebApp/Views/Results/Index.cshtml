@@ -1,0 +1,45 @@
+
+@model IEnumerable<DAL.App.DTO.Result>
+
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1 id="titleQuiz">Results</h1>
+
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Quiz!.QuizName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CorrectAnswersCount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Percentage)
+        </th>
+
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Quiz!.QuizName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CorrectAnswersCount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Percentage)%
+            </td>
+
+
+        </tr>
+    }
+    </tbody>
+</table>
