@@ -25,11 +25,32 @@ namespace DAL.App.EF.Repositories
 
             query = query
                 .Include(x => x.Quiz)
-                .OrderBy(x => x.Quiz!.QuizName);
+                .Where(x => x.AppUserId == userId);
+            var resQuery = query
+                .Select(p => new DAL.App.DTO.Result()
+                {
+                    Id = p.Id,
+                    Percentage = p.Percentage,
+                    QuizName = p.Quiz!.QuizName,
+                    CorrectAnswersCount = p.CorrectAnswersCount
+
+                }).OrderBy(x => x.QuizName);
 
 
-            var res = await query.Select(x => Mapper.Map(x)).ToListAsync();
-            return res!;
+
+            return await resQuery.ToListAsync();
+        }
+        public void RemoveResultAsync(Guid id)
+        {
+            var query = CreateQuery();
+
+            query = query
+                .Where(x => x.QuizId == id);
+            foreach (var l in query)
+            {
+                RepoDbSet.Remove(l);
+            }
+
         }
     }
 }

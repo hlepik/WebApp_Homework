@@ -1,8 +1,5 @@
 using System.Threading.Tasks;
 using AutoMapper;
-using System;
-using System.Collections.Generic;
-using AutoMapper;
 using Contracts.DAL.App;
 using Contracts.DAL.App.Repositories;
 using Contracts.DAL.Base.Repositories;

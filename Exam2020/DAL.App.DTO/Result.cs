@@ -12,10 +12,10 @@ namespace DAL.App.DTO
 
         public int TotalAnswers { get; set; }
         public int Percentage { get; set; }
+        public string? QuizName { get; set; }
 
-        public Guid AppUserId { get; set; }
-        public AppUser? AppUser { get; set; }
+        public Guid? AppUserId { get; set; }
         public Guid QuizId { get; set; }
-        public Quiz? Quiz { get; set; }
+
     }
 }

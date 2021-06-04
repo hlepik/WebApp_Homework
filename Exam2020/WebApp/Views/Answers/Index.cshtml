@@ -20,7 +20,7 @@
                 @Html.DisplayNameFor(model => model.IsAnswerCorrect)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Question)
+                @Html.DisplayNameFor(model => model.QuestionName)
             </th>
             <th></th>
         </tr>
@@ -35,7 +35,7 @@
                 @Html.DisplayFor(modelItem => item.IsAnswerCorrect)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Question!.QuestionText)
+                @Html.DisplayFor(modelItem => item.QuestionName)
             </td>
          <td style="float: right;">
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>

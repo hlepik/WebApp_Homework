@@ -15,7 +15,6 @@ namespace WebApp.ApiControllers.Identity
     /// Api endpoint for registering new user and user log-in (jwt token generation)
     /// </summary>
     [ApiController]
-    [ApiVersion("1.0")]
     [Route("api/v{version:apiVersion}/[controller]/[action]")]
     public class AccountController : ControllerBase
     {

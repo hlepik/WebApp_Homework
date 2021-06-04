@@ -15,10 +15,11 @@ namespace DAL.App.DTO
         public bool MultipleChoice { get; set; }
         [DisplayName("Poll")]
         public bool IsPoll { get; set; }
-
+        public string? QuizName { get; set; }
         public Guid QuizId { get; set; }
         public Quiz? Quiz { get; set; }
+        public IEnumerable<Answer>? AllAnswers { get; set; }
 
-        public ICollection<Domain.App.Answer>? Answers { get; set; }
+        public ICollection<Answer>? Answers { get; set; }
     }
 }

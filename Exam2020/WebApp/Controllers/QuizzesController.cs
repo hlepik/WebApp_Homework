@@ -10,6 +10,7 @@ using DAL.App.EF;
 using Domain.App;
 using Microsoft.AspNetCore.Authorization;
 using WebApp.ViewModels.Quizzes;
+using Question = DAL.App.DTO.Question;
 using Quiz = DAL.App.DTO.Quiz;
 
 namespace WebApp.Controllers
@@ -39,10 +40,6 @@ namespace WebApp.Controllers
         // GET: Quizzes/Details/5
         public async Task<IActionResult> Details(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
             var quiz = await _uow.Quiz
                 .FirstOrDefaultAsync(id);
@@ -72,7 +69,7 @@ namespace WebApp.Controllers
         {
             if (!ModelState.IsValid) return View(quiz);
 
-            quiz.CreatedAt = DateTime.Now;
+            quiz.CreatedAt = DateTime.Now.ToShortDateString();
             quiz.Percentage = 100;
             quiz.PeopleCount = 0;
            _uow.Quiz.Add(quiz);
@@ -140,7 +137,20 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
+
+            var question = await _uow.Question.GetAllWithIdAsync(id);
+
+
+            foreach (var each in question)
+            {
+                _uow.Answer.RemoveAnswerAsync(each.Id);
+                await _uow.Question.RemoveAsync(each.Id);
+            }
+
+
+            _uow.Result.RemoveResultAsync(id);
             await _uow.Quiz.RemoveAsync(id);
+
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

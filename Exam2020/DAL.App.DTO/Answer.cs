@@ -13,9 +13,11 @@ namespace DAL.App.DTO
 
         [DisplayName("Is answer correct?")]
         public bool IsAnswerCorrect { get; set; }
+        [DisplayName("Question name")]
+        public string? QuestionName { get; set; }
 
         public Guid QuestionId { get; set; }
-        public Question? Question { get; set; }
 
+        public Question? Question { get; set; }
     }
 }

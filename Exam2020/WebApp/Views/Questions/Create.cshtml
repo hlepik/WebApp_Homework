@@ -20,21 +20,21 @@
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Question.MultipleChoice" /> @Html.DisplayNameFor(model => model.Question.MultipleChoice)
+                    <input class="form-check-input" asp-for="Question.MultipleChoice" /> @Html.DisplayNameFor(model => model.Question.MultipleChoice)?
                 </label>
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Question.IsPoll" /> @Html.DisplayNameFor(model => model.Question.IsPoll)
+                    <input class="form-check-input" asp-for="Question.IsPoll" /> @Html.DisplayNameFor(model => model.Question.IsPoll)?
                 </label>
             </div>
 
             @if (Model.SelectedQuiz != null)
             {
-                <dt class = "col-md-4">
+                <dt class = "col-md-6">
                     @Html.DisplayNameFor(model => model.QuizName)
                 </dt>
-                <dd class = "col-md-4">
+                <dd class = "col-md-6">
                     @Html.DisplayFor(model => model.QuizName)
                 </dd>
 

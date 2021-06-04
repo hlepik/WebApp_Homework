@@ -8,7 +8,7 @@ using DAL.App.DTO;
 using DAL.App.EF.Mappers;
 using DAL.Base.EF.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Answer = Domain.App.Answer;
+#pragma warning disable 1998
 
 namespace DAL.App.EF.Repositories
 {
@@ -28,15 +28,29 @@ namespace DAL.App.EF.Repositories
                 .Include(x => x.Questions)
                 .OrderBy(x => x.CreatedAt);
 
-            var res = await query.Select(x => Mapper.Map(x)).ToListAsync();
-            return res!;
+            var resQuery = query
+                .Select(p => new DAL.App.DTO.Quiz()
+                {
+                    Id = p.Id,
+                    QuizName = p.QuizName,
+                    Percentage = p.Percentage,
+                    PeopleCount = p.PeopleCount,
+                    CreatedAt = p.CreatedAt.ToShortDateString(),
+                    QuestionsCount = p.Questions!.Count
+
+
+                }).OrderBy(x => x.QuizName);
+
+
+
+            return await resQuery.ToListAsync();
         }
 
         public async Task<string?> GetName(Guid id)
         {
             var query = CreateQuery();
 
-            string? res = query
+            string res = query
                 .Where(x => x.Id == id).Select(x => x.QuizName).First();
 
             return res;
@@ -53,18 +67,44 @@ namespace DAL.App.EF.Repositories
             return res!;
         }
 
+
         public override async Task<Quiz?> FirstOrDefaultAsync(Guid id, Guid userId = default, bool noTracking = true)
         {
-            var query = CreateQuery(userId, noTracking);
+            var query = CreateQuery();
 
-            query = query
-                .Include(c => c.Questions)
-                .ThenInclude(t => t.Answers);
+            var resQuery = query
+                .Include(p => p.Questions)
+                .ThenInclude(t => t.Answers)
+                .Select(p => new DAL.App.DTO.Quiz()
+                {
+                    Id = p.Id,
+                    QuizName = p.QuizName,
+                    Percentage = p.Percentage,
+                    PeopleCount = p.PeopleCount,
+                    CreatedAt = p.CreatedAt.ToShortDateString(),
+                    QuestionsCount = p.Questions!.Count,
+                    AllQuestions = p.Questions.Select(x => new Question
+                    {
+                        Id = x.Id,
+                        QuestionText = x.QuestionText,
+                        MultipleChoice = x.MultipleChoice,
+                        IsPoll = x.IsPoll,
+                        AllAnswers = x.Answers!.Select(m => new Answer
+                        {
+                            Id = m.Id,
+                            IsAnswerCorrect = m.IsAnswerCorrect,
+                            QuestionAnswer = m.QuestionAnswer,
+                            QuestionId = m.QuestionId
 
-            var res = await query.FirstOrDefaultAsync(m => m.Id == id);
+                        })
+                    })
 
 
-            return Mapper.Map(res);
+
+                }).FirstOrDefaultAsync(m => m.Id == id);
+
+
+            return await resQuery;
         }
         public  async Task<int> GetQuestionsCount(Guid id)
         {
@@ -78,6 +118,8 @@ namespace DAL.App.EF.Repositories
 
             return res.Questions!.Count;
         }
+
+
         public  async Task<int> GetCorrectAnswers(Guid id)
         {
             var query = CreateQuery();
@@ -98,6 +140,11 @@ namespace DAL.App.EF.Repositories
                         {
                             count++;
                         }
+                    }
+
+                    if (question.IsPoll)
+                    {
+                        count++;
                     }
 
                 }

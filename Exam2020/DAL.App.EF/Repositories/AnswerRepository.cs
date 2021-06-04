@@ -23,11 +23,54 @@ namespace DAL.App.EF.Repositories
             var query = CreateQuery(userId, noTracking);
 
             query = query
-                .Include(x => x.Question)
-                .OrderBy(x => x.Question);
+                .Include(x => x.Question);
 
-            var res = await query.Select(x => Mapper.Map(x)).ToListAsync();
-            return res!;
+            var resQuery = query
+                .Select(p => new DAL.App.DTO.Answer()
+                {
+                    Id = p.Id,
+                    QuestionAnswer = p.QuestionAnswer,
+                    IsAnswerCorrect = p.IsAnswerCorrect,
+                    QuestionName = p.Question!.QuestionText,
+                    QuestionId = p.QuestionId,
+
+
+                }).OrderBy(x => x.QuestionName);
+            return await resQuery.ToListAsync();
+        }
+        public async Task<IEnumerable<DAL.App.DTO.Answer>> GetAllAnswersAsync(Guid id)
+        {
+            var query = CreateQuery();
+
+            query = query
+                .Include(x => x.Question)
+                .Where(x => x.QuestionId == id);
+
+            var resQuery = query
+                .Select(p => new DAL.App.DTO.Answer()
+                {
+                    Id = p.Id,
+                    QuestionAnswer = p.QuestionAnswer,
+                    IsAnswerCorrect = p.IsAnswerCorrect,
+                    QuestionName = p.Question!.QuestionText,
+                    QuestionId = p.QuestionId,
+
+
+                }).OrderBy(x => x.QuestionName);
+            return await resQuery.ToListAsync();
+        }
+
+        public void RemoveAnswerAsync(Guid id)
+        {
+            var query = CreateQuery();
+
+            query = query
+                .Where(x => x.QuestionId == id);
+            foreach (var l in query)
+            {
+                RepoDbSet.Remove(l);
+            }
+
         }
 
 

@@ -10,6 +10,7 @@ using DAL.App.EF;
 using Domain.App;
 using Extensions.Base;
 using WebApp.ViewModels.Quizzes;
+using Question = DAL.App.DTO.Question;
 
 namespace WebApp.Controllers
 {
@@ -133,10 +134,7 @@ namespace WebApp.Controllers
 
         public async Task<IActionResult> Redirect(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+
 
             var quiz = await _uow.Question
                 .FirstOrDefaultAsync(id);
@@ -155,6 +153,14 @@ namespace WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
+            var question = await _uow.Question.FirstOrDefaultAsync(id);
+
+            if (question != null)
+            {
+                _uow.Answer.RemoveAnswerAsync(question.Id);
+            }
+
+
             await _uow.Question.RemoveAsync(id);
             await _uow.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

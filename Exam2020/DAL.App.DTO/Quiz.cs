@@ -12,22 +12,19 @@ namespace DAL.App.DTO
         [MaxLength(500), MinLength(2)]
         [DisplayName("Quiz name")]
         public string QuizName { get; set; } = default!;
-
         public ICollection<Question>? Questions { get; set; }
+
+        public IEnumerable<Question>? AllQuestions { get; set; }
         [DisplayName("Tested people")]
         public int PeopleCount { get; set; }
 
         [DataType(DataType.DateTime)]
         [DisplayName("Created at")]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public string? CreatedAt { get; set; }
+        public int QuestionsCount { get; set; }
 
-        public int TotalAnswers { get; set; }
-
-        public ICollection<AppUser>? AppUsers { get; set; }
-
-        public ICollection<Answer>? Answers { get; set; }
         public int Percentage { get; set; }
-        public ICollection<Result>? Results { get; set; }
-
     }
+
+
 }

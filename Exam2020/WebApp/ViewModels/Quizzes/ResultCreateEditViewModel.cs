@@ -11,7 +11,7 @@ namespace WebApp.ViewModels.Quizzes
 
         public string Quiz { get; set; } = default!;
         public Guid QuizId { get; set; } = default!;
-        public ICollection<Question>? Questions { get; set; }
+        public IEnumerable<Question>? Questions { get; set; }
     }
 
 }

@@ -2,37 +2,56 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Contracts.DAL.App;
+using DAL.App.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DAL.App.EF;
-using Domain.App;
+using Extensions.Base;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.ApiControllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+
+
     public class ResultsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppUnitOfWork _uow;
 
-        public ResultsController(AppDbContext context)
+        public ResultsController(IAppUnitOfWork uow)
         {
-            _context = context;
+            _uow = uow;
+
         }
 
-        // GET: api/Results
         [HttpGet]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(typeof(Quiz), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<Result>>> GetResults()
         {
-            return await _context.Results.ToListAsync();
+            var res = await _uow.Result.GetAllAsync(User.GetUserId()!.Value);
+            return Ok(res);
         }
 
-        // GET: api/Results/5
+        /// <summary>
+        /// Get one result. Based on parameter: Id
+        /// </summary>
+        /// <param name="id">Id of object to retrieve, Guid</param>
+        /// <returns>Picture entity from db</returns>
         [HttpGet("{id}")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
         public async Task<ActionResult<Result>> GetResult(Guid id)
         {
-            var result = await _context.Results.FindAsync(id);
+            var result = await _uow.Result.FirstOrDefaultAsync(id);
 
             if (result == null)
             {
@@ -42,9 +61,18 @@ namespace WebApp.ApiControllers
             return result;
         }
 
-        // PUT: api/Results/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Update picture
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(Message))]
         public async Task<IActionResult> PutResult(Guid id, Result result)
         {
             if (id != result.Id)
@@ -52,57 +80,54 @@ namespace WebApp.ApiControllers
                 return BadRequest();
             }
 
-            _context.Entry(result).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ResultExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _uow.Result.Update(result);
+            await _uow.SaveChangesAsync();
 
             return NoContent();
         }
 
-        // POST: api/Results
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Post picture
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         [HttpPost]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Result))]
         public async Task<ActionResult<Result>> PostResult(Result result)
         {
-            _context.Results.Add(result);
-            await _context.SaveChangesAsync();
+            result.AppUserId = User.GetUserId()!.Value;
+            _uow.Result.Add(result);
+            await _uow.SaveChangesAsync();
 
             return CreatedAtAction("GetResult", new { id = result.Id }, result);
         }
 
-        // DELETE: api/Results/5
+        /// <summary>
+        /// Delete result
+        /// </summary>
+        /// <param name="id">Guid id of item to delete</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
+        [Produces("application/json")]
+        [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Result))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(Message))]
         public async Task<IActionResult> DeleteResult(Guid id)
         {
-            var result = await _context.Results.FindAsync(id);
+            var result = await _uow.Result.FirstOrDefaultAsync(id);
             if (result == null)
             {
                 return NotFound();
             }
 
-            _context.Results.Remove(result);
-            await _context.SaveChangesAsync();
+            _uow.Result.Remove(result);
+            await _uow.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool ResultExists(Guid id)
-        {
-            return _context.Results.Any(e => e.Id == id);
-        }
+
     }
 }

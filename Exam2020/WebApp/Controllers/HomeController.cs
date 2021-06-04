@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using WebApp.Models;
 using WebApp.ViewModels.Quizzes;
 using Result = DAL.App.DTO.Result;
+#pragma warning disable 1998
 
 namespace WebApp.Controllers
 {
@@ -40,27 +41,6 @@ namespace WebApp.Controllers
 
         }
 
-
-        // public async Task<IActionResult> Quiz(Guid id)
-        // {
-        //     if (id == null)
-        //     {
-        //         return NotFound();
-        //     }
-        //
-        //     var quiz = await _uow.Quiz
-        //         .FirstOrDefaultAsync(id);
-        //
-        //
-        //     if (quiz == null)
-        //     {
-        //         return NotFound();
-        //     }
-        //     //
-        //     // return RedirectToAction("Create", "Results", new { id = id});
-        //
-        //
-        // }
         public IActionResult Privacy()
         {
             return View();
@@ -78,8 +58,8 @@ namespace WebApp.Controllers
             var res = await _uow.Quiz.FirstOrDefaultAsync(id);
 
             var vm = new ResultCreateEditViewModel();
-            vm.Questions = res!.Questions;
-            vm.QuizId = res.Id;
+            vm.Questions = await _uow.Question.GetAllWithIdAsync(id);
+            vm.QuizId = res!.Id;
             vm.Quiz = res.QuizName;
 
             return View(vm);
@@ -105,10 +85,12 @@ namespace WebApp.Controllers
 
                 if (!question!.IsPoll)
                 {
+                    var answers = await _uow.Answer.GetAllAnswersAsync(question.Id);
+
                     if (!question!.MultipleChoice)
                     {
 
-                        foreach (var correctAnswer in question!.Answers!)
+                        foreach (var correctAnswer in answers)
                         {
                             if (each.Equals(correctAnswer.Id) && correctAnswer.IsAnswerCorrect)
                             {
@@ -118,7 +100,7 @@ namespace WebApp.Controllers
                     }
                     else
                     {
-                        foreach (var correctAnswer in question!.Answers!)
+                        foreach (var correctAnswer in answers)
                         {
                             if (each.Equals(correctAnswer.Id) && correctAnswer.IsAnswerCorrect)
                             {
@@ -170,12 +152,10 @@ namespace WebApp.Controllers
             return RedirectToAction("Details", "Home", new { total = points, percentage = quizResult});
         }
 
+
         public async Task<IActionResult> Details(int total, int percentage)
+
         {
-            if (total == null)
-            {
-                return NotFound();
-            }
 
             var vm = new ResultAnswersCreateEditViewModel();
 
