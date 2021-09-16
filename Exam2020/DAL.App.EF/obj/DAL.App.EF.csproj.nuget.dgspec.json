@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.App.EF/DAL.App.EF.csproj": {}
+    "/Users/hellu/homework/Exam2020/DAL.App.EF/DAL.App.EF.csproj": {}
   },
   "projects": {
-    "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.App/Contracts.DAL.App.csproj": {
+    "/Users/hellu/homework/Exam2020/Contracts.DAL.App/Contracts.DAL.App.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.App/Contracts.DAL.App.csproj",
+        "projectUniqueName": "/Users/hellu/homework/Exam2020/Contracts.DAL.App/Contracts.DAL.App.csproj",
         "projectName": "Contracts.DAL.App",
-        "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.App/Contracts.DAL.App.csproj",
+        "projectPath": "/Users/hellu/homework/Exam2020/Contracts.DAL.App/Contracts.DAL.App.csproj",
         "packagesPath": "/Users/hellu/.nuget/packages/",
-        "outputPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.App/obj/",
+        "outputPath": "/Users/hellu/homework/Exam2020/Contracts.DAL.App/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/hellu/.nuget/NuGet/NuGet.Config"
@@ -26,14 +26,14 @@
           "net5.0": {
             "targetAlias": "net5.0",
             "projectReferences": {
-              "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj": {
-                "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj"
+              "/Users/hellu/homework/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj": {
+                "projectPath": "/Users/hellu/homework/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj"
               },
-              "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.App.DTO/DAL.App.DTO.csproj": {
-                "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.App.DTO/DAL.App.DTO.csproj"
+              "/Users/hellu/homework/Exam2020/DAL.App.DTO/DAL.App.DTO.csproj": {
+                "projectPath": "/Users/hellu/homework/Exam2020/DAL.App.DTO/DAL.App.DTO.csproj"
               },
-              "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.App/Domain.App.csproj": {
-                "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.App/Domain.App.csproj"
+              "/Users/hellu/homework/Exam2020/Domain.App/Domain.App.csproj": {
+                "projectPath": "/Users/hellu/homework/Exam2020/Domain.App/Domain.App.csproj"
               }
             }
           }
@@ -66,14 +66,14 @@
         }
       }
     },
-    "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj": {
+    "/Users/hellu/homework/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj",
+        "projectUniqueName": "/Users/hellu/homework/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj",
         "projectName": "Contracts.DAL.Base",
-        "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj",
+        "projectPath": "/Users/hellu/homework/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj",
         "packagesPath": "/Users/hellu/.nuget/packages/",
-        "outputPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.Base/obj/",
+        "outputPath": "/Users/hellu/homework/Exam2020/Contracts.DAL.Base/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/hellu/.nuget/NuGet/NuGet.Config"
@@ -88,8 +88,8 @@
           "net5.0": {
             "targetAlias": "net5.0",
             "projectReferences": {
-              "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.Domain.Base/Contracts.Domain.Base.csproj": {
-                "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.Domain.Base/Contracts.Domain.Base.csproj"
+              "/Users/hellu/homework/Exam2020/Contracts.Domain.Base/Contracts.Domain.Base.csproj": {
+                "projectPath": "/Users/hellu/homework/Exam2020/Contracts.Domain.Base/Contracts.Domain.Base.csproj"
               }
             }
           }
@@ -122,14 +122,14 @@
         }
       }
     },
-    "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.Domain.Base/Contracts.Domain.Base.csproj": {
+    "/Users/hellu/homework/Exam2020/Contracts.Domain.Base/Contracts.Domain.Base.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.Domain.Base/Contracts.Domain.Base.csproj",
+        "projectUniqueName": "/Users/hellu/homework/Exam2020/Contracts.Domain.Base/Contracts.Domain.Base.csproj",
         "projectName": "Contracts.Domain.Base",
-        "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.Domain.Base/Contracts.Domain.Base.csproj",
+        "projectPath": "/Users/hellu/homework/Exam2020/Contracts.Domain.Base/Contracts.Domain.Base.csproj",
         "packagesPath": "/Users/hellu/.nuget/packages/",
-        "outputPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.Domain.Base/obj/",
+        "outputPath": "/Users/hellu/homework/Exam2020/Contracts.Domain.Base/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/hellu/.nuget/NuGet/NuGet.Config"
@@ -180,14 +180,14 @@
         }
       }
     },
-    "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.App.DTO/DAL.App.DTO.csproj": {
+    "/Users/hellu/homework/Exam2020/DAL.App.DTO/DAL.App.DTO.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.App.DTO/DAL.App.DTO.csproj",
+        "projectUniqueName": "/Users/hellu/homework/Exam2020/DAL.App.DTO/DAL.App.DTO.csproj",
         "projectName": "DAL.App.DTO",
-        "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.App.DTO/DAL.App.DTO.csproj",
+        "projectPath": "/Users/hellu/homework/Exam2020/DAL.App.DTO/DAL.App.DTO.csproj",
         "packagesPath": "/Users/hellu/.nuget/packages/",
-        "outputPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.App.DTO/obj/",
+        "outputPath": "/Users/hellu/homework/Exam2020/DAL.App.DTO/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/hellu/.nuget/NuGet/NuGet.Config"
@@ -202,11 +202,11 @@
           "net5.0": {
             "targetAlias": "net5.0",
             "projectReferences": {
-              "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.App/Domain.App.csproj": {
-                "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.App/Domain.App.csproj"
+              "/Users/hellu/homework/Exam2020/Domain.App/Domain.App.csproj": {
+                "projectPath": "/Users/hellu/homework/Exam2020/Domain.App/Domain.App.csproj"
               },
-              "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.Base/Domain.Base.csproj": {
-                "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.Base/Domain.Base.csproj"
+              "/Users/hellu/homework/Exam2020/Domain.Base/Domain.Base.csproj": {
+                "projectPath": "/Users/hellu/homework/Exam2020/Domain.Base/Domain.Base.csproj"
               }
             }
           }
@@ -253,14 +253,14 @@
         }
       }
     },
-    "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.App.EF/DAL.App.EF.csproj": {
+    "/Users/hellu/homework/Exam2020/DAL.App.EF/DAL.App.EF.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.App.EF/DAL.App.EF.csproj",
+        "projectUniqueName": "/Users/hellu/homework/Exam2020/DAL.App.EF/DAL.App.EF.csproj",
         "projectName": "DAL.App.EF",
-        "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.App.EF/DAL.App.EF.csproj",
+        "projectPath": "/Users/hellu/homework/Exam2020/DAL.App.EF/DAL.App.EF.csproj",
         "packagesPath": "/Users/hellu/.nuget/packages/",
-        "outputPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.App.EF/obj/",
+        "outputPath": "/Users/hellu/homework/Exam2020/DAL.App.EF/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/hellu/.nuget/NuGet/NuGet.Config"
@@ -275,20 +275,20 @@
           "net5.0": {
             "targetAlias": "net5.0",
             "projectReferences": {
-              "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.App/Contracts.DAL.App.csproj": {
-                "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.App/Contracts.DAL.App.csproj"
+              "/Users/hellu/homework/Exam2020/Contracts.DAL.App/Contracts.DAL.App.csproj": {
+                "projectPath": "/Users/hellu/homework/Exam2020/Contracts.DAL.App/Contracts.DAL.App.csproj"
               },
-              "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj": {
-                "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj"
+              "/Users/hellu/homework/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj": {
+                "projectPath": "/Users/hellu/homework/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj"
               },
-              "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.App.DTO/DAL.App.DTO.csproj": {
-                "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.App.DTO/DAL.App.DTO.csproj"
+              "/Users/hellu/homework/Exam2020/DAL.App.DTO/DAL.App.DTO.csproj": {
+                "projectPath": "/Users/hellu/homework/Exam2020/DAL.App.DTO/DAL.App.DTO.csproj"
               },
-              "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.Base.EF/DAL.Base.EF.csproj": {
-                "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.Base.EF/DAL.Base.EF.csproj"
+              "/Users/hellu/homework/Exam2020/DAL.Base.EF/DAL.Base.EF.csproj": {
+                "projectPath": "/Users/hellu/homework/Exam2020/DAL.Base.EF/DAL.Base.EF.csproj"
               },
-              "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.App/Domain.App.csproj": {
-                "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.App/Domain.App.csproj"
+              "/Users/hellu/homework/Exam2020/Domain.App/Domain.App.csproj": {
+                "projectPath": "/Users/hellu/homework/Exam2020/Domain.App/Domain.App.csproj"
               }
             }
           }
@@ -339,6 +339,9 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
@@ -347,14 +350,14 @@
         }
       }
     },
-    "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.Base.EF/DAL.Base.EF.csproj": {
+    "/Users/hellu/homework/Exam2020/DAL.Base.EF/DAL.Base.EF.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.Base.EF/DAL.Base.EF.csproj",
+        "projectUniqueName": "/Users/hellu/homework/Exam2020/DAL.Base.EF/DAL.Base.EF.csproj",
         "projectName": "DAL.Base.EF",
-        "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.Base.EF/DAL.Base.EF.csproj",
+        "projectPath": "/Users/hellu/homework/Exam2020/DAL.Base.EF/DAL.Base.EF.csproj",
         "packagesPath": "/Users/hellu/.nuget/packages/",
-        "outputPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.Base.EF/obj/",
+        "outputPath": "/Users/hellu/homework/Exam2020/DAL.Base.EF/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/hellu/.nuget/NuGet/NuGet.Config"
@@ -369,8 +372,8 @@
           "net5.0": {
             "targetAlias": "net5.0",
             "projectReferences": {
-              "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.Base/DAL.Base.csproj": {
-                "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.Base/DAL.Base.csproj"
+              "/Users/hellu/homework/Exam2020/DAL.Base/DAL.Base.csproj": {
+                "projectPath": "/Users/hellu/homework/Exam2020/DAL.Base/DAL.Base.csproj"
               }
             }
           }
@@ -409,14 +412,14 @@
         }
       }
     },
-    "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.Base/DAL.Base.csproj": {
+    "/Users/hellu/homework/Exam2020/DAL.Base/DAL.Base.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.Base/DAL.Base.csproj",
+        "projectUniqueName": "/Users/hellu/homework/Exam2020/DAL.Base/DAL.Base.csproj",
         "projectName": "DAL.Base",
-        "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.Base/DAL.Base.csproj",
+        "projectPath": "/Users/hellu/homework/Exam2020/DAL.Base/DAL.Base.csproj",
         "packagesPath": "/Users/hellu/.nuget/packages/",
-        "outputPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/DAL.Base/obj/",
+        "outputPath": "/Users/hellu/homework/Exam2020/DAL.Base/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/hellu/.nuget/NuGet/NuGet.Config"
@@ -431,8 +434,8 @@
           "net5.0": {
             "targetAlias": "net5.0",
             "projectReferences": {
-              "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj": {
-                "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj"
+              "/Users/hellu/homework/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj": {
+                "projectPath": "/Users/hellu/homework/Exam2020/Contracts.DAL.Base/Contracts.DAL.Base.csproj"
               }
             }
           }
@@ -471,14 +474,14 @@
         }
       }
     },
-    "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.App/Domain.App.csproj": {
+    "/Users/hellu/homework/Exam2020/Domain.App/Domain.App.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.App/Domain.App.csproj",
+        "projectUniqueName": "/Users/hellu/homework/Exam2020/Domain.App/Domain.App.csproj",
         "projectName": "Domain.App",
-        "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.App/Domain.App.csproj",
+        "projectPath": "/Users/hellu/homework/Exam2020/Domain.App/Domain.App.csproj",
         "packagesPath": "/Users/hellu/.nuget/packages/",
-        "outputPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.App/obj/",
+        "outputPath": "/Users/hellu/homework/Exam2020/Domain.App/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/hellu/.nuget/NuGet/NuGet.Config"
@@ -493,8 +496,8 @@
           "net5.0": {
             "targetAlias": "net5.0",
             "projectReferences": {
-              "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.Base/Domain.Base.csproj": {
-                "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.Base/Domain.Base.csproj"
+              "/Users/hellu/homework/Exam2020/Domain.Base/Domain.Base.csproj": {
+                "projectPath": "/Users/hellu/homework/Exam2020/Domain.Base/Domain.Base.csproj"
               }
             }
           }
@@ -533,14 +536,14 @@
         }
       }
     },
-    "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.Base/Domain.Base.csproj": {
+    "/Users/hellu/homework/Exam2020/Domain.Base/Domain.Base.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.Base/Domain.Base.csproj",
+        "projectUniqueName": "/Users/hellu/homework/Exam2020/Domain.Base/Domain.Base.csproj",
         "projectName": "Domain.Base",
-        "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.Base/Domain.Base.csproj",
+        "projectPath": "/Users/hellu/homework/Exam2020/Domain.Base/Domain.Base.csproj",
         "packagesPath": "/Users/hellu/.nuget/packages/",
-        "outputPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.Base/obj/",
+        "outputPath": "/Users/hellu/homework/Exam2020/Domain.Base/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/hellu/.nuget/NuGet/NuGet.Config"
@@ -555,8 +558,8 @@
           "net5.0": {
             "targetAlias": "net5.0",
             "projectReferences": {
-              "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.Domain.Base/Contracts.Domain.Base.csproj": {
-                "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Contracts.Domain.Base/Contracts.Domain.Base.csproj"
+              "/Users/hellu/homework/Exam2020/Contracts.Domain.Base/Contracts.Domain.Base.csproj": {
+                "projectPath": "/Users/hellu/homework/Exam2020/Contracts.Domain.Base/Contracts.Domain.Base.csproj"
               }
             }
           }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "epWQvp6A/Sg6tbVJyc8rYz2OG9a6Jxw0i5IyUOMSFNlApftuxsDwhdQHCfWKrRiTRosWOAFNAcJupF+bxaRNhg==",
+  "dgSpecHash": "6S0nJuy1pyjMwKs6DuHx3yZRqmtC3aY6Z/cM3S8oPrAI17jVvvf3VQK3ID6/l20NocIGhmwgpRnXWdLJsVw+Ig==",
   "success": true,
-  "projectFilePath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Domain.App/Domain.App.csproj",
+  "projectFilePath": "/Users/hellu/homework/Exam2020/Domain.App/Domain.App.csproj",
   "expectedPackageFiles": [
     "/Users/hellu/.nuget/packages/microsoft.aspnetcore.cryptography.internal/5.0.1/microsoft.aspnetcore.cryptography.internal.5.0.1.nupkg.sha512",
     "/Users/hellu/.nuget/packages/microsoft.aspnetcore.cryptography.keyderivation/5.0.1/microsoft.aspnetcore.cryptography.keyderivation.5.0.1.nupkg.sha512",

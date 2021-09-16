@@ -297,11 +297,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Extensions.Base/Extensions.Base.csproj",
+      "projectUniqueName": "/Users/hellu/homework/Exam2020/Extensions.Base/Extensions.Base.csproj",
       "projectName": "Extensions.Base",
-      "projectPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Extensions.Base/Extensions.Base.csproj",
+      "projectPath": "/Users/hellu/homework/Exam2020/Extensions.Base/Extensions.Base.csproj",
       "packagesPath": "/Users/hellu/.nuget/packages/",
-      "outputPath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Extensions.Base/obj/",
+      "outputPath": "/Users/hellu/homework/Exam2020/Extensions.Base/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/hellu/.nuget/NuGet/NuGet.Config"

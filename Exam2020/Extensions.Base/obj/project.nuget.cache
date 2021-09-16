@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "RrmKur//NOLmAcs1Z1ia6YymiDRbv8RKB8uOa3FEd6P+EhzmQkE9U3NOozcWFAGQbyTem81Imw2K3RW5B1tIqQ==",
+  "dgSpecHash": "/w3ENJqQa/BF9wPCV20Aq74K5gELi0uy9xGEIRg30CZbgHduDAoDPE1zRERptt7S4QFbYgbSSQyeTevDKH4y5Q==",
   "success": true,
-  "projectFilePath": "/Users/hellu/RiderProjects/icd0009-2020s/Exam2020/Extensions.Base/Extensions.Base.csproj",
+  "projectFilePath": "/Users/hellu/homework/Exam2020/Extensions.Base/Extensions.Base.csproj",
   "expectedPackageFiles": [
     "/Users/hellu/.nuget/packages/microsoft.csharp/4.5.0/microsoft.csharp.4.5.0.nupkg.sha512",
     "/Users/hellu/.nuget/packages/microsoft.identitymodel.jsonwebtokens/6.11.1/microsoft.identitymodel.jsonwebtokens.6.11.1.nupkg.sha512",
